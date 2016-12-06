@@ -25,11 +25,11 @@ The theory behind the single-phase flow solver used in [RheoTool] can be found i
 
 The repository includes versions of [RheoTool] for: OpenFOAM® v2.2.2, OpenFOAM® v4.0 and foam-extend v3.2.  
 
-To install [RheoTool], please follow the instructions in Chapter 2 of the [user-guide](https://github.com/fppimenta/rheoTool/doc).
+To install [RheoTool], please follow the instructions in Chapter 2 of the [user-guide](https://github.com/fppimenta/rheoTool/tree/master/doc).
 
 ## Docs
 
-See the [user-guide](https://github.com/fppimenta/rheoTool/doc).
+See the [user-guide](https://github.com/fppimenta/rheoTool/tree/master/doc).
 
 ## Third-Party 
 
