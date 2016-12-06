@@ -1,0 +1,39 @@
+constitutiveModel/constitutiveModel.C
+
+constitutiveEqs/constitutiveEq/constitutiveEq.C
+constitutiveEqs/constitutiveEq/newConstitutiveEq.C
+
+ constitutiveEqs/Oldroyd-B/Oldroyd_B.C
+ constitutiveEqs/Oldroyd-B/Oldroyd-BLog/Oldroyd_BLog.C
+ constitutiveEqs/Oldroyd-B/Oldroyd-BSqrt/Oldroyd_BSqrt.C
+ constitutiveEqs/Oldroyd-B/Oldroyd-BRootk/Oldroyd_BRootk.C
+
+ constitutiveEqs/Giesekus/Giesekus.C
+ constitutiveEqs/Giesekus/GiesekusLog/GiesekusLog.C
+
+ constitutiveEqs/WhiteMetznerCY/WhiteMetznerCY.C
+ constitutiveEqs/WhiteMetznerCY/WhiteMetznerCYLog/WhiteMetznerCYLog.C
+
+ constitutiveEqs/FENE-CR/FENE_CR.C
+ constitutiveEqs/FENE-CR/FENE-CRLog/FENE_CRLog.C
+
+ constitutiveEqs/FENE-P/FENE_P.C
+ constitutiveEqs/FENE-P/FENE-PLog/FENE_PLog.C
+
+ constitutiveEqs/sPTTlinear/sPTTlinear.C
+ constitutiveEqs/sPTTlinear/sPTTlinearLog/sPTTlinearLog.C
+
+ constitutiveEqs/sPTTexp/sPTTexp.C
+ constitutiveEqs/sPTTexp/sPTTexpLog/sPTTexpLog.C
+ 
+
+ constitutiveEqs/GNF/Newtonian/Newtonian.C
+ constitutiveEqs/GNF/CarreauYasuda/CarreauYasuda.C
+ constitutiveEqs/GNF/powerLaw/powerLaw.C
+ constitutiveEqs/GNF/HerschelBulkley/HerschelBulkley.C
+ 
+ constitutiveEqs/multiMode/multiMode.C
+ 
+constitutiveTwoPhaseMixture/constitutiveTwoPhaseMixture.C
+
+LIB = $(FOAM_USER_LIBBIN)/libconstitutiveEquations

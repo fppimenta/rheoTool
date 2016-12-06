@@ -1,0 +1,142 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     rheoInterFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.15; 
+
+deltaT          0.000001;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.01;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           0.05;
+
+maxAlphaCo      0.05;
+
+maxDeltaT       0.001;
+
+functions
+{
+
+   Wout
+    {
+	 functionObjectLibs ("libutilityFunctionObjects.so");
+	 type coded;
+	 redirectType kinetEne;
+	 writeControl timeStep;
+         writeInterval       100;
+         enabled             yes;
+
+	 codeWrite
+	 #{
+ 
+          // Lookup/create variables 
+       
+           const volScalarField& alpha1 = mesh().lookupObject<volScalarField>("alpha.water");
+           surfaceScalarField alpha1f = fvc::snGrad(alpha1);
+           
+           const volVectorField& C = mesh().C();
+                 
+           scalar rowy(C[0].y());
+           bool endly(false);
+           scalar maxInter(0.), inter(0.);
+           
+           forAll(C,idx)
+            {
+                if (mag(C[idx].y()-rowy)<SMALL)
+                {
+		      if ((C[idx].x()>0.) && (!endly))
+		       {
+		         if ((alpha1[idx]-0.5)*(alpha1[idx-1]-0.5)<0.)
+		          {
+		             scalar y1=alpha1[idx-1];
+		             scalar y2=alpha1[idx];
+		             scalar x1=C[idx-1].x();
+		             scalar x2=C[idx].x();
+		             
+		             inter = (0.5-y1)/( (y2-y1)/(x2-x1) ) + x1;
+		             
+		             endly = true;
+		             if (inter>maxInter) {maxInter = inter;}
+		            
+		          }
+		       
+		       }  
+		       
+		  }  
+		  else
+		  {
+		 
+		    endly = false;
+		    rowy = C[idx].y();
+		    		    		  
+		  }       
+            
+            }
+          
+           scalarList list;
+           list.append(mesh().time().value()); // Time (col 0)  
+           list.append(maxInter); // Max interface position (col 1)  
+         
+          // Write data
+
+           string comsh;           
+           string filename("DropWidth.txt");
+	   std::stringstream doub2str; doub2str.precision(12);
+
+           comsh = "./writeData " + filename;
+           forAll(list, id)
+            {
+              doub2str.str(std::string());
+              doub2str << list[id]; 
+              comsh += " " + doub2str.str();
+            }
+           
+	    if (Pstream::master())
+            {
+	      system(comsh);
+            }
+        
+	 #};
+    }
+     
+}
+
+// ************************************************************************* //

@@ -1,0 +1,8 @@
+#!/bin/sh
+set -x
+
+wmake libso constitutiveEquations
+wmake libso gaussDefCmpwConvectionScheme
+wmake libso postProcessing
+wmake libso boundaryConditions
+

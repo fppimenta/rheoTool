@@ -1,0 +1,12 @@
+postProcUtils/ppUtil.C 
+postProcUtils/calcWi0/calcWi0.C
+postProcUtils/calcCd/calcCd.C
+postProcUtils/calcKineticE/calcKineticE.C
+postProcUtils/calcWSSmag/calcWSSmag.C
+postProcUtils/calcVortexL/calcVortexL.C
+
+postProcUtils/calcW/calcW.C
+
+postProcUtils/none/none.C
+
+LIB = $(FOAM_USER_LIBBIN)/libpostProcessingRheoTool

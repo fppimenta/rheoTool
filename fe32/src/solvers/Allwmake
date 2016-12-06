@@ -1,0 +1,6 @@
+#!/bin/sh
+set -x
+
+wmake rheoFoam
+wmake rheoTestFoam
+wmake rheoInterFoam

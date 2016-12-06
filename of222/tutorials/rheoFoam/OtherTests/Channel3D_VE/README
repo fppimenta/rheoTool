@@ -1,0 +1,10 @@
+--> Purpose
+
+	This test is mostly to evaluate how the log-conformation approach performs in 3D geometries.
+	
+--> General conditions
+
+	The same as for the 2D tests, except the geometry, which is now a 3D channel/duct.
+	
+	To test any VE model other than Oldroyd-B, simply copy the dictionary 'constitutiveProperties' from the 2D tests relative to that model and paste it here. Nothing else need to be changed.
+

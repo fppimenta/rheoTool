@@ -1,0 +1,94 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     3.2                                |
+|   \\  /    A nd           | Web:         http://www.extend-project.de       |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     rheoFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         20;
+
+deltaT          2e-4;
+
+writeControl    runTime;
+
+writeInterval   2;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  12;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   10;
+
+graphFormat     raw;
+
+runTimeModifiable yes;
+
+adjustTimeStep off;
+
+maxCo          0.01;
+
+maxDeltaT      0.001;
+
+functions
+{
+
+ // Sample some points along time
+
+    probes
+    {
+        type            probes;
+
+        // Name of the directory for probe data
+        name            probes;
+
+        // Write at same frequency as fields
+        outputControl   timeStep;
+        outputInterval  100;
+
+        // Fields to be probed
+        fields
+        (
+            U
+            tau
+        );
+
+        probeLocations
+        (
+             (0 0 0.5)
+             (1 0 0.5)
+             
+             (0 0.9 0.5)
+             (0 -0.9 0.5)
+ 
+             (0 0.95 0.5)
+             (0 -0.95 0.5)
+            
+        );
+    }
+ 
+}
+
+// ************************************************************************* //

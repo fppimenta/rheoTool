@@ -1,0 +1,3 @@
+linearExtrapolation/extSTFvPatchSymmTensorField.C
+
+LIB = $(FOAM_USER_LIBBIN)/libBCRheoTool

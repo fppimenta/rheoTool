@@ -1,0 +1,117 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     rheoFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         15;
+
+deltaT          1e-3;
+
+writeControl    runTime;
+
+writeInterval   2;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  12;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   10;
+
+graphFormat     raw;
+
+runTimeModifiable yes;
+
+adjustTimeStep off;
+
+maxCo          0.01;
+
+maxDeltaT      0.001;
+
+functions
+{
+   outputCd
+    {
+	 functionObjectLibs ("libutilityFunctionObjects.so");
+	 type coded;
+	 redirectType calCd;
+	 writeControl timeStep;
+         writeInterval      50;
+         enabled             yes;
+
+	 codeWrite
+	 #{
+ 
+          // Lookup/create variable 
+	     
+	   const volVectorField& U = mesh().lookupObject<volVectorField>("U");
+           const volSymmTensorField& tau = mesh().lookupObject<volSymmTensorField>("tau");
+           const volScalarField& p = mesh().lookupObject<volScalarField>("p");
+           const dictionary& constDict = mesh().lookupObject<IOdictionary>("constitutiveProperties");
+           dimensionedScalar rho_(constDict.subDict("parameters").lookup("rho"));
+           dimensionedScalar etaS_(constDict.subDict("parameters").lookup("etaS"));
+           dimensionedScalar etaP_(constDict.subDict("parameters").lookup("etaP"));
+  
+           label cyl = mesh().boundaryMesh().findPatchID("cylinder");
+           scalarList list;
+    
+          // Compute cd
+ 
+           volTensorField L = fvc::grad(U);
+
+	   volSymmTensorField F = tau + symm( L + L.T() ) * etaS_ - p * symmTensor::I * rho_;
+
+           vector Fpatch = gSum( ( -mesh().boundaryMesh()[cyl].faceAreas() ) & F.boundaryField()[cyl] )/(etaS_ + etaP_).value();
+  
+           list.append(mesh().time().value());  // Time (col 0)  
+           list.append(Fpatch.x());             // Cd   (col 1)  
+
+          // Write data
+
+           string comsh;           
+           string filename("Cd.txt");
+	   std::stringstream doub2str; doub2str.precision(12);
+
+           comsh = "./writeData " + filename;
+           forAll(list, id)
+            {
+              doub2str.str(std::string());
+              doub2str << list[id]; 
+              comsh += " " + doub2str.str();
+            }
+           
+           if (Pstream::master())
+            {
+	      system(comsh);
+            }
+
+	 #};
+    }
+ 
+}
+
+// ************************************************************************* //

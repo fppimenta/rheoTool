@@ -1,0 +1,7 @@
+#!/bin/sh
+set -x
+
+wclean libso constitutiveEquations
+wclean libso gaussDefCmpwConvectionScheme
+wclean libso postProcessing
+wclean libso boundaryConditions

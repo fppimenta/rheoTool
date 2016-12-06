@@ -1,0 +1,64 @@
+# git-ls-files --others --exclude-from=.git/info/exclude
+# Lines that start with '#' are comments.
+
+# editor and misc backup files - anywhere
+*~
+.*~
+*.bak
+*.bak[0-9][0-9]
+*.orig
+*.orig[0-9][0-9]
+\#*\#
+
+# CVS recovered versions - anywhere
+.#*
+
+# objects and archives - anywhere
+*.[oa]
+*.la
+*.so
+*.jar
+*.dylib
+
+# testing and cleanup
+AllcleanMaster.sh
+AllrunMaster.sh
+limpa.sh
+updateHeader.sh
+resume
+
+# dependency files - anywhere
+*.dep
+
+# lnInclude (symlink) folders - anywhere
+lnInclude
+
+# build folders - anywhere
+linux*Gcc*/
+linux*Icc*/
+darwin*Gcc*/
+darwin*Intel*/
+linuxming*/
+SiCortex*Gcc*/
+solaris*Gcc*/
+SunOS*Gcc*/
+
+# patch residue
+*.orig
+*.rej
+
+# other stuff
+.build
+.hgignore
+.timeStamp
+
+# ignore the persistent .build tag in the main directory
+/.build
+
+# ignore .timeStamp in the main directory
+/.timeStamp
+
+# ignore .tags in the main directory
+/.tags
+
+# end-of-file

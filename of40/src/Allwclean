@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd libs
+$(pwd)/Allwclean
+
+cd ../solvers
+$(pwd)/Allwclean

@@ -1,0 +1,84 @@
+#!/bin/sh
+
+#Download Eigen version 3.2.9
+
+[ -z "$WM_PROJECT_USER_DIR" ] && { echo " "; echo "ERROR: OpenFOAM vars are not loaded"; echo " "; exit 1; }
+
+mkdir -p $WM_PROJECT_USER_DIR/ThirdParty
+cd $WM_PROJECT_USER_DIR/ThirdParty
+
+wget "http://bitbucket.org/eigen/eigen/get/3.2.9.tar.gz"
+
+state=$?
+
+if [ $state -ne 0 ]; then
+  echo " "
+  echo "********************** "
+  echo " "
+  echo "ERROR: Check your Internet connection"
+  echo " "
+  
+  exit 1;
+fi
+
+tmpname=`tar -tzf 3.2.9.tar.gz | head -1 | cut -f1 -d"/"`
+
+tar -xvzf 3.2.9.tar.gz
+
+state=$?
+
+if [ $state -eq 0 ]; then
+  rm 3.2.9.tar.gz
+
+  mv  $tmpname Eigen3.2.9
+
+  state=$?
+
+  if [ $state -ne 0 ]; then
+
+        echo " "  
+	echo "********************** "
+	echo " "
+	echo "ERROR: it seems Eigen already exists in your system"
+	echo " "
+
+	exit 1;
+  fi
+
+else
+
+  echo " "
+  echo "********************** "
+  echo " "
+  echo "ERROR: untar error"
+  echo " "
+
+  exit 1;
+
+fi
+
+state=$?
+
+if [ $state -eq 0 ]; then
+  echo " "
+  echo "********************** "
+  echo " "
+  echo "Eigen has been downloaded successfully to directory:"
+  echo " "
+  echo "$WM_PROJECT_USER_DIR/ThirdParty/Eigen3.2.9"
+  echo " "
+  echo "If this directory is ok for you as its final location, run the following command to export its path:"
+  echo " "
+  echo " echo \"export EIGEN_RHEO=$WM_PROJECT_USER_DIR/ThirdParty/Eigen3.2.9\">>$HOME/.bashrc "
+  echo " "
+else
+  echo " "
+  echo "********************** "
+  echo " "
+  echo "ERROR: Eigen download failled."
+  echo " "
+  echo "Check if you have writting permission ?"
+  echo " "
+fi
+
+														

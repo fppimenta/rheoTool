@@ -1,0 +1,113 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.2                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     rheoFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         10;
+
+deltaT          2e-4;
+
+writeControl    runTime;
+
+writeInterval   2;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  12;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   10;
+
+graphFormat     raw;
+
+runTimeModifiable yes;
+
+adjustTimeStep off;
+
+maxCo          0.2;
+
+maxDeltaT      1e-3;
+
+functions
+{
+
+   kineticEnergy
+    {
+	 functionObjectLibs ("libutilityFunctionObjects.so");
+	 type coded;
+	 redirectType kinetEne;
+	 outputControl timeStep;
+         outputInterval      20;
+         enabled             yes;
+
+	 code
+	 #{
+ 
+          // Lookup/create variables 
+       
+           const volVectorField& U = mesh().lookupObject<volVectorField>("U");
+           const volSymmTensorField& tau = mesh().lookupObject<volSymmTensorField>("tau");
+           const dictionary& cttP = mesh().lookupObject<IOdictionary>("constitutiveProperties");
+           dimensionedScalar lambda_(cttP.subDict("parameters").lookup("lambda"));
+           dimensionedScalar etaP_(cttP.subDict("parameters").lookup("etaP"));
+
+          // Compute kinetic energy
+
+           int nCells = mesh().nCells(); 
+           reduce(nCells, sumOp<int>());
+
+           scalarList list;
+           list.append(mesh().time().value()); // Time (col 0)  
+           list.append( ( 0.5/nCells ) * gSum( mag( U.internalField() ) * mag( U.internalField() ) ) ); // Average kinE (col 1) 
+           list.append( ( 0.5/nCells ) * (lambda_.value()/etaP_.value()) * gSum( tr( tau.internalField() ) ) ); // Average elastic energy (col 2)  
+           
+          // Write data
+
+           string comsh;           
+           string filename("kinEner.txt");
+	   std::stringstream doub2str; doub2str.precision(12);
+
+           comsh = "./writeData " + filename;
+           forAll(list, id)
+            {
+              doub2str.str(std::string());
+              doub2str << list[id]; 
+              comsh += " " + doub2str.str();
+            }
+           
+	    if (Pstream::master())
+            {
+	      system(comsh);
+            }
+        
+	 #};
+    }
+     
+}
+ 
+
+// ************************************************************************* //
