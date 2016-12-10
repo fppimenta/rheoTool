@@ -23,7 +23,7 @@ The theory behind the single-phase flow solver used in [RheoTool] can be found i
 
 [RheoTool] can be either cloned using `git` via: `git clone https://github.com/fppimenta/rheoTool` or simply downloaded from the GitHub page at https://github.com/fppimenta/rheoTool.  
 
-The repository includes versions of [RheoTool] for: OpenFOAM® v2.2.2, OpenFOAM® v4.0 and foam-extend v3.2.  
+The repository includes versions of [RheoTool] for: OpenFOAM® [v2.2.2](http://openfoam.org/version/2-2-2), OpenFOAM® [v4.0](http://openfoam.org/version/4-0) and foam-extend [v3.2](https://github.com/Unofficial-Extend-Project-Mirror/foam-extend-foam-extend-3.2/tree/nextRelease) (branch _nextRelease_; lastly tested on commit 6de4e26).  
 
 To install [RheoTool], please follow the instructions in Chapter 2 of the [user-guide](https://github.com/fppimenta/rheoTool/tree/master/doc).
 
@@ -46,5 +46,5 @@ Here are some pictures from the tutorials included in [RheoTool].
 [RheoTool]:https://github.com/fppimenta/rheoTool
 [OpenFOAM®]:http://openfoam.org/
 [foam-extend]:http://www.extend-project.de/
-[foam-extend 3.2]:https://github.com/Unofficial-Extend-Project-Mirror/foam-extend-foam-extend-3.2
+[foam-extend 3.2]:https://github.com/Unofficial-Extend-Project-Mirror/foam-extend-foam-extend-3.2/tree/nextRelease
 
