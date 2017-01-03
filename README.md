@@ -4,7 +4,7 @@
 
 [RheoTool] is an open-source toolbox based on [OpenFOAM®] to simulate the flow of Generalized Newtonian Fluids (GNF) and viscoelastic fluids. The library containing the viscoelastic models has been developed based on the library used by _viscoelasticFluidFoam_ [(Favero et al., 2010, J. Non-Newtonian Fluid Mech.)](http://dx.doi.org/10.1016/j.jnnfm.2010.08.010), already present in [foam-extend 3.2]. 
 
-The theory behind the single-phase flow solver used in [RheoTool] can be found in: [Pimenta F. and Alves M.A., 2016, J. Non-Newtonian Fluid Mech.](http://dx.doi.org/10.1016/j.jnnfm.2016.12.002).
+The theory behind the single-phase flow solver used in [RheoTool] can be found in: [Pimenta F. and Alves M.A., 2017, J. Non-Newtonian Fluid Mech.](http://dx.doi.org/10.1016/j.jnnfm.2016.12.002).
 
 ## Features
 
