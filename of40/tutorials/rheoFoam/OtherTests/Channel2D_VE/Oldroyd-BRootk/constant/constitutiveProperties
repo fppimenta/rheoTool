@@ -24,7 +24,7 @@ parameters
                 lambda           lambda [0 0 1 0 0 0 0] .1;
                 k                k [0 0 0 0 0 0 0] 8; 
                
-                uTauCoupling     true;               
+                stabilization    coupling;                   
 }
 
 passiveScalarProperties

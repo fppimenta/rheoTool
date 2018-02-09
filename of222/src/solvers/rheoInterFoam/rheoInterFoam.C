@@ -46,7 +46,9 @@ Description
 #include "pimpleControl.H"
 #include "fvIOoptionList.H"
 
+#include "ppUtilInterface.H"
 #include "constitutiveTwoPhaseMixture.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 int main(int argc, char *argv[])
@@ -59,6 +61,7 @@ int main(int argc, char *argv[])
 
     #include "initContinuityErrs.H"
     #include "createFields.H"
+    #include "createPPutil.H"
     #include "createFvOptions.H"
     #include "readTimeControls.H"
     #include "correctPhi.H"
@@ -104,7 +107,10 @@ int main(int argc, char *argv[])
                
                if (simplec)
                 {	
-                  #include "pEqn.H"
+                  while (pimple.correct())
+                   {
+                      #include "pEqn.H"
+                   } 
                 }
                else
                 {	
@@ -122,7 +128,9 @@ int main(int argc, char *argv[])
              }
 
          }
-
+ 
+        //- Post-processing               
+        postProc.update();
         runTime.write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+(cd libs && ./Allwmake)
+
+(cd solvers && ./Allwmake)

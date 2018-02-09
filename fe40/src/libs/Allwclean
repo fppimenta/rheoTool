@@ -1,0 +1,11 @@
+#!/bin/sh
+set -x
+
+wclean libso constitutiveEquations
+wclean libso gaussDefCmpwConvectionScheme
+wclean libso EDFModels
+wclean libso boundaryConditions
+wclean libso postProcessing/postProcUtils
+wclean preProcessing/rndPerturbation
+wclean postProcessing/writeEfield
+

@@ -2,6 +2,7 @@ EXE_INC = \
     -I../../libs/constitutiveEquations/lnInclude \
     -I../../libs/gaussDefCmpwConvectionScheme/lnInclude \
     -I../../libs/boundaryConditions/lnInclude \
+    -I../../libs/postProcessing/postProcUtils/lnInclude \
     -I$(LIB_SRC)/transportModels/twoPhaseMixture/lnInclude \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude \
@@ -12,6 +13,7 @@ EXE_LIBS = \
     -L$(FOAM_USER_LIBBIN) -lconstitutiveEquations \
     -L$(FOAM_USER_LIBBIN) -lgaussDefCmpwConvectionSchemes \
     -L$(FOAM_USER_LIBBIN) -lBCRheoTool \
+    -L$(FOAM_USER_LIBBIN) -lpostProcessingRheoTool \
     -ltwoPhaseMixture \
     -lfiniteVolume \
     -lfvOptions \

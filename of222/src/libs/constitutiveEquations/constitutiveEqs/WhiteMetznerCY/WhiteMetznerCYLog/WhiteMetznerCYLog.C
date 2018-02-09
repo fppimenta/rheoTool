@@ -119,9 +119,22 @@ Foam::WhiteMetznerCYLog::WhiteMetznerCYLog
     K_(dict.lookup("K")),
     L_(dict.lookup("L")),
     a_(dict.lookup("a")),
-    b_(dict.lookup("b")),
-    uTauCoupling_(dict.lookupOrDefault<Switch>("uTauCoupling", true))
-{}
+    b_(dict.lookup("b"))
+{
+ checkForStab(dict);
+ 
+ // Check if parameters allow the use of the log version
+ 
+ if ( m_.value()!=n_.value() || K_.value()!=L_.value() || a_.value()!=b_.value())
+  {
+     FatalErrorIn("Foam::WhiteMetznerCYLog::WhiteMetznerCYLog\n")
+            << "The Log version of the WhiteMetznerCY model can only be used if:\n"
+            << "\n   m=n   and   K=L   and   a=b\n"
+            << "\n Check if this is the case, otherwise use the stress version (WhiteMetznerCY).\n" 
+            << abort(FatalError);
+  }
+  
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

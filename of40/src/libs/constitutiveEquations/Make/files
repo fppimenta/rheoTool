@@ -20,16 +20,21 @@ constitutiveEqs/constitutiveEq/newConstitutiveEq.C
  constitutiveEqs/FENE-P/FENE_P.C
  constitutiveEqs/FENE-P/FENE-PLog/FENE_PLog.C
 
- constitutiveEqs/sPTTlinear/sPTTlinear.C
- constitutiveEqs/sPTTlinear/sPTTlinearLog/sPTTlinearLog.C
+ constitutiveEqs/PTTlinear/PTTlinear.C
+ constitutiveEqs/PTTlinear/PTTlinearLog/PTTlinearLog.C
 
- constitutiveEqs/sPTTexp/sPTTexp.C
- constitutiveEqs/sPTTexp/sPTTexpLog/sPTTexpLog.C
+ constitutiveEqs/PTTexp/PTTexp.C
+ constitutiveEqs/PTTexp/PTTexpLog/PTTexpLog.C
  
+ constitutiveEqs/Rolie-Poly/RoliePoly.C
+ constitutiveEqs/Rolie-Poly/Rolie-PolyLog/RoliePolyLog.C
+ 
+ constitutiveEqs/XPomPom/XPomPom.C
+ constitutiveEqs/XPomPom/XPomPomLog/XPomPomLog.C
 
  constitutiveEqs/GNF/Newtonian/Newtonian.C
  constitutiveEqs/GNF/CarreauYasuda/CarreauYasuda.C
- constitutiveEqs/GNF/powerLaw/powerLaw.C
+ constitutiveEqs/GNF/PowerLaw/PowerLaw.C
  constitutiveEqs/GNF/HerschelBulkley/HerschelBulkley.C
 
  constitutiveEqs/multiMode/multiMode.C

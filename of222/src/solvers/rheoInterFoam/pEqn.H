@@ -28,10 +28,11 @@
     tmp<volScalarField> rAtU(rAU);
 
     rAtU = 1.0/(1.0/rAU - UEqn.H1()); 
+    rAtU().rename("rAtU");
    
     phiHbyA += fvc::interpolate(rAtU() - rAU)*fvc::snGrad(p_rgh)*mesh.magSf();
     HbyA -= (rAU - rAtU())*fvc::grad(p_rgh);
-    
+     
     while (pimple.correctNonOrthogonal())
     {
         fvScalarMatrix p_rghEqn

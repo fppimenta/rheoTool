@@ -75,7 +75,7 @@ PIMPLE
     nInIter         1;
     SIMPLEC         true;
     
-    nCorrectors     3;
+    nCorrectors     1;
     nNonOrthogonalCorrectors 0;
 }
 

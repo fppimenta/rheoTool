@@ -47,7 +47,24 @@ solvers
     }
  
 }
- 
+
+PostProcessing
+{
+  functions
+   (
+     WSSmag
+      {
+        funcType           calcWSS;
+        
+        isViscoelastic           false;
+        includeSolventStresses   false; // Only applies for viscoelastic models
+        includePolymericStresses false; // Only applies for viscoelastic models
+
+        enabled            true;
+        evaluateInterval   1;       
+      }
+   );
+}
 
 SIMPLE
 {

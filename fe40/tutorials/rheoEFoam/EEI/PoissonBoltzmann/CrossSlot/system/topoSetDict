@@ -1,0 +1,71 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.extend-project.de       |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+actions
+(
+
+    {
+        name    tdSet;
+        type    faceSet;
+        action  new;
+        source patchToFace;
+        sourceInfo
+        {
+             name "inlet_top";
+        }
+    }
+    
+    {
+        name    lrSet;
+        type    faceSet;
+        action  new;
+        source patchToFace;
+        sourceInfo
+        {
+             name "outlet_right";
+        }
+    }
+
+      {
+        name    tdSet;
+        type    faceSet;
+        action  delete;
+        source  normalToFace;
+        sourceInfo
+        {
+             normal (0 1 0);     // Vector
+             cos     0.01;       // Tolerance (max cos of angle)
+        }
+      }
+
+      
+
+      {
+        name    lrSet;
+        type    faceSet;
+        action  delete;
+        source  normalToFace;
+        sourceInfo
+        {
+             normal (1 0 0);     // Vector
+             cos     0.01;       // Tolerance (max cos of angle)
+        }
+      }
+
+   
+);
+
+// ************************************************************************* //

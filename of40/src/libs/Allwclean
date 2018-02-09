@@ -4,4 +4,7 @@ set -x
 wclean libso constitutiveEquations
 wclean libso gaussDefCmpwConvectionScheme
 wclean libso boundaryConditions
-
+wclean libso EDFModels
+wclean libso postProcessing/postProcUtils
+wclean preProcessing/rndPerturbation
+wclean postProcessing/writeEfield

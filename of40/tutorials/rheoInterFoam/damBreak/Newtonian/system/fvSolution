@@ -65,9 +65,10 @@ solvers
 PIMPLE
 {
     nInIter         1;
-    SIMPLEC         false;
+    SIMPLEC         true;
     
-    nCorrectors     3;
+    nCorrectors     2;
+    
     nNonOrthogonalCorrectors 0;
 }
 

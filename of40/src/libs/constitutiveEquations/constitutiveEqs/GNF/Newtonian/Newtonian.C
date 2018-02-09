@@ -26,7 +26,6 @@ License
 
 #include "Newtonian.H"
 #include "addToRunTimeSelectionTable.H"
-#include "extrapolatedCalculatedFvPatchField.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -67,7 +66,7 @@ Foam::Newtonian::Newtonian
                 dimensionSet(1, -1, -2, 0, 0, 0, 0),
                 pTraits<symmTensor>::zero  
         ),
-        extrapolatedCalculatedFvPatchField<tensor>::typeName
+        extrapolatedCalculatedFvPatchField<symmTensor>::typeName
     ),
     eta_
     (
@@ -81,7 +80,7 @@ Foam::Newtonian::Newtonian
         ),
         U.mesh(),
         etaS_,
-        extrapolatedCalculatedFvPatchField<tensor>::typeName
+        extrapolatedCalculatedFvPatchField<scalar>::typeName
     )
     
 {}
@@ -95,7 +94,7 @@ Foam::Newtonian::Newtonian
 
 Foam::tmp<Foam::fvVectorMatrix> Foam::Newtonian::divTau(const volVectorField& U) const
 {
-   
+ 
     return
     (
        fvm::laplacian( etaS_/rho_, U, "laplacian(eta,U)")
@@ -105,13 +104,13 @@ Foam::tmp<Foam::fvVectorMatrix> Foam::Newtonian::divTau(const volVectorField& U)
 
 Foam::tmp<Foam::fvVectorMatrix> Foam::Newtonian::divTauS(const volVectorField& U, const volScalarField& alpha) const
 {   
+    
     return
     (
         fvm::laplacian( etaS_*alpha, U, "laplacian(eta,U)")
-      + (fvc::grad(U) & fvc::grad(etaS_*alpha))
+      + fvc::div(etaS_*alpha*dev2(T(fvc::grad(U))), "div(eta*alpha*dev2(T(gradU)))")
     );    
 }
-
 
 void Foam::Newtonian::correct()
 {

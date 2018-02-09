@@ -26,7 +26,6 @@ License
 
 #include "CarreauYasuda.H"
 #include "addToRunTimeSelectionTable.H"
-#include "extrapolatedCalculatedFvPatchField.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -71,7 +70,7 @@ Foam::CarreauYasuda::CarreauYasuda
                 dimensionSet(1, -1, -2, 0, 0, 0, 0),
                 pTraits<symmTensor>::zero  
         ),
-        extrapolatedCalculatedFvPatchField<tensor>::typeName
+        extrapolatedCalculatedFvPatchField<symmTensor>::typeName
     ),
     eta_
     (
@@ -92,7 +91,6 @@ Foam::CarreauYasuda::CarreauYasuda
 
 void Foam::CarreauYasuda::correct()
 {
-
     eta_ = etaInf_ + (eta0_ - etaInf_) * pow(scalar(1.0) + pow(k_*strainRate(), a_), (n_ - scalar(1.0))/a_);
 }
 

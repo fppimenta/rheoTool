@@ -27,9 +27,11 @@ boundaryField
     }
     plate
     {
-       type            zeroGradient;
+        type            fixedFluxPressure;
+        Dp              "rAtU"; // "rAtU" for SIMPLEC; comment this line for PIMPLE
+        value           uniform 0;
     }
-     wFront
+    wFront
     {
 	type            wedge;     
     }

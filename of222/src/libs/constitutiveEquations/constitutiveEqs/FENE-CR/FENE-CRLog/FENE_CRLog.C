@@ -113,9 +113,10 @@ Foam::FENE_CRLog::FENE_CRLog
     etaS_(dict.lookup("etaS")),
     etaP_(dict.lookup("etaP")),
     lambda_(dict.lookup("lambda")),
-    L2_(dict.lookup("L2")),
-    uTauCoupling_(dict.lookupOrDefault<Switch>("uTauCoupling", true))
-{}
+    L2_(dict.lookup("L2"))
+{
+ checkForStab(dict);
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

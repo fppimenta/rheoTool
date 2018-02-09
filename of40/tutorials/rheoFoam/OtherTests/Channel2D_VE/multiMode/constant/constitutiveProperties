@@ -31,7 +31,7 @@ parameters
                 lambda           lambda [0 0 1 0 0 0 0] .1;
                 L2               L2 [0 0 0 0 0 0 0] 10;
 
-                uTauCoupling     true;  
+                stabilization    coupling;       
             }   
             M2
             {
@@ -42,7 +42,7 @@ parameters
                 etaP             etaP [1 -1 -1 0 0 0 0] .99;             
                 lambda           lambda [0 0 1 0 0 0 0] .1;
 
-                uTauCoupling     true;  
+                stabilization    coupling;      
             } 
         );            
 }

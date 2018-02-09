@@ -43,7 +43,6 @@ solvers
     } 
 }
 
-
 SIMPLE
 {
     nInIter         1;

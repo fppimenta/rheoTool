@@ -10,7 +10,6 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    location    "system";
     object      controlDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -68,6 +67,9 @@ functions
 	 code
 	 #{
  
+          // NOTE: this is a very rude algorithm. Possibly, it will not work for meshes
+          //       of different resolution or in different conditions.
+          
           // Lookup/create variables 
        
            const volScalarField& alpha1 = mesh().lookupObject<volScalarField>("alpha1");
@@ -139,6 +141,5 @@ functions
     }
      
 }
-
 
 // ************************************************************************* //

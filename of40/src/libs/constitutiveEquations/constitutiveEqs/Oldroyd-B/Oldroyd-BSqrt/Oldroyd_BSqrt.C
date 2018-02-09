@@ -26,7 +26,6 @@ License
 
 #include "Oldroyd_BSqrt.H"
 #include "addToRunTimeSelectionTable.H"
-#include "extrapolatedCalculatedFvPatchField.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -75,9 +74,10 @@ Foam::Oldroyd_BSqrt::Oldroyd_BSqrt
     rho_(dict.lookup("rho")),
     etaS_(dict.lookup("etaS")),
     etaP_(dict.lookup("etaP")),
-    lambda_(dict.lookup("lambda")),
-    uTauCoupling_(dict.lookupOrDefault<Switch>("uTauCoupling", true))
-{}
+    lambda_(dict.lookup("lambda"))
+{
+ checkForStab(dict);
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

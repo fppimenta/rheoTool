@@ -1,0 +1,8 @@
+EXE_INC = \
+    -isystem$(EIGEN_RHEO) \
+    -I/constitutiveEqs/utils \
+    -I$(LIB_SRC)/finiteVolume/lnInclude
+ 
+LIB_LIBS = \
+    -lfiniteVolume
+

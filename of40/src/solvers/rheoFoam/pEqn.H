@@ -31,8 +31,8 @@
 
         pEqn.setReference(pRefCell, pRefValue);
  
-        pEqn.solve();     
-          
+        pEqn.solve();
+    
         if (simple.finalNonOrthogonalIter())
         {
             phi = phiHbyA - pEqn.flux();

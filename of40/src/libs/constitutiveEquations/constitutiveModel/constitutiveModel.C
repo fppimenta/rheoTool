@@ -61,7 +61,6 @@ constitutiveModel::constitutiveModel
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-
 tmp<volSymmTensorField> constitutiveModel::tau() const
 {
     return eqPtr_->tau();

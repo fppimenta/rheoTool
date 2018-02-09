@@ -64,7 +64,6 @@ Foam::FENE_P::FENE_P
     etaP_(dict.lookup("etaP")),
     L2_(dict.lookup("L2")),
     lambda_(dict.lookup("lambda")),
-    uTauCoupling_(dict.lookupOrDefault<Switch>("uTauCoupling", true)),
     solveInTau_(dict.lookupOrDefault<Switch>("solveInTau", false)),
     modifiedForm_(dict.lookupOrDefault<Switch>("modifiedForm", false)),
     A_
@@ -93,7 +92,9 @@ Foam::FENE_P::FENE_P
         ),
         1./ ( (L2_ + tr(tau_)*lambda_/etaP_)/(L2_ - 3.) )
     )
-{}
+{
+ checkForStab(dict);
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

@@ -56,7 +56,7 @@ namespace fv
 
 //- Temporary debug switch to provide warning about backward-compatibility
 //  issue with setting div schemes for steady-state
-extern int warnUnboundedGaussDefCmpw;
+extern int warnUnboundedgaussDefCmpw;
 
 /*---------------------------------------------------------------------------*\
                        Class gaussDefCmpwConvectionScheme Declaration
@@ -116,7 +116,7 @@ public:
 
             if
             (
-                warnUnboundedGaussDefCmpw
+                warnUnboundedgaussDefCmpw
              && word(mesh.ddtScheme("default")) == "steadyState"
              && bounded != "bounded"
             )
@@ -169,14 +169,7 @@ public:
             const bool& 
         ) const;
 
-        tmp<GeometricField<Type, fvsPatchField, surfaceMesh> > phifDefCs 
-        (
-            const surfaceScalarField&,
-            const surfaceScalarField&,
-            const GeometricField<Type, fvPatchField, volMesh>&,
-            const bool&
-        ) const;
-
+       
         void lims
         (
             scalarList&, scalarList&, scalarList&,

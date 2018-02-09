@@ -82,7 +82,7 @@ private:
         
 protected:
 
-   // Protected Member Functions
+   // Protected Members
    
       //- Return B and Sigma matrices after decomposition of grad(U).T() for the LCM
         void decomposeGradU
@@ -99,6 +99,12 @@ protected:
         
       //- Return the strain rate magnitude for GNF models
         tmp<volScalarField> strainRate();
+        
+      //- Check which stabilization method to use
+        void checkForStab(const dictionary& dict);
+      
+      //- Stabilization method: 0 - none; 1 - BSD; 2 - Coupling  
+        int stabMeth_; 
         
   // The following protected functions are intended to be used inside divTau() and divTauS() functions,
   // which should be general for almost all models (exception: multiMode). Any other use should be
@@ -121,12 +127,6 @@ protected:
       virtual const dimensionedScalar etaP() const
        {
           return (dimensionedScalar("zeroU", dimensionSet(1, -1, -1, 0, 0, 0, 0), 0));
-       }
-      
-      //- Return true if there is coupling for VE models (default behavior is false - for GNF models)
-      virtual bool coupledUtau() const
-       {
-          return false;
        }
 
 public:

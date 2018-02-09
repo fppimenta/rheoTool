@@ -69,9 +69,6 @@ class FENE_P
 
             //- Relaxation time
             dimensionedScalar lambda_;
-
-    //- Include or not the U-tau coupling term
-        bool uTauCoupling_;
     
     //- Should the equation be solved in tau 
         bool solveInTau_;
@@ -109,14 +106,7 @@ protected:
        {
           return etaP_;
        }
-       
-       //- Return true if there is coupling Utau
-       virtual bool coupledUtau() const
-       {
-          return uTauCoupling_;
-       }
-
-
+ 
 public:
 
     //- Runtime type information

@@ -39,24 +39,27 @@ Description
 #include "simpleControl.H"
 #include "fvIOoptionList.H"
 
+#include "ppUtilInterface.H"
 #include "constitutiveModel.H"
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+ 
 int main(int argc, char *argv[])
 {
     #include "setRootCase.H"
     #include "createTime.H"
     #include "createMesh.H"
     #include "createFields.H"
+    #include "createPPutil.H"
     #include "createFvOptions.H"
     #include "initContinuityErrs.H"
 
     simpleControl simple(mesh);
-
+    
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     Info<< "\nStarting time loop\n" << endl;
-   
+ 
     // --- Time loop ---
 
     while (simple.loop())
@@ -91,7 +94,10 @@ int main(int argc, char *argv[])
              }
 
          }
- 
+  
+        //- Post-processing               
+        postProc.update();
+        
         runTime.write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"

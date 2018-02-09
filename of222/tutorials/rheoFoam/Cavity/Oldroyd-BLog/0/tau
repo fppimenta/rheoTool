@@ -23,12 +23,12 @@ boundaryField
 
     movingLid
     {
-        type            extST;
+        type            linearExtrapolation;
         value           uniform (0 0 0 0 0 0);
     }
     fixedWalls
     {
-        type            extST;
+        type            linearExtrapolation;
         value           uniform (0 0 0 0 0 0);
     }
     frontAndBack

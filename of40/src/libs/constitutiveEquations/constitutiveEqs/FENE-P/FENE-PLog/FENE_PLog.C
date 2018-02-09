@@ -26,7 +26,6 @@ License
 
 #include "FENE_PLog.H"
 #include "addToRunTimeSelectionTable.H"
-#include "extrapolatedCalculatedFvPatchField.H"
  
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -89,7 +88,7 @@ Foam::FENE_PLog::FENE_PLog
                 dimless,
                 pTraits<tensor>::I
         ),
-        extrapolatedCalculatedFvPatchField<tensor>::typeName
+         extrapolatedCalculatedFvPatchField<tensor>::typeName
     ),
     eigVecs_
     (
@@ -108,15 +107,16 @@ Foam::FENE_PLog::FENE_PLog
                 dimless,
                 pTraits<tensor>::I
         ),
-        extrapolatedCalculatedFvPatchField<tensor>::typeName
+         extrapolatedCalculatedFvPatchField<tensor>::typeName
     ),
     rho_(dict.lookup("rho")),
     etaS_(dict.lookup("etaS")),
     etaP_(dict.lookup("etaP")),
     lambda_(dict.lookup("lambda")),
-    L2_(dict.lookup("L2")),
-    uTauCoupling_(dict.lookupOrDefault<Switch>("uTauCoupling", true))
-{}
+    L2_(dict.lookup("L2"))
+{
+ checkForStab(dict);
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

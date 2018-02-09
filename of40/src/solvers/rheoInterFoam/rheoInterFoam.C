@@ -43,12 +43,14 @@ Description
 #include "localEulerDdtScheme.H"
 #include "CrankNicolsonDdtScheme.H"
 #include "subCycle.H"
-#include "immiscibleConstitutiveTwoPhaseMixture.H"
 #include "pimpleControl.H"
 #include "fvOptions.H"
 #include "CorrectPhi.H"
 #include "localEulerDdtScheme.H"
 #include "fvcSmooth.H"
+
+#include "immiscibleConstitutiveTwoPhaseMixture.H"
+#include "ppUtilInterface.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -65,6 +67,7 @@ int main(int argc, char *argv[])
     #include "initContinuityErrs.H"
     #include "createFields.H"
     #include "createFvOptions.H"
+    #include "createPPutil.H"
     #include "correctPhi.H"
 
     if (!LTS)
@@ -81,6 +84,7 @@ int main(int argc, char *argv[])
     bool   sPS = cttProperties.subDict("passiveScalarProperties").lookupOrDefault<Switch>("solvePassiveScalar", false);
     if (sPS) C.writeOpt() = IOobject::AUTO_WRITE;
     
+
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     Info<< "\nStarting time loop\n" << endl;
@@ -95,7 +99,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            #include "CourantNo.H"
+            #include "CourantNo.H" 
             #include "alphaCourantNo.H"
             #include "setDeltaT.H"
         }
@@ -116,7 +120,10 @@ int main(int argc, char *argv[])
 
             if (simplec)
              {	
-                  #include "pEqn.H"
+               while (pimple.correct())
+                {
+                   #include "pEqn.H"
+                } 
              }
             else
              {	
@@ -133,6 +140,7 @@ int main(int argc, char *argv[])
              }
         }
  
+        postProc.update();
         runTime.write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"

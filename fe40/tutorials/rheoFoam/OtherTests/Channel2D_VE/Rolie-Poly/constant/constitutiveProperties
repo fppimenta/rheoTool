@@ -1,0 +1,41 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.extend-project.de       |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      constitutiveProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+parameters
+{                
+                type             Rolie-Poly;
+
+                rho              rho [1 -3 0 0 0 0 0] 1.;
+                etaS             etaS [1 -1 -1 0 0 0 0] .01;
+                etaP             etaP [1 -1 -1 0 0 0 0] .99;             
+                lambdaD          lambdaD [0 0 1 0 0 0 0] .1;
+                lambdaR          lambdaR [0 0 1 0 0 0 0] .01;
+                chiMax           chiMax [0 0 0 0 0 0 0] 4.;
+                beta             beta [0 0 0 0 0 0 0] 0.1;
+                delta            delta [0 0 0 0 0 0 0] -0.5;
+                
+                solveInTau       false;
+
+                stabilization    coupling;                   
+}
+
+passiveScalarProperties
+{
+                solvePassiveScalar   no;
+                D                    D [ 0 2 -1 0 0 0 0 ] 1e-9; 
+}
+
+// ************************************************************************* //

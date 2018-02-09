@@ -66,11 +66,7 @@ class Oldroyd_B
 
             //- Relaxation time
             dimensionedScalar lambda_;
-
-        //- Include or not the U-tau coupling
-        bool uTauCoupling_;
-
-
+ 
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
@@ -78,7 +74,7 @@ class Oldroyd_B
 
         //- Disallow default bitwise assignment
         void operator=(const Oldroyd_B&);
-
+        
 protected:
 
        //- Return the solvent viscosity
@@ -92,13 +88,7 @@ protected:
        {
           return etaP_;
        }
-       
-       //- Return true if there is coupling Utau
-       virtual bool coupledUtau() const
-       {
-          return uTauCoupling_;
-       }
-
+ 
 public:
 
     //- Runtime type information
@@ -124,7 +114,7 @@ public:
 
     // Member Functions
 
-        //- Return the viscoelastic stress tensor
+       //- Return the viscoelastic stress tensor
         virtual tmp<volSymmTensorField> tau() const
         {
             return tau_;

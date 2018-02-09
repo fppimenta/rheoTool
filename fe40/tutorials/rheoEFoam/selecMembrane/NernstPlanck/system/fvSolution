@@ -1,0 +1,121 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.extend-project.de       |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    "(p|psi|U)"
+    {
+        solver          GAMG;
+        tolerance       1e-8;
+        relTol          0.;
+        smoother        DIC;
+        cacheAgglomeration true;
+        nCellsInCoarsestLevel 10;
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+        
+    }
+
+    "(C|ci)"
+    {
+
+        solver          GAMG;
+        tolerance       1e-8;
+        relTol          0.;
+        smoother        DILU;
+        cacheAgglomeration true;
+        nCellsInCoarsestLevel 10;
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+    }
+ 
+}
+
+PostProcessing
+{
+ 
+ functions
+ (
+ 
+  JMonitor
+   {
+     funcType          calcJpatch;
+     ListOfPatches
+      (
+        "membrane"
+        "reservoir"
+      );                        // List of patches for where to compute J
+     enabled           true;
+     evaluateInterval  30;   // Time-steps between outputs
+   }
+   
+ );
+ 
+}
+
+electricControls
+{
+  nIterPNP         2;
+  
+  phiEEqn
+   {
+      residuals 1e-7;
+      maxIter      1;
+   }
+
+  psiEqn
+   {
+      residuals 1e-7;
+      maxIter      1;
+   }
+   
+   ciEqn
+   {
+      residuals 1e-7;
+      maxIter      1;
+   }
+}
+
+SIMPLE
+{
+    solveFluid      true;
+     
+    nInIter         1;
+    nNonOrthogonalCorrectors 0;
+    pRefCell        0;
+    pRefValue       0;
+
+    residualControl
+    {
+       
+    }
+}
+
+relaxationFactors
+{
+    fields
+     {        
+	p 	1;
+     }
+
+    equations
+     { 
+       U 	1;
+       ci       1;
+     }
+}
+
+// ************************************************************************* //

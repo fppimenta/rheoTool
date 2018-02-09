@@ -1,5 +1,5 @@
 EXE_INC = \
-    -I$(EIGEN_RHEO) \
+    -isystem$(EIGEN_RHEO) \
     -I/constitutiveEqs/utils \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/transportModels/twoPhaseMixture/lnInclude

@@ -11,4 +11,4 @@ runApplication blockMesh
 
 runApplication $application
 
-runApplication sample
+runApplication postProcess -func sampleDict

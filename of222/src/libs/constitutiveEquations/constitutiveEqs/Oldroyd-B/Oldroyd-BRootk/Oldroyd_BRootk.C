@@ -114,9 +114,10 @@ Foam::Oldroyd_BRootk::Oldroyd_BRootk
     etaS_(dict.lookup("etaS")),
     etaP_(dict.lookup("etaP")),
     lambda_(dict.lookup("lambda")),
-    k_(dict.lookup("k")),
-    uTauCoupling_(dict.lookupOrDefault<Switch>("uTauCoupling", true))
-{}
+    k_(dict.lookup("k"))
+{
+ checkForStab(dict);
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

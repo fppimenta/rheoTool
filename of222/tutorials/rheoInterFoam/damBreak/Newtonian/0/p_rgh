@@ -20,21 +20,10 @@ internalField   uniform 0;
 
 boundaryField
 {
-    leftWall
+    "(.*Wall)"
     {
         type            fixedFluxPressure;
-        value           uniform 0;
-    }
-
-    rightWall
-    {
-        type            fixedFluxPressure;
-        value           uniform 0;
-    }
-
-    lowerWall
-    {
-        type            fixedFluxPressure;
+        Dp              "rAtU"; // "rAtU" for SIMPLEC; comment this line for PIMPLE
         value           uniform 0;
     }
 

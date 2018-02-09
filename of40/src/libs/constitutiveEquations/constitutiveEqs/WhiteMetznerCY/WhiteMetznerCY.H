@@ -85,10 +85,6 @@ class WhiteMetznerCY
             //- Fitted parameter for lambda
             dimensionedScalar b_;
 
-        //- Include or not the U-tau coupling
-        bool uTauCoupling_;
-
-
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
@@ -96,7 +92,7 @@ class WhiteMetznerCY
 
         //- Disallow default bitwise assignment
         void operator=(const WhiteMetznerCY&);
-        
+
 protected:
 
        //- Return the solvent viscosity
@@ -109,12 +105,6 @@ protected:
        virtual const dimensionedScalar etaP() const
        {
           return etaP_;
-       }
-       
-       //- Return true if there is coupling Utau
-       virtual bool coupledUtau() const
-       {
-          return uTauCoupling_;
        }
 
 public:
@@ -142,7 +132,7 @@ public:
 
     // Member Functions
 
-        //- Return the viscoelastic stress tensor
+       //- Return the viscoelastic stress tensor
         virtual tmp<volSymmTensorField> tau() const
         {
             return tau_;

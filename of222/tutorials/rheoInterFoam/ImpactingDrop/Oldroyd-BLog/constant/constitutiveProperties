@@ -13,7 +13,7 @@ FoamFile
     object      constitutiveProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
- 
+
 phase1
 {
       parameters
@@ -24,7 +24,7 @@ phase1
          etaP             etaP [1 -1 -1 0 0 0 0] 3.6;  
          lambda           lambda [0 0 1 0 0 0 0] 0.02;
          
-         uTauCoupling     true;
+         stabilization    coupling;
        }
 }
 

@@ -1,7 +1,6 @@
 #!/bin/bash
 
-cd libs
-$(pwd)/Allwmake
+(cd libs && ./Allwmake)
 
-cd ../solvers
-$(pwd)/Allwmake
+(cd solvers && ./Allwmake)
+ 

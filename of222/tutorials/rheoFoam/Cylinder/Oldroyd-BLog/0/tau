@@ -32,7 +32,7 @@ boundaryField
 
    "(walls|cylinder)"
     {
-        type            extST;
+        type            linearExtrapolation;
         value           uniform (0 0 0 0 0 0);
      
     }

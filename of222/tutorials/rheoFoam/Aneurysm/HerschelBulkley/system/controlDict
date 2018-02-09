@@ -81,65 +81,6 @@ functions
              (0.00188 0.04432 -0.01182)                      
         );
    }
-
-   calcWSS
-    {
-	 functionObjectLibs ("libutilityFunctionObjects.so");
-	 type coded;
-	 redirectType WSSmag;
-	 outputControl outputTime;
-         outputInterval      1;
-         enabled             yes;
-
-	 code
-	 #{
- 
-          // Lookup/create variable 
-	     
-	   const volVectorField& U = mesh().lookupObject<volVectorField>("U");
-	 
-           const volScalarField& eta_ = mesh().lookupObject<volScalarField>("eta");
-           
-          // Compute WSSmag
- 
-           volTensorField L = fvc::grad(U);
-           volTensorField tauNewt = eta_ * ( L + L.T() ) ;
-
-           volScalarField WSSmag
-           (
-             IOobject
-             (
-                "WSSmag",
-                U.time().timeName(),
-                mesh(),
-                IOobject::NO_READ,
-                IOobject::AUTO_WRITE
-             ),
-             mesh(),
-             dimensionedScalar
-             (
-                "zero",
-                dimensionSet( 1, -1, -2, 0, 0, 0, 0),
-                0.
-             )
-           );
-         
-           forAll(WSSmag.boundaryField(), patchI)
-	    {
-		WSSmag.boundaryField()[patchI] =
-                mag(
-			 (
-			    mesh().Sf().boundaryField()[patchI]
-			   /mesh().magSf().boundaryField()[patchI]
-			 ) & tauNewt.boundaryField()[patchI]
-                   );
-	    }
-
-            WSSmag.write();
-         
-	 #};
-    }
-
 }
 
 // ************************************************************************* //

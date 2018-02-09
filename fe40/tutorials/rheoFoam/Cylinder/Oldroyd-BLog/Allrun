@@ -1,0 +1,16 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+# Get application directory
+application=`getApplication`
+
+runApplication blockMesh
+
+runApplication mirrorMesh -noFunctionObjects
+cp -fr 0/polyMesh/ constant/
+rm -rf 0/polyMesh/
+
+runApplication $application

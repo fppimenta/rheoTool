@@ -1,0 +1,39 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.extend-project.de       |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      electricProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+ 
+parameters
+{
+        type             Ohmic;      
+  
+        relPerm          relPerm [ 0 0 0 0 0 0 0 ] 78.3;  
+        
+        species
+        (        
+           cations
+           {        
+              z                 z [ 0 0 0 0 0 0 0 ] 1;      
+              D                 D [ 0 2 -1 0 0 0 0 ] 1e-9;          
+           }
+           
+           anions
+           {  
+              z                 z [ 0 0 0 0 0 0 0 ] -1;         
+              D                 D [ 0 2 -1 0 0 0 0 ] 1e-9;         
+           }               
+        ); 
+}
+
+// ************************************************************************* //

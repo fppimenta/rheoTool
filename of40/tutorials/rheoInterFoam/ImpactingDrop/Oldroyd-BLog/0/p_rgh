@@ -27,7 +27,8 @@ boundaryField
     }
     plate
     {
-       type            zeroGradient;
+       type            fixedFluxPressure;
+        value           uniform 0;
     }
      wFront
     {

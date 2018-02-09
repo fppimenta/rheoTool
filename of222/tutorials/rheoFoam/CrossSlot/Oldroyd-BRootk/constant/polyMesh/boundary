@@ -10,7 +10,6 @@ FoamFile
     version     2.0;
     format      ascii;
     class       polyBoundaryMesh;
-    location    "constant/polyMesh";
     object      boundary;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

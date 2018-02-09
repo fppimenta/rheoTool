@@ -1,0 +1,47 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.extend-project.de       |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+
+    in1
+    { 
+        type            HBprofile; // see src/solvers/rheoFoam/BC/U/HBprofileFvPatchVectorField.C
+    	value           uniform (0 0 0);
+    	R               0.00169;
+    	uIn             (0 0.424214493 0); // Slightly oversized to avoid negative values in the profile (extruion is not very accurate)
+    }
+    
+    walls
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+        
+    }
+
+    "(out.*)"
+    {
+        type            zeroGradient;
+       
+    }
+    
+}
+
+// ************************************************************************* //

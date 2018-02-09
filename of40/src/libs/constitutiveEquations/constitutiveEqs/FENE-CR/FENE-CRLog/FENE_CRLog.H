@@ -79,9 +79,6 @@ class FENE_CRLog
             //- Molecular adimensional extensibility
             dimensionedScalar L2_;
 
-        //- Include or not the U-tau coupling
-        bool uTauCoupling_;
-
 
     // Private Member Functions
 
@@ -90,7 +87,7 @@ class FENE_CRLog
 
         //- Disallow default bitwise assignment
         void operator=(const FENE_CRLog&);
-
+        
 protected:
 
        //- Return the solvent viscosity
@@ -104,13 +101,7 @@ protected:
        {
           return etaP_;
        }
-       
-       //- Return true if there is coupling Utau
-       virtual bool coupledUtau() const
-       {
-          return uTauCoupling_;
-       }
-
+ 
 public:
 
     //- Runtime type information
@@ -136,7 +127,7 @@ public:
 
     // Member Functions
 
-        //- Return the viscoelastic stress tensor
+       //- Return the viscoelastic stress tensor
         virtual tmp<volSymmTensorField> tau() const
         {
             return tau_;

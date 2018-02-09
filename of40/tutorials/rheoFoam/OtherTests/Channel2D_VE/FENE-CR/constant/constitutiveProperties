@@ -25,7 +25,7 @@ parameters
                 L2               L2 [0 0 0 0 0 0 0] 100;
                 solveInTau       false;                
 
-                uTauCoupling     true;               
+                stabilization    coupling;                    
 }
 
 passiveScalarProperties

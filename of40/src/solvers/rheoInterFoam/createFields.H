@@ -130,7 +130,7 @@ tmp<surfaceScalarField> talphaPhiCorr0;
 
 #include "createMRF.H"
 
-    // Read field C if present, otherwise the field is (always) initialized as 0
+    // Read C field if present, otherwise the field is (always) initialized as 0
     volScalarField C
     (
         IOobject
@@ -148,7 +148,7 @@ tmp<surfaceScalarField> talphaPhiCorr0;
                 dimless,
                 pTraits<scalar>::zero
         ),
-        zeroGradientFvPatchField<scalar>::typeName
+        extrapolatedCalculatedFvPatchField<scalar>::typeName
     );
  
     IOdictionary cttProperties

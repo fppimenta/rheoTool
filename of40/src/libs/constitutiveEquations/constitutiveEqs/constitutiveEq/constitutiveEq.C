@@ -48,7 +48,8 @@ constitutiveEq::constitutiveEq
 :
     name_(name),
     U_(U),
-    phi_(phi)
+    phi_(phi), 
+    stabMeth_(0)
 {}
 
 // * * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
@@ -69,18 +70,17 @@ tmp<fvVectorMatrix> constitutiveEq::divTau
      }
     else
      {     
-           if (coupledUtau())
+           if (stabMeth_ == 0) // none
 	     {
 	     
 	      return
 	       (
 		  fvc::div(tau()/rho(), "div(tau)")
-		- (etaP()/rho()) * fvc::div(fvc::grad(U))
-		+ fvm::laplacian( (etaP() + etaS())/rho(), U, "laplacian(eta,U)")
+		+ fvm::laplacian(etaS()/rho(), U, "laplacian(eta,U)")
 	       );
 
 	     }
-	     else
+	    else if (stabMeth_ == 1) // BSD 
 	     {
 	      
 	      return
@@ -88,6 +88,17 @@ tmp<fvVectorMatrix> constitutiveEq::divTau
 		  fvc::div(tau()/rho(), "div(tau)")
 		- fvc::laplacian(etaP()/rho(), U, "laplacian(eta,U)")
 		+ fvm::laplacian( (etaP()+ etaS())/rho(), U, "laplacian(eta,U)")
+	       );
+
+	     }   
+	    else // coupling
+	     {
+	      
+	      return
+	       (
+		  fvc::div(tau()/rho(), "div(tau)")
+		- (etaP()/rho()) * fvc::div(fvc::grad(U))
+		+ fvm::laplacian( (etaP() + etaS())/rho(), U, "laplacian(eta,U)")
 	       );
 
 	     }       
@@ -103,38 +114,50 @@ tmp<fvVectorMatrix> constitutiveEq::divTauS
         
    if (isGNF())
     {   
+    
 	   return
 	    (
 		 fvm::laplacian( eta()*alpha, U, "laplacian(eta,U)")
-	      + (fvc::grad(U) & fvc::grad(eta()*alpha))
+	       + fvc::div(eta()*alpha*dev2(T(fvc::grad(U))), "div(eta*alpha*dev2(T(gradU)))")
 	    ); 
      }
    else
      {     
-           if (coupledUtau())
+           if (stabMeth_ == 0) // none
 	     {
 	     
 	      return
 	       (        
-		- fvc::div( (etaP()*alpha) * fvc::grad(U), "div(grad(U))")
-		+ fvm::laplacian( (etaP() + etaS())*alpha, U, "laplacian(eta,U)")
-		+ (fvc::grad(U) & fvc::grad(etaS()*alpha))
+		  fvm::laplacian(etaS()*alpha, U, "laplacian(eta,U)")
+		+ fvc::div(etaS()*alpha*dev2(T(fvc::grad(U))), "div(eta*alpha*dev2(T(gradU)))")
 	       );
 
 	     }
-	     else
+	   else if (stabMeth_ == 1) // BSD 
 	     {
 	      
 	      return
 	       (
 		- fvc::laplacian(etaP()*alpha, U, "laplacian(eta,U)")
 		+ fvm::laplacian( (etaP()+ etaS())*alpha, U, "laplacian(eta,U)")
-		+ (fvc::grad(U) & fvc::grad(etaS()*alpha))
+		+ fvc::div(etaS()*alpha*dev2(T(fvc::grad(U))), "div(eta*alpha*dev2(T(gradU)))")
+	       );
+
+	     } 
+	   else // coupling
+	     {
+	      
+	      return
+	       (        
+		- fvc::div( (etaP()*alpha) * fvc::grad(U), "div(grad(U))")
+		+ fvm::laplacian( (etaP() + etaS())*alpha, U, "laplacian(eta,U)")
+		+ fvc::div(etaS()*alpha*dev2(T(fvc::grad(U))), "div(eta*alpha*dev2(T(gradU)))")
 	       );
 
 	     }       
      }      
 }
+
 
 void constitutiveEq::decomposeGradU
 (
@@ -243,6 +266,35 @@ tmp<volScalarField> constitutiveEq::strainRate()
    return ( sqrt(2.0)*mag( symm(fvc::grad(U_)) ) );
 }
 
+void constitutiveEq::checkForStab(const dictionary& dict)
+{
+  // Allow coupling by default
+  word stab_(dict.lookupOrDefault<word>("stabilization", "coupling"));
+  
+  if (stab_ == "none")
+   {
+     stabMeth_ = 0;
+     Info << "Selected stabilization method: none.\n";
+   }
+  else if (stab_ == "BSD")
+   {
+     stabMeth_ = 1;
+     Info << "Selected stabilization method: BSD.\n";
+   }
+  else if (stab_ == "coupling")
+   {
+     stabMeth_ = 2;
+     Info << "Selected stabilization method: coupling.\n";
+   }
+  else
+   {
+       FatalErrorIn("constitutiveEq::checkForStab(const dictionary& dict)\n")
+            << "\nThe stabilizatin method specified does not exist.\n"
+            << "\nAvailable methods are:\n"
+            << "\n. none" <<"\n. BSD" << "\n. coupling" 
+            << abort(FatalError);
+   }   
+}
 
 } //End namespace
 

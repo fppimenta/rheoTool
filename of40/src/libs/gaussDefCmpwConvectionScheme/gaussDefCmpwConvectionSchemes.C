@@ -28,7 +28,7 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-int Foam::fv::warnUnboundedGaussDefCmpw
+int Foam::fv::warnUnboundedgaussDefCmpw
 (
     Foam::debug::debugSwitch("warnUnboundedgaussDefCmpw", true)
 );

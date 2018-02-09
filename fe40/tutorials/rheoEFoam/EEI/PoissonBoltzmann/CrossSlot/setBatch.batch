@@ -1,0 +1,5 @@
+faceSet tdSet new patchToFace inlet_top
+faceSet lrSet new patchToFace outlet_right
+faceSet tdSet delete normalToFace (0 1 0) 1e-7
+faceSet lrSet delete normalToFace (1 0 0) 1e-7
+quit

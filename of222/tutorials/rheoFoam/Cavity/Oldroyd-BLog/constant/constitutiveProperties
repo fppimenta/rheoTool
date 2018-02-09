@@ -22,10 +22,9 @@ parameters
                 rho              rho [1 -3 0 0 0 0 0] .01;
                 etaS             etaS [1 -1 -1 0 0 0 0] 0.5;
                 etaP             etaP [1 -1 -1 0 0 0 0] 0.5;                 
-                lambda           lambda [0 0 1 0 0 0 0] 1.;  
-
-                uTauCoupling     true;
-                
+                lambda           lambda [0 0 1 0 0 0 0] 1.;
+               
+                stabilization    coupling;         
 }
 
 passiveScalarProperties

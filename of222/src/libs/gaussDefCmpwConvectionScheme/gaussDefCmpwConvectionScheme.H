@@ -169,14 +169,6 @@ public:
             const bool& 
         ) const;
 
-        tmp<GeometricField<Type, fvsPatchField, surfaceMesh> > phifDefCs 
-        (
-            const surfaceScalarField&,
-            const surfaceScalarField&,
-            const GeometricField<Type, fvPatchField, volMesh>&,
-            const bool&
-        ) const;
-
         void lims
         (
             scalarList&, scalarList&, scalarList&,

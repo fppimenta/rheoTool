@@ -39,10 +39,10 @@ Description
 #include "simpleControl.H"
 #include "fvOptions.H"
 #include "extrapolatedCalculatedFvPatchField.H"
-
+#include "ppUtilInterface.H"
 #include "constitutiveModel.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
- 
+
 int main(int argc, char *argv[])
 {
     #include "postProcess.H"
@@ -54,8 +54,9 @@ int main(int argc, char *argv[])
     #include "createTimeControls.H"
     #include "createFields.H"
     #include "createFvOptions.H"
+    #include "createPPutil.H"
     #include "initContinuityErrs.H"
-        
+    
     // Read extra-controls
 
     int    nInIter = simple.dict().lookupOrDefault<int>("nInIter", 1); 
@@ -101,6 +102,7 @@ int main(int argc, char *argv[])
 
          }
 
+        postProc.update();
         runTime.write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"

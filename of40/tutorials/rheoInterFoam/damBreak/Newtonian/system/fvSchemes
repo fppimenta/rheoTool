@@ -31,20 +31,16 @@ divSchemes
 {
     default                  none;
    
-    div(rhoPhi,U)            Gauss linearUpwind grad(U);
+    div(rhoPhi,U)            Gauss limitedLinearV 1;
     div(Sum(tau))            Gauss linear;
-    div(phi,alpha)           Gauss vanLeer01;
-    div(phirb,alpha)         Gauss linear;         
+    div(phi,alpha)           Gauss vanLeer;
+    div(phirb,alpha)         Gauss interfaceCompression;
+    div(eta*alpha*dev2(T(gradU)))  Gauss linear;         
 }
 
 laplacianSchemes
 {
-    default                             none;
-    laplacian(eta,U)                    Gauss linear corrected;
-    laplacian(p_rgh|(ap-H1))            Gauss linear corrected;
-    laplacian(rAUf,pcorr)               Gauss linear corrected;
-    laplacian(rAUf,p_rgh)               Gauss linear corrected; 
-        
+    default                             Gauss linear corrected;
 }
 
 interpolationSchemes

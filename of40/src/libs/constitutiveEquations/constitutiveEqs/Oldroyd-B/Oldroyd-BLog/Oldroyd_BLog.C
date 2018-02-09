@@ -26,7 +26,6 @@ License
 
 #include "Oldroyd_BLog.H"
 #include "addToRunTimeSelectionTable.H"
-#include "extrapolatedCalculatedFvPatchField.H"
 
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -90,7 +89,7 @@ Foam::Oldroyd_BLog::Oldroyd_BLog
                 dimless,
                 pTraits<tensor>::I
         ),
-        extrapolatedCalculatedFvPatchField<tensor>::typeName
+         extrapolatedCalculatedFvPatchField<tensor>::typeName
     ),
     eigVecs_
     (
@@ -109,14 +108,15 @@ Foam::Oldroyd_BLog::Oldroyd_BLog
                 dimless,
                 pTraits<tensor>::I
         ),
-        extrapolatedCalculatedFvPatchField<tensor>::typeName
+         extrapolatedCalculatedFvPatchField<tensor>::typeName
     ),
     rho_(dict.lookup("rho")),
     etaS_(dict.lookup("etaS")),
     etaP_(dict.lookup("etaP")),
-    lambda_(dict.lookup("lambda")),
-    uTauCoupling_(dict.lookupOrDefault<Switch>("uTauCoupling", true))
-{}
+    lambda_(dict.lookup("lambda"))
+{
+ checkForStab(dict);
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -179,7 +179,6 @@ void Foam::Oldroyd_BLog::correct()
     tau_ = (etaP_/lambda_) * symm( (eigVecs_ & eigVals_ & eigVecs_.T()) - Itensor);
 
     tau_.correctBoundaryConditions();
-
 }
 
 

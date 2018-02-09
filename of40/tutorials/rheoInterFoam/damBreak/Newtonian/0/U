@@ -20,21 +20,12 @@ internalField   uniform (0 0 0);
 
 boundaryField
 {
-    leftWall
+    "(.*Wall)"
     {
         type            fixedValue;
         value           uniform (0 0 0);
     }
-    rightWall
-    {
-        type            fixedValue;
-        value           uniform (0 0 0);
-    }
-    lowerWall
-    {
-        type            fixedValue;
-        value           uniform (0 0 0);
-    }
+    
     atmosphere
     {
         type            pressureInletOutletVelocity;

@@ -47,7 +47,7 @@ PIMPLE
 {
     nInIter         1;
     SIMPLEC         true;
-    nCorrectors     2;
+    nCorrectors     1;
     
     nNonOrthogonalCorrectors 0;
     pRefCell        0;

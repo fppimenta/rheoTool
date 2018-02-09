@@ -55,7 +55,7 @@
     int    nInIter = mesh.solutionDict().subDict("SIMPLE").lookupOrDefault<int>("nInIter", 1);
     bool   sPS = cttProperties.subDict("passiveScalarProperties").lookupOrDefault<Switch>("solvePassiveScalar", false); 
 
-    // Read field C if present, otherwise the field is (always) initialized as 0
+    // Read C field if present, otherwise the field is (always) initialized as 0
     volScalarField C
     (
         IOobject

@@ -1,0 +1,20 @@
+EDFModel/EDFModel.C
+
+models/EDFEquations/EDFEquation.C
+models/EDFEquations/newEDFEquation.C
+
+models/DebyeHuckel/DebyeHuckel.C
+models/PoissonBoltzmann/PoissonBoltzmann.C
+models/NernstPlanck/NernstPlanck.C
+models/slipSmoluchowski/slipSmoluchowski.C
+models/noModel/noModel.C
+
+models/NernstPlanck/MNernstPlanck/MNernstPlanck.C
+
+models/Ohmic/Ohmic.C
+
+models/MelcherTwoFluids/MelcherTwoFluids.C
+
+models/NernstPlanck/NernstPlanckLog/NernstPlanckLog.C
+
+LIB = $(FOAM_USER_LIBBIN)/libEDFModels

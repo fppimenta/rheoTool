@@ -31,7 +31,7 @@
     HbyA -= (rAU - rAtU())*fvc::grad(p_rgh);
     
     // Update the pressure BCs to ensure flux consistency
-    constrainPressure(p_rgh, U, phiHbyA, rAUf, MRF);
+    constrainPressure(p_rgh, U, phiHbyA, rAtU(), MRF);
 
     while (pimple.correctNonOrthogonal())
     {

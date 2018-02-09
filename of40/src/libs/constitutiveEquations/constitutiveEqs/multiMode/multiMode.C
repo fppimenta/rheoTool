@@ -130,7 +130,7 @@ Foam::tmp<Foam::volSymmTensorField> Foam::multiMode::tau() const
 
 const Foam::dimensionedScalar Foam::multiMode::rho() const
 {
-    // It is unlikely to have different densities,
+    // It is unlikely (wrong) to have different densities,
     // but average to be sure.
     
     dimensionedScalar rho_( models_[0].rho() );
@@ -145,6 +145,7 @@ const Foam::dimensionedScalar Foam::multiMode::rho() const
 
     return rho_/cnt;
 }
+
 
 void Foam::multiMode::correct()
 {

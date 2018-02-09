@@ -24,7 +24,7 @@ gradSchemes
     default         Gauss linear;
     grad(p)         Gauss linear;
     grad(U)         Gauss linear;
-    extSTGrad       Gauss linear;
+    linExtrapGrad       Gauss linear;
 
 }
 
@@ -34,10 +34,12 @@ divSchemes
     div(Sum(tau))            Gauss linear; 
     div(grad(U))             Gauss linear;
     
-    div(rhoPhi,U)            Gauss linearUpwind grad(U);
+    div(rhoPhi,U)            Gauss limitedLinearV 1;
     
-    div(phi,alpha)           Gauss vanLeer01;
+    div(phi,alpha)           Gauss vanLeer;
     div(phirb,alpha)         Gauss linear;
+    
+    div(eta*alpha*dev2(T(gradU)))  Gauss linear; 
     
     div(phi,theta.water)    GaussDefCmpw cubista;
     div(phi,theta.air)      GaussDefCmpw cubista;
@@ -48,11 +50,7 @@ divSchemes
 
 laplacianSchemes
 {
-    default                             none;
-    laplacian(eta,U)                    Gauss linear corrected;
-    laplacian(p_rgh|(ap-H1))            Gauss linear corrected;
-    laplacian(rAUf,pcorr)               Gauss linear corrected;
-    laplacian(rAUf,p_rgh)               Gauss linear corrected;
+    default                             Gauss linear corrected;
 }
 
 interpolationSchemes

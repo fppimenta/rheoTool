@@ -157,7 +157,7 @@ constitutiveModel constEq(U, phi);
 
 bool isGNF(constEq.isGNF()); 
 
-// Create file (consider single-processor; won't make sense multiprocessor one 1 cell!)
+// Create file (assume single-processor; won't make sense multiprocessor one 1 cell!)
 
 fileName oFile(runTime.path()/"Report");
 OFstream res(oFile);
@@ -180,7 +180,7 @@ word CM = constitutiveProperties.subDict("parameters").lookup("type");
 scalar lambdaMax(0.0);
 scalar lambdaMin(1e20);
 
-if (!isGNF) // doesn't care about ramp, although lambdaMax/Min have no sense if ramp is false
+if (!isGNF) // Doesn't care about ramp, although lambdaMax/Min have no sense if ramp is false
 {
 	if(CM=="multiMode")
 	{
@@ -215,13 +215,13 @@ if (!isGNF) // doesn't care about ramp, although lambdaMax/Min have no sense if 
 
 if (ramp_ && !isGNF) 
    {
-       nInIter = 1; // Don't make sense when seeking for steady values
+       nInIter = 1; // Doesn't make sense when seeking for steady values
        runTime.setDeltaT((lambdaMin+lambdaMax)*0.5/gammaEpsilonDotL_[0]);
        runTime.setEndTime(1e8); // Just to avoid an early exit
    }
 else if(ramp_ && isGNF) 
    {
-       nInIter = 1; // Don't make sense when seeking for steady values
+       nInIter = 1; // Doesn't make sense when seeking for steady values
        runTime.setDeltaT(lambdaMin/20);
        lambdaMax = 1; // Any value, since it will exit from the error
        lambdaMin = 1; // Any value, since it will exit from the error

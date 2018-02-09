@@ -40,7 +40,7 @@
     // Create constitutive equation
     constitutiveModel constEq(U, phi);
 
-    // Read field C if present, otherwise the field is (always) initialized as 0
+    // Read C field if present, otherwise the field is (always) initialized as 0
     volScalarField C
     (
         IOobject
@@ -58,7 +58,7 @@
                 dimless,
                 pTraits<scalar>::zero
         ),
-        extrapolatedCalculatedFvPatchField<tensor>::typeName
+        extrapolatedCalculatedFvPatchField<scalar>::typeName
     );
   
     IOdictionary cttProperties

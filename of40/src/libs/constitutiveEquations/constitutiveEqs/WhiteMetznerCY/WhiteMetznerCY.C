@@ -68,9 +68,10 @@ Foam::WhiteMetznerCY::WhiteMetznerCY
     K_(dict.lookup("K")),
     L_(dict.lookup("L")),
     a_(dict.lookup("a")),
-    b_(dict.lookup("b")),
-    uTauCoupling_(dict.lookupOrDefault<Switch>("uTauCoupling", true))
-{}
+    b_(dict.lookup("b"))
+{
+ checkForStab(dict);
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

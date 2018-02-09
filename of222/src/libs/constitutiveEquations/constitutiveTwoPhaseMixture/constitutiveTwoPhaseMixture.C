@@ -116,9 +116,8 @@ Foam::constitutiveTwoPhaseMixture::divTauMF(volVectorField& U)
    return (
              phase1_->divTauS(U, bAlpha1) 
            + phase2_->divTauS(U, bAlpha2)
-           + fvc::div(tauMF_,"div(Sum(tau))")          
+           + fvc::div(tauMF_,"div(Sum(tau))") 
          );
-         
 }
 
 bool Foam::constitutiveTwoPhaseMixture::read()

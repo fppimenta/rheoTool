@@ -26,7 +26,6 @@ License
 
 #include "Oldroyd_BRootk.H"
 #include "addToRunTimeSelectionTable.H"
-#include "extrapolatedCalculatedFvPatchField.H"
 
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -90,7 +89,7 @@ Foam::Oldroyd_BRootk::Oldroyd_BRootk
                 dimless,
                 pTraits<tensor>::I
         ),
-        extrapolatedCalculatedFvPatchField<tensor>::typeName
+         extrapolatedCalculatedFvPatchField<tensor>::typeName
     ),
     eigVecs_
     (
@@ -109,15 +108,16 @@ Foam::Oldroyd_BRootk::Oldroyd_BRootk
                 dimless,
                 pTraits<tensor>::I
         ),
-        extrapolatedCalculatedFvPatchField<tensor>::typeName
+         extrapolatedCalculatedFvPatchField<tensor>::typeName
     ),
     rho_(dict.lookup("rho")),
     etaS_(dict.lookup("etaS")),
     etaP_(dict.lookup("etaP")),
     lambda_(dict.lookup("lambda")),
-    k_(dict.lookup("k")),
-    uTauCoupling_(dict.lookupOrDefault<Switch>("uTauCoupling", true))
-{}
+    k_(dict.lookup("k"))
+{
+ checkForStab(dict);
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

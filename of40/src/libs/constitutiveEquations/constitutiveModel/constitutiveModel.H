@@ -78,6 +78,7 @@ public:
 
     // Constructors
 
+        
         //- Construct from components
         constitutiveModel
         (
@@ -103,9 +104,9 @@ public:
         //- Return the coupling term for the momentum equation
         virtual tmp<fvVectorMatrix> divTau(volVectorField& U) const;
         
-        //- Return true if GNF (non-elastic)
+        //- Is GNF or VE
         virtual bool isGNF();
-
+       
         //- Correct the viscoelastic stress
         virtual void correct();
 

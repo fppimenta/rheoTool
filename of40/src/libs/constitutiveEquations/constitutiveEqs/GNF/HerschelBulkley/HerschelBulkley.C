@@ -26,7 +26,6 @@ License
 
 #include "HerschelBulkley.H"
 #include "addToRunTimeSelectionTable.H"
-#include "extrapolatedCalculatedFvPatchField.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -70,7 +69,7 @@ Foam::HerschelBulkley::HerschelBulkley
                 dimensionSet(1, -1, -2, 0, 0, 0, 0),
                 pTraits<symmTensor>::zero  
         ),
-        extrapolatedCalculatedFvPatchField<tensor>::typeName
+        extrapolatedCalculatedFvPatchField<symmTensor>::typeName
     ),
     eta_
     (
@@ -91,8 +90,8 @@ Foam::HerschelBulkley::HerschelBulkley
 
 void Foam::HerschelBulkley::correct()
 {
-    volScalarField strainRate_(strainRate()); 
-
+    volScalarField strainRate_(strainRate());
+    
     dimensionedScalar tone("tone", dimTime, 1.0);
     dimensionedScalar rtone("rtone", dimless/dimTime, 1.0);
 

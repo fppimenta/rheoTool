@@ -1,0 +1,39 @@
+// Forma inplícita original
+
+fvScalarMatrix ciEqn 
+  (
+    fvm::ddt(ci)
+  + fvm::div(phi(), ci, "div(phi,ci)")  
+  ==  
+    fvm::laplacian(species_[i].Di(), ci, "laplacian(D,ci)")   	  
+  + fvc::laplacian(EMigD, phiE_+psi_, "laplacian(EMigD,phiE)")  
+  );  
+  
+// Desenvolvendo a derivada e incluindo termos implícitos 
+
+fvScalarMatrix ciEqn 
+  (
+    fvm::ddt(ci)
+  + fvm::div(phi(), ci, "div(phi,ci)")  
+  ==  
+    fvm::laplacian(species_[i].Di(), ci, "laplacian(D,ci)")   	  
+  + fvm::SuSp( (species_[i].Di() * eK_ * species_[i].zi() / (kbK_*T_))*
+               fvc::laplacian(phiE_+psi_, "laplacian(EMigD,phiE)"),
+               ci
+            )      
+  );
+
+// Considerando a electromigração como sendo um fluxo
+ 
+surfaceScalarField
+eMigFlux( ( species_[i].Di() * eK_ * species_[i].zi() / (kbK_*T_) ) * fvc::snGrad(phiE_+psi_) * phi().mesh().magSf() );
+           
+           
+fvScalarMatrix ciEqn 
+  (
+    fvm::ddt(ci)
+  + fvm::div(phi(), ci, "div(phi,ci)")  
+  ==  
+    fvm::laplacian(species_[i].Di(), ci, "laplacian(D,ci)")   	   
+  + fvm::div(eMigFlux, ci, "div(eMigFlux,ci)")  
+  );    

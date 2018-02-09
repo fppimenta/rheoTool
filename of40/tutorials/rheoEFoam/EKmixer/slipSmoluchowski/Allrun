@@ -1,0 +1,24 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+# Get application directory
+application=`getApplication`
+
+runApplication blockMesh
+runApplication topoSet
+runApplication refineMesh -dict system/refineMeshDict -overwrite 
+
+cp 0/C.org 0/C
+
+runApplication setFields
+
+runApplication decomposePar -noFunctionObjects
+
+runParallel $application
+
+runApplication reconstructPar -noFunctionObjects
+
+runApplication writeEfield

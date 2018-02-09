@@ -33,7 +33,7 @@ parameters
 		b                b [0 0 0 0 0 0 0] 2.;
 		m                m [0 0 0 0 0 0 0] 0.1;		
 		              
-                uTauCoupling     true;               
+                stabilization    coupling;                
 }
 
 passiveScalarProperties

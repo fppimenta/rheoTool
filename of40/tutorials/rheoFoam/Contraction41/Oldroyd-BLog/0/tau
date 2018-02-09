@@ -33,7 +33,7 @@ boundaryField
  
     "(wall.*)"
     {
-        type            extST;
+        type            linearExtrapolation;
         value           uniform (0 0 0 0 0 0);
     }
 

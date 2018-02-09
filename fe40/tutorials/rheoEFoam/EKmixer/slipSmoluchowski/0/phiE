@@ -1,0 +1,60 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.extend-project.de       |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      psi;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 2 -3 0 0 -1 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    inletWest
+    {
+	type            ACPotential;
+    	value           uniform 100;
+    	offset          50;
+    	amplitude       50;
+    	frequency       1.;
+    	phaseDelay      0.;
+    }
+    
+    inletNorth
+    {    
+        type            ACPotential;
+    	value           uniform 100;
+    	offset          45;
+    	amplitude       45;
+    	frequency       1.;
+    	phaseDelay      -1.5707963268;
+    }
+    
+    outlet
+    {
+	type            fixedValue;
+	value           uniform 0;     
+    }
+    
+    symmetry
+    {
+	type            symmetryPlane;    
+    }
+    
+    walls
+    {
+	type            zeroGradient;
+    }
+}
+
+// ************************************************************************* //

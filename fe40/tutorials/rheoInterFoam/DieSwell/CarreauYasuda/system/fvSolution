@@ -1,0 +1,78 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.extend-project.de       |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    "(pd.*|pcorr)"
+    {
+        solver          GAMG;
+        tolerance       1e-10;
+        relTol          0.01;
+        smoother        DIC;
+        cacheAgglomeration true;
+        nCellsInCoarsestLevel 10;
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+        
+    }
+
+    U
+    {
+
+        solver           PBiCG;
+        preconditioner
+        {
+            preconditioner DILU;
+        }
+
+        tolerance         1e-10;
+        relTol            0;
+        minIter           0;
+        maxIter           1000;
+    } 
+}
+
+PISO
+{
+    cAlpha          1;
+}
+
+PIMPLE
+{
+    nInIter         1;
+    SIMPLEC         true;
+     
+    nCorrectors     1;
+    
+    nNonOrthogonalCorrectors 0;
+    nAlphaCorr      2;
+    nAlphaSubCycles 2;
+}
+
+relaxationFactors
+{
+     fields
+      {       
+         p 1;
+      }
+
+     equations
+      { 
+         U 1;
+      }
+}
+
+// ************************************************************************* //

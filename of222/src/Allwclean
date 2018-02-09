@@ -1,7 +1,6 @@
 #!/bin/bash
 
-cd libs
-$(pwd)/Allwclean
+(cd libs && ./Allwclean)
 
-cd ../solvers
-$(pwd)/Allwclean
+(cd solvers && ./Allwclean)
+  

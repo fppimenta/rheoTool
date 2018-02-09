@@ -24,7 +24,7 @@ gradSchemes
     default         Gauss linear;
     grad(p)         Gauss linear;
     grad(U)         Gauss linear;
-    extSTGrad       Gauss linear;      
+    linExtrapGrad       Gauss linear;      
     
 
 }

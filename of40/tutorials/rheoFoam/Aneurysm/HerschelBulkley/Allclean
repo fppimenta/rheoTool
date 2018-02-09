@@ -7,6 +7,8 @@
 
 cleanTimeDirectories
 
+rm -rf rheoToolPP
+
 find -name 'processor*' | xargs rm -rf
 find -name 'postProcessing' | xargs rm -rf
 find -name 'log.*' | xargs rm -rf

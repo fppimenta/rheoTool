@@ -26,7 +26,6 @@ License
 
 #include "GiesekusLog.H"
 #include "addToRunTimeSelectionTable.H"
-#include "extrapolatedCalculatedFvPatchField.H"
  
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -89,7 +88,7 @@ Foam::GiesekusLog::GiesekusLog
                 dimless,
                 pTraits<tensor>::I
         ),
-        extrapolatedCalculatedFvPatchField<tensor>::typeName
+         extrapolatedCalculatedFvPatchField<tensor>::typeName
     ),
     eigVecs_
     (
@@ -108,15 +107,16 @@ Foam::GiesekusLog::GiesekusLog
                 dimless,
                 pTraits<tensor>::I
         ),
-        extrapolatedCalculatedFvPatchField<tensor>::typeName
+         extrapolatedCalculatedFvPatchField<tensor>::typeName
     ),
     rho_(dict.lookup("rho")),
     etaS_(dict.lookup("etaS")),
     etaP_(dict.lookup("etaP")),
     alpha_(dict.lookup("alpha")),
-    lambda_(dict.lookup("lambda")),
-    uTauCoupling_(dict.lookupOrDefault<Switch>("uTauCoupling", true))
-{}
+    lambda_(dict.lookup("lambda"))
+{
+ checkForStab(dict);
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
