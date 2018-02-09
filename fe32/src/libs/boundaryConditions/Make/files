@@ -1,7 +1,0 @@
-linearExtrapolation/extSTFvPatchSymmTensorField.C
-
-U/uCosFvPatchVectorField.C
-U/uLidFvPatchVectorField.C
-U/HBprofileFvPatchVectorField.C
-
-LIB = $(FOAM_USER_LIBBIN)/libBCRheoTool
