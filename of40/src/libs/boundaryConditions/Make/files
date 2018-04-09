@@ -2,10 +2,7 @@ linearExtrapolation/linearExtrapolationFvPatchFields.C
 
 zeroIonicFlux/zeroIonicFluxFvPatchScalarField.C
 
-zeroIonicFlux/zeroIonicFluxLog/zeroIonicFluxLogFvPatchScalarField.C
-
 boltzmannEquilibrium/boltzmannEquilibriumFvPatchScalarField.C
-boltzmannEquilibrium/boltzmannEquilibriumLog/boltzmannEquilibriumLogFvPatchScalarField.C
 
 slipSmoluchowski/slipSmoluchowskiFvPatchVectorField.C
 slipSigmaDependent/slipSigmaDependentFvPatchVectorField.C
