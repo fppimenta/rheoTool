@@ -1,6 +1,0 @@
-#!/bin/bash
-
-(cd libs && ./Allwclean)
-
-(cd solvers && ./Allwclean)
-  

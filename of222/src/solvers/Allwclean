@@ -1,7 +1,0 @@
-#!/bin/sh
-set -x
-
-wclean rheoFoam
-wclean rheoTestFoam
-wclean rheoInterFoam
-wclean rheoEFoam
