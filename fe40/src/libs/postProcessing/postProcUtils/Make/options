@@ -1,7 +1,9 @@
 EXE_INC = \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I../../constitutiveEquations/lnInclude \
     -I../../EDFModels/lnInclude
     
 LIB_LIBS = \
     -lfiniteVolume \
+    -L$(FOAM_USER_LIBBIN) -lconstitutiveEquations \
     -L$(FOAM_USER_LIBBIN) -lEDFModels

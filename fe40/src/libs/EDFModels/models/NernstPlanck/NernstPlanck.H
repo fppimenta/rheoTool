@@ -33,7 +33,8 @@ License
 
 namespace Foam
 {
-
+namespace EDFEquations
+{
 class NernstPlanck
 :
     public EDFEquation
@@ -198,6 +199,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace EDFEquations
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -16,7 +16,7 @@ License
     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-    for more details.
+    for more details. 
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM; if not, write to the Free Software Foundation,
@@ -28,18 +28,23 @@ License
  
 #include "calcWSS.H"
 #include "addToRunTimeSelectionTable.H"
+#include "constitutiveModel.H"
+#include "constitutiveTwoPhaseMixture.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
+namespace ppUtils
+{
     defineTypeNameAndDebug(calcWSS, 0);
     addToRunTimeSelectionTable(ppUtil, calcWSS, dictFS);
+}
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::calcWSS::calcWSS
+Foam::ppUtils::calcWSS::calcWSS
 (
     const word& name,
     const dictionary& dict,
@@ -47,76 +52,31 @@ Foam::calcWSS::calcWSS
 )
 :
 ppUtil(name, dict, U),
-isVE_(dict.lookup("isViscoelastic")),
-incSolv_(dict.lookup("includeSolventStresses")),
+isTwoPhaseFlow_(dict.lookup("isTwoPhaseFlow")),
 incPoly_(dict.lookup("includePolymericStresses")),
-etaSWW_("etaSWW", dimensionSet(1, -1, -1, 0, 0, 0, 0), 0.),
 WSSmag_
-    (
-        IOobject
-        (
-            "WSSmag",
-            U.time().timeName(),
-            U.mesh(),
-            IOobject::NO_READ,
-            IOobject::AUTO_WRITE
-        ),
-        U.mesh(),
-        dimensionedScalar
-        (
-          "zero",
-          dimensionSet( 1, -1, -2, 0, 0, 0, 0),
-          0.
-        )
-    )  
-{
-
-// Compute/read solvent viscosity in case of viscoelastic fluid
-// considering the possibility of being a multimode model
-
-if (isVE_ && incSolv_)
- {
- 
-   IOdictionary constitutiveProperties
-    (
-        IOobject
-        (
-            "constitutiveProperties",
-            U.time().constant(),
-            U.mesh(),
-            IOobject::MUST_READ,
-            IOobject::AUTO_WRITE
-        )
-    );
-    
-   word CM = constitutiveProperties.subDict("parameters").lookup("type");
-   
-   if(CM=="multiMode")
-     {
-         PtrList<entry> modelEntries(constitutiveProperties.subDict("parameters").lookup("models"));
-
-         scalar etaCum(0.0);
-
-            forAll (modelEntries, modelI)
-            {
-               dimensionedScalar etaI(modelEntries[modelI].dict().lookup("etaS"));
-               etaCum += etaI.value();	      
-            }
-         etaSWW_.value() = etaCum;
-     }
-    else
-     {
-        dimensionedScalar etaStmp(constitutiveProperties.subDict("parameters").lookup("etaS"));                 
-        etaSWW_.value() = etaStmp.value();               
-     }     
- }
-
-}
-
+(
+ IOobject
+  (
+    "WSSmag",
+    U.time().timeName(),
+    U.mesh(),
+    IOobject::NO_READ,
+    IOobject::AUTO_WRITE
+  ),
+ U.mesh(),
+ dimensionedScalar
+ (
+  "zero",
+  dimensionSet( 1, -1, -2, 0, 0, 0, 0),
+  0.
+ )
+)  
+{}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::calcWSS::update()
+void Foam::ppUtils::calcWSS::update()
 {
 
 if (enabled_)
@@ -132,69 +92,67 @@ if (enabled_)
       {
         // Ensure zero WSS to start        
         forAll(WSSmag_.boundaryField(), patchI)
-	 {
-		WSSmag_.boundaryField()[patchI] *= 0.;
-	 }
-        
-        // Case GNF
-         
-        if (!isVE_)
-         {   
-           const volScalarField& eta_ = U().mesh().lookupObject<volScalarField>("eta");
-           
-           volTensorField L = fvc::grad(U());
-           volTensorField tau_ = eta_ * ( L + L.T() ) ;
-
-           forAll(WSSmag_.boundaryField(), patchI)
-	    {
-	      vectorField n(U().mesh().Sf().boundaryField()[patchI]/U().mesh().magSf().boundaryField()[patchI]);
-	      
-	      WSSmag_.boundaryField()[patchI] = mag( n & tau_.boundaryField()[patchI] );
-	    }
+	{
+	   WSSmag_.boundaryField()[patchI] *= 0.;
+	}
+	
+	// Total extra-stress
+        GeometricField<symmTensor, fvPatchField, volMesh> tau
+        (
+         IOobject
+          (
+           "tauTotal",
+           U().mesh(),
+           IOobject::NO_READ,
+           IOobject::NO_WRITE,
+           false
+          ),
+         U().mesh(),
+         dimensionedSymmTensor("0",dimPressure,symmTensor::zero) 
+        );
 	 
-	 }   
-       
-       // Case VE
-       	 
-	else 
-	 {
-	   //- Polymeric contribution (needs to remove normal stresses in a general case)
-	   
-	   if (incPoly_)
-	    {
-	      forAll(WSSmag_.boundaryField(), patchI)
-	       {
-	          const volSymmTensorField& tau_ = U().mesh().lookupObject<volSymmTensorField>("tau");
-           
-                  vectorField n(U().mesh().Sf().boundaryField()[patchI]/U().mesh().magSf().boundaryField()[patchI]);
+	 
+        if (isTwoPhaseFlow_) 
+        {
+          constitutiveTwoPhaseMixture& constEq_ = const_cast<constitutiveTwoPhaseMixture&>
+          (
+            U().mesh().lookupObject<constitutiveTwoPhaseMixture>("constitutiveProperties")
+          );
+          
+          tau = constEq_.tauTotalMF(); 
+          
+          if (!incPoly_)
+	  {
+	    tau -= constEq_.tauMF(); 
+	  } 
+        } 
+        else
+        {
+          constitutiveModel& constEq_ = const_cast<constitutiveModel&>
+          (
+            U().mesh().lookupObject<constitutiveModel>("constitutiveProperties")
+          );
+
+          tau = constEq_.tauTotal(); 
+          
+          if (!incPoly_)
+	  {
+	    tau -= constEq_.tau(); 
+	  } 
+        } 
+      
+        forAll(WSSmag_.boundaryField(), patchI)
+	 {	          
+           vectorField n(U().mesh().Sf().boundaryField()[patchI]/U().mesh().magSf().boundaryField()[patchI]);
  
-                  vectorField tracV(n & tau_.boundaryField()[patchI]);
+           vectorField tracV(n & tau.boundaryField()[patchI]);
 
-                  vectorField nTracV(n * ( n & tracV));
+           vectorField nTracV(n * ( n & tracV));
 
-                  vectorField tTracV(tracV-nTracV);
+           vectorField tTracV(tracV-nTracV);
 
-                  WSSmag_.boundaryField()[patchI] = mag(tTracV);
-	       }
-	    }
-	   
-	   //- Solvent contribution
-	   
-	   if (incSolv_)
-	    {
-	   
-              volTensorField L = fvc::grad(U());
-              volTensorField tau_ = etaSWW_ * ( L + L.T() ) ;
-
-              forAll(WSSmag_.boundaryField(), patchI)
-	       {
-	         vectorField n(U().mesh().Sf().boundaryField()[patchI]/U().mesh().magSf().boundaryField()[patchI]);
-	      
-	         WSSmag_.boundaryField()[patchI] += mag( n & tau_.boundaryField()[patchI] );
-	       }
-	    }	 
-	 }
-	 
+           WSSmag_.boundaryField()[patchI] = mag(tTracV);
+        }
        
       } // if outTime 
 

@@ -36,10 +36,10 @@ SourceFiles
 #include "constitutiveEq.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
 namespace Foam
 {
-
+namespace constitutiveEqs
+{
 /*---------------------------------------------------------------------------*\
                            Class CarreauYasuda Declaration
 \*---------------------------------------------------------------------------*/
@@ -143,6 +143,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace constitutiveEqs
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

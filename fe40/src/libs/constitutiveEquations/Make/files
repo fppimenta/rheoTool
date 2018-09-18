@@ -36,8 +36,17 @@ constitutiveEqs/constitutiveEq/newConstitutiveEq.C
  constitutiveEqs/GNF/CarreauYasuda/CarreauYasuda.C
  constitutiveEqs/GNF/PowerLaw/PowerLaw.C
  constitutiveEqs/GNF/HerschelBulkley/HerschelBulkley.C
+ constitutiveEqs/GNF/Casson/Casson.C
  
  constitutiveEqs/multiMode/multiMode.C
+ 
+ constitutiveEqs/otherModels/Saramito/Saramito.C
+ constitutiveEqs/otherModels/Saramito/SaramitoLog/SaramitoLog.C
+ constitutiveEqs/otherModels/ML-IKH/ML_IKH.C
+ constitutiveEqs/otherModels/RRM/RRM.C
+ constitutiveEqs/otherModels/VCM/VCM.C
+ constitutiveEqs/otherModels/BMP/BMP.C
+ constitutiveEqs/otherModels/BMP/BMPLog/BMPLog.C
  
 constitutiveTwoPhaseMixture/constitutiveTwoPhaseMixture.C
 

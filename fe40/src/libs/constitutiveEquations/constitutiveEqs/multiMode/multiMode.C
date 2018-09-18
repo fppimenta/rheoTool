@@ -31,14 +31,16 @@ License
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
     defineTypeNameAndDebug(multiMode, 0);
     addToRunTimeSelectionTable(constitutiveEq, multiMode, dictionary);
 }
-
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::multiMode::multiMode
+Foam::constitutiveEqs::multiMode::multiMode
 (
     const word& name,
     const volVectorField& U,
@@ -65,7 +67,8 @@ Foam::multiMode::multiMode
             symmTensor::zero
         )
     ),
-    models_()
+    models_(),
+    etaS_("0", dimPressure*dimTime, 0.)
 {
     PtrList<entry> modelEntries(dict.lookup("models"));
     models_.setSize(modelEntries.size());
@@ -83,6 +86,9 @@ Foam::multiMode::multiMode
                 modelEntries[modelI].dict()
             )
         );
+        
+        dimensionedScalar etaI(modelEntries[modelI].dict().lookup("etaS"));
+        etaS_.value() += etaI.value();	
     }
 }
 
@@ -90,7 +96,7 @@ Foam::multiMode::multiMode
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 Foam::tmp<Foam::fvVectorMatrix>
-Foam::multiMode::divTau(const volVectorField& U) const
+Foam::constitutiveEqs::multiMode::divTau(const volVectorField& U) const
 {
     tmp<fvVectorMatrix> divMatrix = models_[0].divTau(U);
 
@@ -103,7 +109,7 @@ Foam::multiMode::divTau(const volVectorField& U) const
 }
 
 Foam::tmp<Foam::fvVectorMatrix>
-Foam::multiMode::divTauS(const volVectorField& U, const volScalarField& alpha) const
+Foam::constitutiveEqs::multiMode::divTauS(const volVectorField& U, const volScalarField& alpha) const
 {
     tmp<fvVectorMatrix> divMatrix = models_[0].divTauS(U, alpha);
 
@@ -116,7 +122,7 @@ Foam::multiMode::divTauS(const volVectorField& U, const volScalarField& alpha) c
 }
 
 
-Foam::tmp<Foam::volSymmTensorField> Foam::multiMode::tau() const
+Foam::tmp<Foam::volSymmTensorField> Foam::constitutiveEqs::multiMode::tau() const
 {
     tau_ *= 0;
 
@@ -128,7 +134,7 @@ Foam::tmp<Foam::volSymmTensorField> Foam::multiMode::tau() const
     return tau_;
 }
 
-const Foam::dimensionedScalar Foam::multiMode::rho() const
+const Foam::dimensionedScalar Foam::constitutiveEqs::multiMode::rho() const
 {
     // It is unlikely (wrong) to have different densities,
     // but average to be sure.
@@ -147,7 +153,7 @@ const Foam::dimensionedScalar Foam::multiMode::rho() const
 }
 
 
-void Foam::multiMode::correct()
+void Foam::constitutiveEqs::multiMode::correct()
 {
     forAll (models_, i)
     {

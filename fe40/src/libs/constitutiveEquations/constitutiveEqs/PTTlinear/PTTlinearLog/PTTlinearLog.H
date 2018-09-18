@@ -39,6 +39,8 @@ SourceFiles
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
 
 /*---------------------------------------------------------------------------*\
                            Class PTTlinearLog Declaration
@@ -154,6 +156,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace constitutiveEqs
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

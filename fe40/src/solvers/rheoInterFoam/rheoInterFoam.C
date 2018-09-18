@@ -29,21 +29,21 @@ Description
     (volume of fluid) phase-fraction based interface capturing approach. The flow is
     laminar. Any GNF or viscoelastic model of library lconstitutiveEquations can be
     selected. The pressure-velocity coupling is runtime selectable: either SIMPLEC
-    or PIMPLE (the momentum equation is always solved in both cases).
-    
-    Based on solver interFoam of foam-extend.
+    or PIMPLE (the momentum equation is always solved in both cases). The mesh can 
+    be either static or dynamic.   
     
     This solver is part of rheoTool.
 
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
+#include "dynamicFvMesh.H"
 #include "MULES.H"
 #include "subCycle.H"
 #include "interfaceProperties.H"
+#include "twoPhaseMixture.H"
+#include "turbulenceModel.H"
 #include "pimpleControl.H"
-#include "IFstream.H"
-#include "OFstream.H"
 
 #include "ppUtilInterface.H"
 #include "constitutiveTwoPhaseMixture.H"
@@ -54,7 +54,8 @@ int main(int argc, char *argv[])
 {
 #   include "setRootCase.H"
 #   include "createTime.H"
-#   include "createMesh.H"
+#   include "createDynamicFvMeshDict.H" 
+#   include "createDynamicFvMesh.H"
 
     pimpleControl pimple(mesh);
 
@@ -62,7 +63,7 @@ int main(int argc, char *argv[])
 #   include "initContinuityErrs.H"
 #   include "createFields.H"
 #   include "createPPutil.H"
-#   include "createTimeControls.H"
+#   include "createControls.H"
 #   include "correctPhi.H"
 #   include "CourantNo.H"
 #   include "setInitialDeltaT.H"
@@ -73,41 +74,53 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
-#       include "readTimeControls.H"
+#       include "readControls.H"
 #       include "CourantNo.H"
+
+        // Make the fluxes absolute
+        fvc::makeAbsolute(phi, U);
+
 #       include "setDeltaT.H"
 
         runTime++;
 
-        Info<< "Time = " << runTime.timeName() << nl << endl;
+        Info<< "Time = " << runTime.timeName() << endl;
 
-        // --- Inner loop iterations ---
+        bool meshChanged = mesh.update();
+        reduce(meshChanged, orOp<bool>());
 
+#       include "volContinuity.H"
+
+        volScalarField gh("gh", g & mesh.C());
+        surfaceScalarField ghf("ghf", g & mesh.Cf());
+
+        if (correctPhi && meshChanged)
+        {
+#           include "correctPhi.H"
+        }
+
+        // Make the fluxes relative to the mesh motion
+        fvc::makeRelative(phi, U);
+
+        if (checkMeshCourantNo)
+        {
+#           include "meshCourantNo.H"
+        }
+
+        // Pressure-velocity corrector
         for (int i=0; i<nInIter; i++)
-	  {
-            twoPhaseProperties.correct();
-
+        {
+            Info << nl << "Inner iteration:  " << i << nl << endl; 
+            
 #           include "alphaEqnSubCycle.H"
 
 #           include "UEqn.H"
 
             // --- PISO loop
-            if (simplec)
-             {	
-                while (pimple.correct())
-                {
-                  #include "pEqn.H"
-                } 
-             }
-            else
-             {	
-               while (pimple.correct())
-                {
-                  #include "pEqnP.H"
-                }   
-             }  
-
-#           include "continuityErrs.H"
+            while (pimple.correct())
+            {
+#             include "pEqn.H"
+            }
 
             p = pd + rho*gh;
 
@@ -120,14 +133,16 @@ int main(int argc, char *argv[])
                     pRefValue - getRefCellValue(p, pdRefCell)
                 );
             }
-
+            
+            twoPhaseProperties.correct();
+            
             // --- Passive Scalar transport
             if (sPS)
              {
                #include "CEqn.H"
              }
         }
- 
+
         //- Post-processing               
         postProc.update();
         

@@ -51,62 +51,39 @@ int main(int argc, char *argv[])
     #include "setRootCase.H"
     #include "createTime.H"
     #include "createMesh.H"
-    #include "createFields.H"    
-    #include "createTimeControls.H"
+    #include "createFields.H"   
      
     simpleControl simple(mesh);
- 
-
+    
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     Info<< "\nStarting time loop\n" << endl;
-
-    
+  
     while (simple.loop())
     {
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
-        #include "readTimeControls.H"
-        #include "CourantNo.H"
-        #include "setDeltaT.H"
-
         for (int i=0; i<nInIter; i++)
-	  {
-
-            Info<< "Iteration  " << i << nl << endl; 
+         {
+           Info<< "Iteration  " << i << nl << endl; 
             
-            // --- Solve only the constitutive equation         
-              
-               constEq.correct();
-
-          }
-        
-        volTensorField L = fvc::grad(U);
-        
-        if (isGNF)
-         {
-           const volScalarField& etaGNF_ = mesh.lookupObject<volScalarField>("eta");
-           extraStress = etaGNF_*twoSymm(L);
-          
+           // --- Solve only the constitutive equation           
+           constEq.correct();
          }
-        else
-         {
-            extraStress = etaS*twoSymm(L) + constEq.tau();
-         }
+        
+        extraStress = constEq.tauTotal();
 
-    //    runTime.write(); // Uncomment if needed
+//      runTime.write(); // Uncomment if needed
       
         if (ramp_)
          {
               scalar relError = Foam::mag(extraStress[0]-oldExtraStress)/(Foam::mag(extraStress[0]) + SMALL); 
            
               if (relError < 1e-8 || cnt > 5000)
-               { 
-
+               {
                  #include "reStartOrEnd.H"
-                
                }
-            
+               
               oldExtraStress = extraStress[0];
               cnt++;
          }

@@ -1,0 +1,79 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.extend-project.de       |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    "(left|right|top)"
+    {      
+        type            navierSlip;
+        value           uniform (0 0 0); 
+        
+        model           nonLinearNavierSlip;
+        m               1.;
+        knl             5e-7;
+        URF             1.;
+        isTwoPhaseFlow  false;
+        isMovingWall    false;
+    }
+    
+    piston
+    {      
+        type            navierSlip;
+        value           uniform (0 0 0);
+         
+        model           nonLinearNavierSlip; 
+        m               1.;
+        knl             5e-7;
+        URF             1.;
+        isTwoPhaseFlow  false;
+        isMovingWall    true;      
+    }
+    
+    // Note: uShaft is a tutorial specific BC (uShaftFvPatchVectorField.C)
+    shaft
+    {      
+        type            uShaft;
+        value           uniform (0 0 0);
+         
+        model           nonLinearNavierSlip; 
+        m               1.;
+        knl             5e-7;
+        URF             1.;
+        isTwoPhaseFlow  false;
+        isMovingWall    true;      
+    	
+    	offset          (0. 0. 0.);
+    	amplitude       (2.412743158 0. 0.);
+    	frequency       32;
+    	delay           0.;     
+    }
+      
+    wedge0
+    {
+        type            wedge;
+    }
+    
+    wedge1
+    {
+        type            wedge;
+    }
+}
+
+// ************************************************************************* //

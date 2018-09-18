@@ -39,6 +39,8 @@ SourceFiles
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
 
 /*---------------------------------------------------------------------------*\
                            Class XPomPom Declaration
@@ -148,6 +150,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace constitutiveEqs
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

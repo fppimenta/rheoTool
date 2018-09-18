@@ -1,0 +1,19 @@
+solidParticle.C
+solidParticleIO.C
+
+externalForcingInterp/externalForcingInterp.C
+externalForcingInterp/BarycentricWeights/interpolationCellPointBary/makeInterpolationCellPointBary.C
+externalForcingInterp/BarycentricWeights/BarycentricWeights.C
+externalForcingInterp/Gradient/Gradient.C
+externalForcingInterp/Analytical/Analytical.C
+
+solidParticleCloud.C
+sPCloudInterface.C
+
+springModel/springModel.C
+springModel/MarkoSiggia/MarkoSiggia.C
+springModel/FENE/FENE.C
+springModel/CohenPade/CohenPade.C
+springModel/Hookean/Hookean.C
+
+LIB = $(FOAM_USER_LIBBIN)/libBDmolecule

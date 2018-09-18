@@ -4,15 +4,15 @@ postProcUtils/calcJpatch/calcJpatch.C
 postProcUtils/calcBalance/calcBalance.C
 postProcUtils/calcWSS/calcWSS.C
 
-postProcUtils/calcWi0/calcWi0.C
-postProcUtils/calcCd/calcCd.C
-postProcUtils/calcKineticE/calcKineticE.C
-postProcUtils/calcVortexL/calcVortexL.C
-postProcUtils/calcW/calcW.C
+postProcUtils/tutorialSpecificUtils/calcWi0/calcWi0.C
+postProcUtils/tutorialSpecificUtils/calcCd/calcCd.C
+postProcUtils/tutorialSpecificUtils/calcKineticE/calcKineticE.C
+postProcUtils/tutorialSpecificUtils/calcVortexL/calcVortexL.C
+postProcUtils/tutorialSpecificUtils/calcW/calcW.C
+postProcUtils/tutorialSpecificUtils/calcFfl/calcFfl.C
 
 postProcUtils/none/none.C
 
 postProcUtilsInterface/ppUtilInterface.C
-
 
 LIB = $(FOAM_USER_LIBBIN)/libpostProcessingRheoTool

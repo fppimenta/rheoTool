@@ -31,14 +31,16 @@ License
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
     defineTypeNameAndDebug(Newtonian, 0);
     addToRunTimeSelectionTable(constitutiveEq, Newtonian, dictionary);
 }
-
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::Newtonian::Newtonian
+Foam::constitutiveEqs::Newtonian::Newtonian
 (
     const word& name,
     const volVectorField& U,
@@ -92,7 +94,7 @@ Foam::Newtonian::Newtonian
 // divTau() and divTauS(). By re-defining, a scalar viscosity is used, instead of
 // a volScalarField with a constant value.
 
-Foam::tmp<Foam::fvVectorMatrix> Foam::Newtonian::divTau(const volVectorField& U) const
+Foam::tmp<Foam::fvVectorMatrix> Foam::constitutiveEqs::Newtonian::divTau(const volVectorField& U) const
 {
  
     return
@@ -102,7 +104,7 @@ Foam::tmp<Foam::fvVectorMatrix> Foam::Newtonian::divTau(const volVectorField& U)
 
 }
 
-Foam::tmp<Foam::fvVectorMatrix> Foam::Newtonian::divTauS(const volVectorField& U, const volScalarField& alpha) const
+Foam::tmp<Foam::fvVectorMatrix> Foam::constitutiveEqs::Newtonian::divTauS(const volVectorField& U, const volScalarField& alpha) const
 {   
     
     return
@@ -112,7 +114,7 @@ Foam::tmp<Foam::fvVectorMatrix> Foam::Newtonian::divTauS(const volVectorField& U
     );    
 }
 
-void Foam::Newtonian::correct()
+void Foam::constitutiveEqs::Newtonian::correct()
 {
     // Do nothing   
 }

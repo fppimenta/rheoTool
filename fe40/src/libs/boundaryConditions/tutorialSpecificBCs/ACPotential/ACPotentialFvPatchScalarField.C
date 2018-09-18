@@ -27,7 +27,6 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "EDFEquation.H"
 #include "mathematicalConstants.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

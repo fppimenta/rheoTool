@@ -6,8 +6,9 @@ EXE_INC = \
     -I../../libs/gaussDefCmpwConvectionScheme/lnInclude \
     -I../../libs/boundaryConditions/lnInclude \
     -I../../libs/postProcessing/postProcUtils/lnInclude \
-    -I$(LIB_SRC)/sampling/lnInclude
-
+    -I$(LIB_SRC)/sampling/lnInclude \
+    -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
+    -I$(LIB_SRC)/dynamicMesh/lnInclude
 
 EXE_LIBS = \
     -lfiniteVolume \
@@ -17,4 +18,7 @@ EXE_LIBS = \
     -L$(FOAM_USER_LIBBIN) -lgaussDefCmpwConvectionSchemes \
     -L$(FOAM_USER_LIBBIN) -lBCRheoTool \
     -L$(FOAM_USER_LIBBIN) -lpostProcessingRheoTool \
-    -lsampling
+    -lsampling \
+    -ldynamicFvMesh \
+    -ltopoChangerFvMesh \
+    -ldynamicMesh

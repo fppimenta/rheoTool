@@ -31,14 +31,16 @@ License
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
     defineTypeNameAndDebug(WhiteMetznerCY, 0);
     addToRunTimeSelectionTable(constitutiveEq, WhiteMetznerCY, dictionary);
 }
-
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::WhiteMetznerCY::WhiteMetznerCY
+Foam::constitutiveEqs::WhiteMetznerCY::WhiteMetznerCY
 (
     const word& name,
     const volVectorField& U,
@@ -76,7 +78,7 @@ Foam::WhiteMetznerCY::WhiteMetznerCY
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::WhiteMetznerCY::correct()
+void Foam::constitutiveEqs::WhiteMetznerCY::correct()
 {
     // Velocity gradient tensor
     volTensorField L = fvc::grad(U());

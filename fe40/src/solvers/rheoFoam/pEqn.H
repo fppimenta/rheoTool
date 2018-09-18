@@ -1,19 +1,20 @@
 {
     p.boundaryField().updateCoeffs();
        
-    volScalarField rAU(1.0/UEqn().A());
+    rAU = 1.0/UEqn().A();
+    
     volVectorField HbyA("HbyA", U);
     HbyA = rAU*UEqn().H();
-     
-
-   // surfaceScalarField phiHbyA("phiHbyA", fvc::interpolate(HbyA) & mesh.Sf());
-
+  
     surfaceScalarField phiHbyA
-            (
-                "phiHbyA",
-                (fvc::interpolate(HbyA) & mesh.Sf())
-              + fvc::ddtPhiCorr(rAU, U, phi)
-            );
+    (
+       "phiHbyA",
+       mesh.changing() == true ?
+       (fvc::interpolate(HbyA) & mesh.Sf())
+       :
+       (fvc::interpolate(HbyA) & mesh.Sf())
+     + fvc::ddtPhiCorr(rAU, U, phi)
+    );
   
     adjustPhi(phiHbyA, U, p);
 
@@ -34,8 +35,8 @@
         );
 
         pEqn.setReference(pRefCell, pRefValue);
-
-        pEqn.solve();
+ 
+        pEqn.solve();               
           
         if (simple.finalNonOrthogonalIter())
         {
@@ -43,12 +44,14 @@
         }
     }
 
-    #include "continuityErrs.H"
-
     // Explicitly relax pressure for momentum corrector
     p.relax();
    
-
+    // Make the fluxes relative to the mesh motion
+    fvc::makeRelative(phi, U);
+    
+    #include "movingMeshContinuityErrs.H"
+   
     // Momentum corrector
     U = HbyA - rAtU()*fvc::grad(p);
      

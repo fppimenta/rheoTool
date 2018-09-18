@@ -31,14 +31,16 @@ License
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
     defineTypeNameAndDebug(HerschelBulkley, 0);
     addToRunTimeSelectionTable(constitutiveEq, HerschelBulkley, dictionary);
 }
-
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::HerschelBulkley::HerschelBulkley
+Foam::constitutiveEqs::HerschelBulkley::HerschelBulkley
 (
     const word& name,
     const volVectorField& U,
@@ -48,10 +50,12 @@ Foam::HerschelBulkley::HerschelBulkley
 :
     constitutiveEq(name, U, phi),
     rho_(dict.lookup("rho")),
+    reg_(dict.lookup("PapanastasiouRegularization")),
     tau0_(dict.lookup("tau0")),
     eta0_(dict.lookup("eta0")),
     k_(dict.lookup("k")),
     n_(dict.lookup("n")),
+    m_("1",dimTime,1.),
     tau_
     (
         IOobject
@@ -83,25 +87,45 @@ Foam::HerschelBulkley::HerschelBulkley
         ),
         strainRate()*dimensionedScalar("zeroU", dimensionSet(1, -1, 0, 0, 0, 0, 0), 0) //Just to ensure dimensions and BCs
     )
-{}
+{
+  if (reg_)
+   dict.lookup("m") >> m_;
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::HerschelBulkley::correct()
+void Foam::constitutiveEqs::HerschelBulkley::correct()
 {
-    volScalarField strainRate_(strainRate());
+   volScalarField
+   strainRate_ =
+   max
+   (
+       strainRate(),
+       dimensionedScalar("VSMALL", dimless/dimTime, VSMALL)
+   );
     
-    dimensionedScalar tone("tone", dimTime, 1.0);
-    dimensionedScalar rtone("rtone", dimless/dimTime, 1.0);
-
-    eta_ = 
-        min
-        (
-             eta0_,
-            (tau0_ + k_*rtone*pow(tone*strainRate_, n_))
-           /(max(strainRate_, dimensionedScalar ("VSMALL", dimless/dimTime, VSMALL)))
-        );
+   dimensionedScalar tone("tone", dimTime, 1.0);
+   dimensionedScalar rtone("rtone", dimless/dimTime, 1.0);
+     
+   if (reg_)
+   {
+     eta_ =
+     min
+     (
+       eta0_,
+       (k_*rtone*pow(tone*strainRate_, n_) + tau0_* (1. - exp(-m_*strainRate_)) )/strainRate_
+     );
+   }
+   else
+   { 
+     eta_ =
+     min
+     (
+       eta0_,
+       (tau0_ + k_*rtone*pow(tone*strainRate_, n_))/strainRate_
+     );
+   }
 }
 
 

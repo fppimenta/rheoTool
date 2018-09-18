@@ -39,6 +39,8 @@ SourceFiles
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
 
 /*---------------------------------------------------------------------------*\
                            Class HerschelBulkley Declaration
@@ -54,6 +56,9 @@ class HerschelBulkley
 
             //- Density
             dimensionedScalar rho_;
+            
+            //- Is Papanastasiou's regularization to be used
+            Switch reg_;
   
             //- Yield stress 
             dimensionedScalar tau0_;
@@ -66,6 +71,9 @@ class HerschelBulkley
 
             //- Behavior index
             dimensionedScalar n_;
+            
+            //- Exponential growth parameter
+            dimensionedScalar m_;
 
         //- Transported viscoelastic stress
         volSymmTensorField tau_;
@@ -142,6 +150,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace constitutiveEqs
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

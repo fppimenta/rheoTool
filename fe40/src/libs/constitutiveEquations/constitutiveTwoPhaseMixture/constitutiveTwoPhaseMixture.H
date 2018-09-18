@@ -146,6 +146,9 @@ public:
         //- Return the multiphase coupling term for the momentum equation
         tmp<fvVectorMatrix> divTauMF(volVectorField& U);
         
+        //- Total extra-stress tensor (polymeric + solvent)
+        tmp<volSymmTensorField> tauTotalMF() const;
+        
         //- Read base transportProperties dictionary
         virtual bool read();
 };

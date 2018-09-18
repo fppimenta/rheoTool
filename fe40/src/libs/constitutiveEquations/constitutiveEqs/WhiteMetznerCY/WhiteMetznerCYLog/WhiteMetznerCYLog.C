@@ -32,14 +32,16 @@ License
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
     defineTypeNameAndDebug(WhiteMetznerCYLog, 0);
     addToRunTimeSelectionTable(constitutiveEq, WhiteMetznerCYLog, dictionary);
 }
-
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::WhiteMetznerCYLog::WhiteMetznerCYLog
+Foam::constitutiveEqs::WhiteMetznerCYLog::WhiteMetznerCYLog
 (
     const word& name,
     const volVectorField& U,
@@ -127,7 +129,7 @@ Foam::WhiteMetznerCYLog::WhiteMetznerCYLog
  
  if ( m_.value()!=n_.value() || K_.value()!=L_.value() || a_.value()!=b_.value())
   {
-     FatalErrorIn("Foam::WhiteMetznerCYLog::WhiteMetznerCYLog\n")
+     FatalErrorIn("Foam::constitutiveEqs::WhiteMetznerCYLog::WhiteMetznerCYLog\n")
             << "The Log version of the WhiteMetznerCY model can only be used if:\n"
             << "\n   m=n   and   K=L   and   a=b\n"
             << "\n Check if this is the case, otherwise use the stress version (WhiteMetznerCY).\n" 
@@ -139,7 +141,7 @@ Foam::WhiteMetznerCYLog::WhiteMetznerCYLog
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::WhiteMetznerCYLog::correct()
+void Foam::constitutiveEqs::WhiteMetznerCYLog::correct()
 {
     // Decompose grad(U).T()
 

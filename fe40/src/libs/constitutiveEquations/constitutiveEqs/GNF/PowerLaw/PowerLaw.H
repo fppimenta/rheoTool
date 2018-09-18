@@ -39,6 +39,8 @@ SourceFiles
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
 
 /*---------------------------------------------------------------------------*\
                            Class PowerLaw Declaration
@@ -141,6 +143,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace constitutiveEqs
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

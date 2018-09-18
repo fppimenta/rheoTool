@@ -1,0 +1,64 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.extend-project.de       |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+ddtSchemes
+{
+    default         Euler;
+}
+
+gradSchemes
+{
+    default         Gauss linear;
+    grad(p)         Gauss linear;
+    grad(U)         Gauss linear;
+    linExtrapGrad       Gauss linear;
+
+}
+
+divSchemes
+{
+    default                  none;
+    div(tau)                 Gauss linear; 
+    div(grad(U))             Gauss linear;
+    div(phi,U)               GaussDefCmpw none;  
+    div(phi,A)               GaussDefCmpw cubista;
+    div(phi,tau)             GaussDefCmpw cubista;
+    div(phi,C)               GaussDefCmpw cubista;
+}
+
+laplacianSchemes
+{
+    default                       Gauss linear corrected;     
+}
+
+interpolationSchemes
+{
+    default           linear;
+      
+}
+
+snGradSchemes
+{
+    default         corrected;
+}
+
+fluxRequired
+{
+    default         no;
+    p;
+}
+
+// ************************************************************************* //

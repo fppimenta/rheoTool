@@ -21,7 +21,7 @@ solvers
         solver           PCG;
         preconditioner   DIC;
         tolerance        1e-10;
-        relTol           0.;
+        relTol           0;
         minIter          0;
         maxIter          800;
         
@@ -37,7 +37,7 @@ solvers
         }
 
         tolerance         1e-10;
-        relTol            0.;
+        relTol            0;
         minIter           0;
         maxIter           1000;
     }
@@ -60,18 +60,7 @@ SIMPLE
 
 relaxationFactors
 {
-    fields
-     {        
-	p 	1;
-     }
-
-    equations
-     { 
-       U 	1;
-       tau	1;
-       teta 	1;
-       C	1;
-     }
+    
 }
 
 // ************************************************************************* //

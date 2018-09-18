@@ -47,30 +47,45 @@
             runTime.constant(),
             mesh,
             IOobject::MUST_READ,
-            IOobject::NO_WRITE
+            IOobject::NO_WRITE,
+            false
         )
     );
+    
+   bool   sPS = cttProperties.subDict("passiveScalarProperties").lookupOrDefault<Switch>("solvePassiveScalar", false);
  
-    int    nInIter = mesh.solutionDict().subDict("SIMPLE").lookupOrDefault<int>("nInIter", 1);
-    bool   sPS = cttProperties.subDict("passiveScalarProperties").lookupOrDefault<Switch>("solvePassiveScalar", false);
-
-    // Read C field if present, otherwise the field is (always) initialized as 0
-    volScalarField C
+   autoPtr<volScalarField>  C
+   (
+    sPS != true
+    ? 
+    NULL
+    :
+    new volScalarField
+    (
+       IOobject
+       (
+           "C",
+           runTime.timeName(),
+           mesh,
+           IOobject::MUST_READ,
+           IOobject::AUTO_WRITE
+       ),
+       mesh
+    )
+   );
+   
+    Info<< "Reading field rAU if present\n" << endl;
+    volScalarField rAU
     (
         IOobject
         (
-            "C",
+            "rAU",
             runTime.timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
-            sPS == false ? (IOobject::NO_WRITE) : (IOobject::AUTO_WRITE)
+            IOobject::AUTO_WRITE
         ),
         mesh,
-        dimensionedScalar
-        (
-                "0",
-                dimless,
-                pTraits<scalar>::zero
-        ),
-        zeroGradientFvPatchField<scalar>::typeName
+        runTime.deltaT(),
+        zeroGradientFvPatchScalarField::typeName
     );

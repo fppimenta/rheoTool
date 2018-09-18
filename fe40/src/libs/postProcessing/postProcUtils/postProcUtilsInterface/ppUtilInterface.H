@@ -25,12 +25,7 @@ License
 Class
     ppUtilInterface
 
-Description
-    Base class which can be directly called by applications to use any of 
-    the models derived from class constitutivEq.
-
-    Based on the libviscoelasticTransportModels library written by Jovani
-    L. Favero. 
+Description 
 
 \*---------------------------------------------------------------------------*/
 

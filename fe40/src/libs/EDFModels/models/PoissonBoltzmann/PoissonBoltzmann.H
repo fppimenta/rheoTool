@@ -33,7 +33,8 @@ License
 
 namespace Foam
 {
-
+namespace EDFEquations
+{
 class PoissonBoltzmann
 :
     public EDFEquation
@@ -196,6 +197,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace EDFEquations
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -32,13 +32,16 @@ License
 
 namespace Foam
 {
+namespace EDFEquations
+{
     defineTypeNameAndDebug(noModel, 0);
     addToRunTimeSelectionTable(EDFEquation, noModel, dictionary);
+}
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::noModel::noModel
+Foam::EDFEquations::noModel::noModel
 (
     const word& name,
     const surfaceScalarField& phi,
@@ -69,7 +72,7 @@ Foam::noModel::noModel
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volVectorField> Foam::noModel::Fe() const
+Foam::tmp<Foam::volVectorField> Foam::EDFEquations::noModel::Fe() const
 {
     return
     (
@@ -77,7 +80,7 @@ Foam::tmp<Foam::volVectorField> Foam::noModel::Fe() const
     );     
 }
 
-void Foam::noModel::correct()
+void Foam::EDFEquations::noModel::correct()
 {
         // Do nothing
 }

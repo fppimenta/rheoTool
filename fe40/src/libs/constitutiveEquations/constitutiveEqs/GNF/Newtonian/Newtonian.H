@@ -36,8 +36,9 @@ SourceFiles
 #include "constitutiveEq.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
 namespace Foam
+{
+namespace constitutiveEqs
 {
 
 /*---------------------------------------------------------------------------*\
@@ -137,6 +138,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace constitutiveEqs
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

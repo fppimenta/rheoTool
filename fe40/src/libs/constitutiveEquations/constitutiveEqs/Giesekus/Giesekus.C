@@ -31,14 +31,16 @@ License
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
     defineTypeNameAndDebug(Giesekus, 0);
     addToRunTimeSelectionTable(constitutiveEq, Giesekus, dictionary);
 }
-
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::Giesekus::Giesekus
+Foam::constitutiveEqs::Giesekus::Giesekus
 (
     const word& name,
     const volVectorField& U,
@@ -71,7 +73,7 @@ Foam::Giesekus::Giesekus
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::Giesekus::correct()
+void Foam::constitutiveEqs::Giesekus::correct()
 {
     // Velocity gradient tensor
     volTensorField L = fvc::grad(U());

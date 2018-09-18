@@ -31,14 +31,16 @@ License
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
     defineTypeNameAndDebug(PowerLaw, 0);
     addToRunTimeSelectionTable(constitutiveEq, PowerLaw, dictionary);
 }
-
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::PowerLaw::PowerLaw
+Foam::constitutiveEqs::PowerLaw::PowerLaw
 (
     const word& name,
     const volVectorField& U,
@@ -89,7 +91,7 @@ Foam::PowerLaw::PowerLaw
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 
-void Foam::PowerLaw::correct()
+void Foam::constitutiveEqs::PowerLaw::correct()
 {
 
     eta_ = max

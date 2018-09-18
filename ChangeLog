@@ -8,6 +8,50 @@
 
 //************************************************************\\
 
+Version 3.0
+
+Released on 18/09/2018.
+
+o Brownian dynamics solver:
+
+	- Add: solvers, libraries, utilities and tutorials for Brownian dynamics simulations of polymer molecules.
+
+o Generic:
+
+	- Add: all solvers are now compatible with dynamic meshes. Due to this change, and for convenience, momentum equation is the first to be solved, followed by pressure equation and then the equations for the remaining variables (extra-stresses, passive scalar, etc.).
+
+	- Add: tutorial fuidDamper showing the use of rheoFoam with dynamic meshes.
+	
+	- Add: added an explicit Navier slip boundary condition for velocity.
+	
+	- Change: Namespace encapsulation of several derived classes.
+	
+	- Change: rheoTool version compatible with OpenFOAM v2.2.2 is discontinued.
+	
+	- Add: added rheoTool patch for OpenFOAM v6.0.
+	
+	- Add: added note in the user-guide (Section 2.5) about parallel compilation of rheoTool.
+
+o Constitutive equations:
+
+	- Add: Papanastasiou regularization is now available for yield-stress GNF models (Hershel-Bulkley/Bingham and Casson models). 
+	
+	- Add: Casson model has been added to the library of constitutive equations.
+	
+	- Add: the Multi-Lambda Isotropic Kinematic Hardening (MLK-IKH) model has been added to the library of constitutive equations.
+
+	- Add: the Vasquez-Cook-Mckinley (VCM) model has been added to the library of constitutive equations.
+	
+	- Add: the Reactive Rod Model (RRM) model has been added to the library of constitutive equations.
+
+	- Add: Saramito's elastoviscoplastic model has been added to the library of constitutive equations. Both stress and log-conformation versions are available.
+	
+	- Add: the Bautista-Manero-Puig (BMP) model has been added to the library of constitutive equations. Both stress and log-conformation versions are available.
+	
+	- Change: implemented functions tauTotal() and tauTotalMF() in base classes. Solver rheoTestFoam and the utility retrieving the wall shear-stresses were modified accordingly.
+
+//************************************************************\\
+
 Version 2.0
 
 Released on 09/02/2018.
@@ -36,7 +80,7 @@ o Post-Processing:
 	
 o Multiphase flows:
 	
-    - Change: (fvc::grad(U) & fvc::grad(etaS()*alpha)) has been replaced by fvc::div(etaS()*alpha*dev2(T(fvc::grad(U)))) for the use in multiphase flows (constitutiveEq.C).
+	- Change: (fvc::grad(U) & fvc::grad(etaS()*alpha)) has been replaced by fvc::div(etaS()*alpha*dev2(T(fvc::grad(U)))) for the use in multiphase flows (constitutiveEq.C).
 	
 	- Fix: call to constrainPressure() in reoInterFoam, version of40, has been corrected for the SIMPLEC algorithm (pEqn.H). Added a section in the user-guide on how to use properly the fixedFluxPressure BC with reoInterFoam in versions of222 and fe40. 
 	

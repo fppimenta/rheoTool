@@ -29,15 +29,15 @@ Description
     (volume of fluid) phase-fraction based interface capturing approach. The flow is
     laminar. Any GNF or viscoelastic model of library lconstitutiveEquations can be
     selected. The pressure-velocity coupling is runtime selectable: either SIMPLEC
-    or PIMPLE (the momentum equation is always solved in both cases).
-    
-    Based on solver interFoam of foam-extend.
+    or PIMPLE (the momentum equation is always solved in both cases). The mesh can 
+    be either static or dynamic.   
     
     This solver is part of rheoTool.
 
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
+#include "dynamicFvMesh.H"
 #include "CMULES.H"
 #include "EulerDdtScheme.H"
 #include "localEulerDdtScheme.H"
@@ -49,6 +49,8 @@ Description
 #include "localEulerDdtScheme.H"
 #include "fvcSmooth.H"
 
+#include "adjustCorrPhi.H" 
+
 #include "immiscibleConstitutiveTwoPhaseMixture.H"
 #include "ppUtilInterface.H"
 
@@ -57,33 +59,42 @@ Description
 int main(int argc, char *argv[])
 {
     #include "postProcess.H"
-
+    
     #include "setRootCase.H"
     #include "createTime.H"
-    #include "createMesh.H"
+    #include "createDynamicFvMeshDict.H"
+    #include "createDynamicFvMesh.H"
+    #include "initContinuityErrs.H"
     #include "createControl.H"
     #include "createTimeControls.H"
     #include "createRDeltaT.H"
-    #include "initContinuityErrs.H"
     #include "createFields.H"
+    #include "createControls.H"
     #include "createFvOptions.H"
     #include "createPPutil.H"
+
+    volScalarField rAU
+    (
+        IOobject
+        (
+            "rAU",
+            runTime.timeName(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        ),
+        mesh,
+        dimensionedScalar("rAUf", dimTime/rho.dimensions(), 1.0)
+    );
+
     #include "correctPhi.H"
+    #include "createUfIfNeeded.H"
 
     if (!LTS)
     {
-        #include "readTimeControls.H"
         #include "CourantNo.H"
         #include "setInitialDeltaT.H"
     }
-    
-    // Read extra-controls
-
-    int    nInIter = mesh.solutionDict().subDict("PIMPLE").lookupOrDefault<int>("nInIter", 1);
-    bool   simplec = mesh.solutionDict().subDict("PIMPLE").lookupOrDefault<Switch>("SIMPLEC", true);
-    bool   sPS = cttProperties.subDict("passiveScalarProperties").lookupOrDefault<Switch>("solvePassiveScalar", false);
-    if (sPS) C.writeOpt() = IOobject::AUTO_WRITE;
-    
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -91,7 +102,7 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
-        #include "readTimeControls.H"
+         #include "readControls.H"
 
         if (LTS)
         {
@@ -99,7 +110,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            #include "CourantNo.H" 
+            #include "CourantNo.H"
             #include "alphaCourantNo.H"
             #include "setDeltaT.H"
         }
@@ -108,38 +119,69 @@ int main(int argc, char *argv[])
 
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
-        // --- Pressure-velocity PIMPLE corrector loop
+       // --- Pressure-velocity PIMPLE corrector loop
        for (int i=0; i<nInIter; i++)
         {
+            
+            Info << "Inner iteration:  " << i << nl << endl; 
+            
+            if (i == 0 || moveMeshOuterCorrectors)
+            {
+                scalar timeBeforeMeshUpdate = runTime.elapsedCpuTime();
+
+                mesh.update();
+
+                if (mesh.changing())
+                {
+                    Info<< "Execution time for mesh.update() = "
+                        << runTime.elapsedCpuTime() - timeBeforeMeshUpdate
+                        << " s" << endl;
+
+                    gh = (g & mesh.C()) - ghRef;
+                    ghf = (g & mesh.Cf()) - ghRef;
+                }
+
+                if (mesh.changing() && correctPhi)
+                {
+                    // Calculate absolute flux from the mapped surface velocity
+                    phi = mesh.Sf() & Uf();
+
+                    #include "correctPhi.H"
+
+                    // Make the flux relative to the mesh motion
+                    fvc::makeRelative(phi, U);
+
+                    mixture.correctInterface();
+                }
+
+                if (mesh.changing() && checkMeshCourantNo)
+                {
+                    #include "meshCourantNo.H"
+                }
+            }
+
             #include "alphaControls.H"
             #include "alphaEqnSubCycle.H"
 
-            mixture.correctAll();
+            mixture.correctInterface();
 
             #include "UEqn.H"
 
-            if (simplec)
-             {	
-               while (pimple.correct())
-                {
+            // --- Pressure corrector loop          	
+            while (pimple.correct())
+             {
                    #include "pEqn.H"
-                } 
-             }
-            else
-             {	
-               while (pimple.correct())
-                {
-                   #include "pEqnP.H"
-                }   
-             }  
+             } 
              
+            mixture.correctTau();
+            
             // --- Passive Scalar transport
             if (sPS)
              {
                #include "CEqn.H"
              }
         }
- 
+        
         postProc.update();
         runTime.write();
 

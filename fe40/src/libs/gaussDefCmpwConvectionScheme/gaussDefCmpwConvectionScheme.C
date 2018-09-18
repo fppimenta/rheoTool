@@ -265,7 +265,7 @@ gaussDefCmpwConvectionScheme<Type>::phifDefC
            (  2.0 * ( ( gradcmp[own[f]]*upw[f] + (1.0 - upw[f]) * gradcmp[neig[f]] ) & ( C[neig[f]] - C[own[f]] ) ) + 1e-18 )  		
            );
 
-           if (phitc <= 0 || phitc >= 1 ) { alpha = 1.; beta = 0.;}
+           if (phitc <= 0. || phitc >= 1. ) { alpha = 1.; beta = 0.;}
            else if (phitc < bL[0] ) { alpha = alphaL[0];  beta = betaL[0]; }
            else if (phitc < bL[1] ) { alpha = alphaL[1];  beta = betaL[1]; }
            else { alpha = alphaL[2];  beta = betaL[2]; }
@@ -306,7 +306,7 @@ gaussDefCmpwConvectionScheme<Type>::phifDefC
                      (  2.0 * ( ( gradcmpPF [faceI]*upwP[faceI] + (1.0 - upwP[faceI]) * gradcmpNF[faceI]) & deltasP[faceI] ) + 1e-18 )  		
                    );
 
-                  if (phitc <= 0 || phitc >= 1 ) { alpha = 1.; beta = 0.;}
+                  if (phitc <= 0. || phitc >= 1. ) { alpha = 1.; beta = 0.;}
           	  else if (phitc < bL[0] ) { alpha = alphaL[0];  beta = betaL[0]; }
           	  else if (phitc < bL[1] ) { alpha = alphaL[1];  beta = betaL[1]; }
            	  else { alpha = alphaL[2];  beta = betaL[2]; }

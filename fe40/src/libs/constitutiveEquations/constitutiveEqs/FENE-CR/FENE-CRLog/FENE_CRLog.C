@@ -31,14 +31,17 @@ License
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
     defineTypeNameAndDebug(FENE_CRLog, 0);
     addToRunTimeSelectionTable(constitutiveEq, FENE_CRLog, dictionary);
+}
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::FENE_CRLog::FENE_CRLog
+Foam::constitutiveEqs::FENE_CRLog::FENE_CRLog
 (
     const word& name,
     const volVectorField& U,
@@ -121,7 +124,7 @@ Foam::FENE_CRLog::FENE_CRLog
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::FENE_CRLog::correct()
+void Foam::constitutiveEqs::FENE_CRLog::correct()
 {
     // Decompose grad(U).T()
 

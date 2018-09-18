@@ -32,14 +32,16 @@ License
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
     defineTypeNameAndDebug(XPomPomLog, 0);
     addToRunTimeSelectionTable(constitutiveEq, XPomPomLog, dictionary);
 }
-
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::XPomPomLog::XPomPomLog
+Foam::constitutiveEqs::XPomPomLog::XPomPomLog
 (
     const word& name,
     const volVectorField& U,
@@ -124,7 +126,7 @@ Foam::XPomPomLog::XPomPomLog
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::XPomPomLog::correct()
+void Foam::constitutiveEqs::XPomPomLog::correct()
 {
     // Decompose grad(U).T()
 

@@ -1,9 +1,11 @@
 linearExtrapolation/linearExtrapolationFvPatchFields.C
+navierSlip/navierSlipFvPatchVectorField.C
 
 tutorialSpecificBCs/uCos/uCosFvPatchVectorField.C
 tutorialSpecificBCs/uLid/uLidFvPatchVectorField.C
 tutorialSpecificBCs/HBprofile/HBprofileFvPatchVectorField.C
 tutorialSpecificBCs/ACPotential/ACPotentialFvPatchScalarField.C
+tutorialSpecificBCs/uShaft/uShaftFvPatchVectorField.C
 
 zeroIonicFlux/zeroIonicFluxFvPatchScalarField.C
  

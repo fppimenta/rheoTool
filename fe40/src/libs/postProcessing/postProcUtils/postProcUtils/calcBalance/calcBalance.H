@@ -40,11 +40,13 @@ SourceFiles
 #ifndef calcBalance_H
 #define calcBalance_H
 
-#include "../ppUtil.H"
+#include "ppUtil.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
+{
+namespace ppUtils
 {
 
 /*---------------------------------------------------------------------------*\
@@ -110,6 +112,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace ppUtils
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

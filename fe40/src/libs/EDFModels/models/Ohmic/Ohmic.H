@@ -33,7 +33,8 @@ License
 
 namespace Foam
 {
-
+namespace EDFEquations
+{
 class Ohmic
 :
     public EDFEquation
@@ -172,6 +173,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace EDFEquations
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

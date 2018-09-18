@@ -47,11 +47,13 @@ SourceFiles
 #ifndef calcWSS_H
 #define calcWSS_H
 
-#include "../ppUtil.H"
+#include "ppUtil.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
+{
+namespace ppUtils
 {
 
 /*---------------------------------------------------------------------------*\
@@ -64,18 +66,12 @@ class calcWSS
 {
     // Private data
     
-        //- Is it a viscoelastic fluid
-        Switch  isVE_;
-        
-        //- Account for Newtonian stresses
-        Switch incSolv_;
+        //- Is two phase flow
+        Switch  isTwoPhaseFlow_;
         
         //- Account for polymeric stresses
         Switch  incPoly_;
-        
-        //- Solvent viscosity for the case of VE
-        dimensionedScalar etaSWW_;
-        
+     
         //- Wall shear stress magnitude
         volScalarField WSSmag_;
         
@@ -118,7 +114,7 @@ public:
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
+} // End namespace ppUtils
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

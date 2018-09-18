@@ -1,0 +1,41 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      constitutiveProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+parameters
+{                
+                type             BMP;
+
+                rho              rho [1 -3 0 0 0 0 0] 1.;
+                etaS             etaS [1 -1 -1 0 0 0 0] .0;
+                etaP             etaP [1 -1 -1 0 0 0 0] .01; // Only used for numerical stabilization.
+                                                                             
+                lambda           lambda [0 0 1 0 0 0 0] 1;
+                k                k    [-1 1 2 0 0 0 0] 1;               
+                G0               G0    [1 -1 -2 0 0 0 0] 0.05;
+                Phi0             Phi0 [-1 1 1 0 0 0 0] 2;
+		PhiInf           PhiInf [-1 1 1 0 0 0 0] 200;
+                
+
+                stabilization    coupling;                    
+}
+
+passiveScalarProperties
+{
+                solvePassiveScalar   no;
+                D                    D [ 0 2 -1 0 0 0 0 ] 1e-9; 
+}
+
+// ************************************************************************* //

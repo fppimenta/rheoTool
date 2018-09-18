@@ -32,14 +32,16 @@ License
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
     defineTypeNameAndDebug(Oldroyd_BLog, 0);
     addToRunTimeSelectionTable(constitutiveEq, Oldroyd_BLog, dictionary);
 }
-
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::Oldroyd_BLog::Oldroyd_BLog
+Foam::constitutiveEqs::Oldroyd_BLog::Oldroyd_BLog
 (
     const word& name,
     const volVectorField& U,
@@ -121,7 +123,7 @@ Foam::Oldroyd_BLog::Oldroyd_BLog
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::Oldroyd_BLog::correct()
+void Foam::constitutiveEqs::Oldroyd_BLog::correct()
 {
     // Decompose grad(U).T()
 

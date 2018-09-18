@@ -35,13 +35,16 @@ License
 
 namespace Foam
 {
+namespace ppUtils
+{
     defineTypeNameAndDebug(calcBalance, 0);
     addToRunTimeSelectionTable(ppUtil, calcBalance, dictFS);
+}
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::calcBalance::calcBalance
+Foam::ppUtils::calcBalance::calcBalance
 (
     const word& name,
     const dictionary& dict,
@@ -81,7 +84,7 @@ T_()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
   
-void Foam::calcBalance::createFile()
+void Foam::ppUtils::calcBalance::createFile()
 {
   // Note: ppDir_ is the directory for the output of postPorcessing data.
   // It is defined in the base class and mkdir is called there also.
@@ -109,7 +112,7 @@ void Foam::calcBalance::createFile()
      }
 }
 
-void Foam::calcBalance::update()
+void Foam::ppUtils::calcBalance::update()
 {
 
 if (enabled_)

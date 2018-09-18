@@ -31,14 +31,16 @@ License
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
     defineTypeNameAndDebug(CarreauYasuda, 0);
     addToRunTimeSelectionTable(constitutiveEq, CarreauYasuda, dictionary);
 }
-
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::CarreauYasuda::CarreauYasuda
+Foam::constitutiveEqs::CarreauYasuda::CarreauYasuda
 (
     const word& name,
     const volVectorField& U,
@@ -89,7 +91,7 @@ Foam::CarreauYasuda::CarreauYasuda
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::CarreauYasuda::correct()
+void Foam::constitutiveEqs::CarreauYasuda::correct()
 {
     eta_ = etaInf_ + (eta0_ - etaInf_) * pow(scalar(1.0) + pow(k_*strainRate(), a_), (n_ - scalar(1.0))/a_);
 }

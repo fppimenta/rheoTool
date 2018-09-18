@@ -142,6 +142,20 @@ Foam::constitutiveTwoPhaseMixture::divTauMF(volVectorField& U)
           
 }
 
+Foam::tmp<Foam::volSymmTensorField>
+Foam::constitutiveTwoPhaseMixture::tauTotalMF() const
+{
+
+   const volScalarField bAlpha1
+    (
+        min(max(alpha1_, scalar(0)), scalar(1))
+    );
+    
+   const volScalarField bAlpha2(1.-bAlpha1);
+   
+   return phase1_->tauTotal()*bAlpha1 + phase2_->tauTotal()*bAlpha2;
+}
+
 bool Foam::constitutiveTwoPhaseMixture::read()
 {
 

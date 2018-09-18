@@ -83,9 +83,23 @@
     );
 
 
-    Info<< "Calculating field g.h\n" << endl;
-    volScalarField gh("gh", g & mesh.C());
-    surfaceScalarField ghf("gh", g & mesh.Cf());
+    // Construct interface from alpha1 distribution
+    interfaceProperties interface(alpha1, U, twoPhaseProperties);
+
+    wordList pcorrTypes
+    (
+        pd.boundaryField().size(),
+        zeroGradientFvPatchScalarField::typeName
+    );
+
+    for (label i = 0; i < pd.boundaryField().size(); i++)
+    {
+        if (pd.boundaryField()[i].fixesValue())
+        {
+            pcorrTypes[i] = fixedValueFvPatchScalarField::typeName;
+        }
+    }
+
 
     volScalarField p
     (
@@ -97,7 +111,7 @@
             IOobject::NO_READ,
             IOobject::AUTO_WRITE
         ),
-        pd + rho*gh
+        pd + rho*(g & mesh.C())
     );
 
 
@@ -119,9 +133,6 @@
             pRefValue - getRefCellValue(p, pdRefCell)
         );
     }
-
-    // Construct interface from alpha1 distribution
-    interfaceProperties interface(alpha1, U, twoPhaseProperties);
     
     IOdictionary cttProperties
     (
@@ -131,33 +142,32 @@
             runTime.constant(),
             mesh,
             IOobject::MUST_READ,
-            IOobject::NO_WRITE
+            IOobject::NO_WRITE,
+            false
         )
     );
     
- 
-    int    nInIter = pimple.dict().lookupOrDefault<int>("nInIter", 1);
-    bool   simplec = pimple.dict().lookupOrDefault<Switch>("SIMPLEC", true);
-    bool   sPS = cttProperties.subDict("passiveScalarProperties").lookupOrDefault<Switch>("solvePassiveScalar", false);
-
     
-    // Read C field if present, otherwise the field is (always) initialized as 0
-    volScalarField C
+   bool   sPS = cttProperties.subDict("passiveScalarProperties").lookupOrDefault<Switch>("solvePassiveScalar", false);
+ 
+   autoPtr<volScalarField>  C
+   (
+    sPS != true
+    ? 
+    NULL
+    :
+    new volScalarField
     (
-        IOobject
-        (
-            "C",
-            runTime.timeName(),
-            mesh,
-            IOobject::READ_IF_PRESENT,
-            sPS == false ? (IOobject::NO_WRITE) : (IOobject::AUTO_WRITE)
-        ),
-        mesh,
-        dimensionedScalar
-        (
-                "0",
-                dimless,
-                pTraits<scalar>::zero
-        ),
-        zeroGradientFvPatchField<scalar>::typeName
-    );
+       IOobject
+       (
+           "C",
+           runTime.timeName(),
+           mesh,
+           IOobject::MUST_READ,
+           IOobject::AUTO_WRITE
+       ),
+       mesh
+    )
+   );
+    
+     

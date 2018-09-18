@@ -39,7 +39,8 @@ SourceFiles
 
 namespace Foam
 {
-
+namespace constitutiveEqs
+{
 /*---------------------------------------------------------------------------*\
                            Class multiMode Declaration
 \*---------------------------------------------------------------------------*/
@@ -55,6 +56,10 @@ class multiMode
 
         //- List of models
         PtrList<constitutiveEq> models_;
+        
+        //- Solvent viscosity (read from dict; can not
+        // use etaS() from models_).
+        dimensionedScalar etaS_; 
 
 
     // Private Member Functions
@@ -71,7 +76,15 @@ protected:
     // There is no need to provide implementations for etaS,
     // etaP and coupledUtau() because functions divTau() and
     // divTauS() are directly implemented.
-
+    
+    // Note v3.0: etaS is needed for tauTotal()
+    
+    //- Return the solvent viscosity. In a multimode model,
+    //  it is the sum of etaS from all modes.
+       virtual const dimensionedScalar etaS() const
+       {
+          return etaS_;
+       }
 
 public:
 
@@ -123,6 +136,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace constitutiveEqs
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -11,5 +11,5 @@ runApplication blockMesh
 
 runApplication $application
 
-runApplication sample
+runApplication sample -latestTime
  

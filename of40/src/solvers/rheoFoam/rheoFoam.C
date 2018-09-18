@@ -27,7 +27,8 @@ Application
 Description
     Transient solver for incompressible, laminar flow. Any GNF or viscoelastic
     model of library lconstitutiveEquations can be selected. Pressure-velocity
-    coupling is using the SIMPLEC algorithm.
+    coupling is using the SIMPLEC algorithm. The mesh can be either static or
+    dynamic.
     
     This solver is part of rheoTool.
 
@@ -39,60 +40,84 @@ Description
 #include "simpleControl.H"
 #include "fvOptions.H"
 #include "extrapolatedCalculatedFvPatchField.H"
+#include "dynamicFvMesh.H"
+#include "CorrectPhi.H"
+
+#include "adjustCorrPhi.H" 
+
 #include "ppUtilInterface.H"
 #include "constitutiveModel.H"
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+   
 int main(int argc, char *argv[])
 {
     #include "postProcess.H"
-
+    
     #include "setRootCase.H"
     #include "createTime.H"
-    #include "createMesh.H"
-    #include "createControl.H"
-    #include "createTimeControls.H"
-    #include "createFields.H"
+    #include "createDynamicFvMeshDict.H"  
+    #include "createDynamicFvMesh.H"  
+    #include "initContinuityErrs.H" 
+    
+    #include "createFields.H"  
+    #include "createControls.H" 
+    #include "createUfIfNeeded.H"
     #include "createFvOptions.H"
     #include "createPPutil.H"
-    #include "initContinuityErrs.H"
-    
-    // Read extra-controls
-
-    int    nInIter = simple.dict().lookupOrDefault<int>("nInIter", 1); 
-    bool   sPS = cttProperties.subDict("passiveScalarProperties").lookupOrDefault<Switch>("solvePassiveScalar", false);
-    if (sPS) C.writeOpt() = IOobject::AUTO_WRITE;
-
+    #include "CourantNo.H"
+    #include "setInitialDeltaT.H"
+ 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
+    
     Info<< "\nStarting time loop\n" << endl;
-
+ 
     // --- Time loop ---
 
     while (simple.loop())
     {
-        Info<< "Time = " << runTime.timeName() << nl << endl;
-
-        #include "readTimeControls.H"
+        #include "readControls.H"
         #include "CourantNo.H"
         #include "setDeltaT.H"
+        
+        Info<< "Time = " << runTime.timeName() << nl << endl;
 
+        mesh.update();
+
+        if (mesh.changing())
+         {
+           // Calculate absolute flux from the mapped surface velocity
+           phi = mesh.Sf() & Uf();
+        
+           if (correctPhi)
+           {
+              #include "correctPhi.H"
+           }
+
+           // Make the flux relative to the mesh motion
+           fvc::makeRelative(phi, U);
+
+           if (checkMeshCourantNo)
+           {
+             #include "meshCourantNo.H"
+           }
+         }
+         
         // --- Inner loop iterations ---
- 
         for (int i=0; i<nInIter; i++)
 	  {
 
-            Info<< "Inner iteration:  " << i << nl << endl; 
+            Info << "Inner iteration:  " << i << nl << endl; 
            
             // --- Pressure-velocity SIMPLEC corrector
             {
-               // ---- Solve constitutive equation ----	
-               constEq.correct();
-
                // ---- Solve U and p ----	
                #include "UEqn.H"
-               #include "pEqn.H"
+               #include "pEqn.H"         
             }
+            
+            // ---- Solve constitutive equation ----	
+            constEq.correct();
 
             // --- Passive Scalar transport
             if (sPS)

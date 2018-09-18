@@ -31,14 +31,16 @@ License
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
     defineTypeNameAndDebug(GiesekusLog, 0);
     addToRunTimeSelectionTable(constitutiveEq, GiesekusLog, dictionary);
 }
-
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::GiesekusLog::GiesekusLog
+Foam::constitutiveEqs::GiesekusLog::GiesekusLog
 (
     const word& name,
     const volVectorField& U,
@@ -121,7 +123,7 @@ Foam::GiesekusLog::GiesekusLog
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::GiesekusLog::correct()
+void Foam::constitutiveEqs::GiesekusLog::correct()
 {
   // Decompose grad(U).T()
 

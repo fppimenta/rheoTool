@@ -1,0 +1,74 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       pointScalarField;
+    object      pointMotionU;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+     left
+    {
+        type            fixedValue;
+	value           uniform 0;
+    }
+
+    right
+    {
+        type            fixedValue;
+	value           uniform 0; 
+    }
+
+    top
+    {
+        type            slip;
+    }
+    
+    piston
+    {       
+        type            codedFixedValue;
+    	value           uniform 0;
+    	redirectType    pistonUx;
+    	code
+    	#{
+          const scalar& t = this->db().time().timeOutputValue();
+ 
+          scalar f = 32.; //Hz
+          scalar alpha = 12e-3; // m
+          scalar omega = 2.*M_PI*f; // rad/s
+          
+          operator==( omega*alpha * cos(omega*t) );
+          
+   	#};
+    }
+    
+    shaft
+    {
+        type            slip;
+    }
+
+    wedge0
+    {
+        type            wedge;
+    }
+    
+    wedge1
+    {
+        type            wedge;
+    }
+}
+
+// ************************************************************************* //

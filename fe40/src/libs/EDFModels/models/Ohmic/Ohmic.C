@@ -32,13 +32,16 @@ License
 
 namespace Foam
 {
+namespace EDFEquations
+{
     defineTypeNameAndDebug(Ohmic, 0);
     addToRunTimeSelectionTable(EDFEquation, Ohmic, dictionary);
+}
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::Ohmic::OhSpecie::OhSpecie
+Foam::EDFEquations::Ohmic::OhSpecie::OhSpecie
 (
     const word& name,
     const surfaceScalarField& phi,
@@ -52,7 +55,7 @@ Foam::Ohmic::OhSpecie::OhSpecie
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::Ohmic::Ohmic
+Foam::EDFEquations::Ohmic::Ohmic
 (
     const word& name,
     const surfaceScalarField& phi,
@@ -118,14 +121,18 @@ Foam::Ohmic::Ohmic
     scalar z1 = mag(species_[1].zi().value());
        
     Deff_ =  2*( species_[0].Di()*species_[1].Di() )
-           / ( species_[0].Di() + species_[1].Di() );  
+           / ( species_[0].Di() + species_[1].Di() ); 
            
-     
+    // This is a fix to avoid FP error when the electric module
+    // is computed after hydrodynamics. This call ensures that on
+    // first time-step the electric component is the 1st computed.
+    // Issue appeared after reordering solving sequence (v3.0).     
+    correct();        
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volVectorField> Foam::Ohmic::Fe() const
+Foam::tmp<Foam::volVectorField> Foam::EDFEquations::Ohmic::Fe() const
 {
     return
     (
@@ -133,7 +140,7 @@ Foam::tmp<Foam::volVectorField> Foam::Ohmic::Fe() const
     );     
 }
 
-void Foam::Ohmic::correct()
+void Foam::EDFEquations::Ohmic::correct()
 {
 
        scalar res=GREAT; 

@@ -1,0 +1,26 @@
+EXE_INC = \
+    -IVoF \
+    -I$(LIB_SRC)/transportModels/twoPhaseMixture/lnInclude \
+    -I$(LIB_SRC)/transportModels/interfaceProperties/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/sampling/lnInclude \
+    -I../../libs/constitutiveEquations/lnInclude \
+    -I../../libs/gaussDefCmpwConvectionScheme/lnInclude \
+    -I../../libs/boundaryConditions/lnInclude \
+    -I../../libs/postProcessing/postProcUtils/lnInclude
+    
+EXE_LIBS = \
+    -limmiscibleIncompressibleTwoPhaseMixture \
+    -lturbulenceModels \
+    -lincompressibleTurbulenceModels \
+    -lfiniteVolume \
+    -ldynamicFvMesh \
+    -lfvOptions \
+    -lmeshTools \
+    -lsampling \
+    -L$(FOAM_USER_LIBBIN) -lconstitutiveEquations \
+    -L$(FOAM_USER_LIBBIN) -lgaussDefCmpwConvectionSchemes \
+    -L$(FOAM_USER_LIBBIN) -lBCRheoTool \
+    -L$(FOAM_USER_LIBBIN) -lpostProcessingRheoTool

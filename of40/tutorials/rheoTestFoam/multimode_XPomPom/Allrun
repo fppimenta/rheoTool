@@ -8,5 +8,6 @@ cd ${0%/*} || exit 1    # run from this directory
 application=`getApplication`
 
 runApplication blockMesh
-
-runApplication $application
+ 
+echo "Running $application and ouputing to dev/null."
+$application>/dev/null

@@ -37,7 +37,8 @@ SourceFiles
 
 namespace Foam
 {
-
+namespace EDFEquations
+{
 class DebyeHuckel
 :
     public EDFEquation
@@ -200,6 +201,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace EDFEquations
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -14,45 +14,30 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-5
+4
 (
-    inlet
+    inletOutlet
     {
         type            cyclic;
-        inGroups        1(cyclic);
-        nFaces          300;
+        nFaces          600;
         startFace       299;
-        matchTolerance  0.0001;
-        transform       unknown;
-        neighbourPatch  outlet;
+        featureCos      0.9;
     }
     walls
     {
         type            wall;
         nFaces          1;
-        startFace       599;
+        startFace       899;
     }
     symmetry
     {
         type            symmetryPlane;
-        inGroups        1(symmetryPlane);
         nFaces          1;
-        startFace       600;
-    }
-    outlet
-    {
-        type            cyclic;
-        inGroups        1(cyclic);
-        nFaces          300;
-        startFace       601;
-        matchTolerance  0.0001;
-        transform       unknown;
-        neighbourPatch  inlet;
+        startFace       900;
     }
     frontAndBack
     {
         type            empty;
-        inGroups        1(empty);
         nFaces          600;
         startFace       901;
     }

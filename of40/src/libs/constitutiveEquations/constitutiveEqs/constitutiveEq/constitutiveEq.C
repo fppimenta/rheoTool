@@ -28,28 +28,40 @@ License
 #include <Eigen/Dense> // For eigen decomposition
 #include "jacobi.H"    // Only required for jacobi decomposition
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(constitutiveEq, 0);
-    defineRunTimeSelectionTable(constitutiveEq, dictionary);
-
+  defineTypeNameAndDebug(constitutiveEq, 0);
+  defineRunTimeSelectionTable(constitutiveEq, dictionary);
+  
+  template<>
+  const char* NamedEnum
+  <
+    constitutiveEq::stabOptions,
+    3
+  >::names[] =
+  {
+    "none",
+    "BSD",
+    "coupling"
+  };
+  
+  const NamedEnum<constitutiveEq::stabOptions, 3> constitutiveEq::stabOptionNames_;
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 constitutiveEq::constitutiveEq
 (
-    const word& name,
-    const volVectorField& U,
-    const surfaceScalarField& phi
+  const word& name,
+  const volVectorField& U,
+  const surfaceScalarField& phi
 )
 :
-    name_(name),
-    U_(U),
-    phi_(phi), 
-    stabMeth_(0)
+  name_(name),
+  U_(U),
+  phi_(phi)
 {}
 
 // * * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
@@ -60,49 +72,45 @@ tmp<fvVectorMatrix> constitutiveEq::divTau
 ) const
 {
    
-   if (isGNF())
-    {   
-	  return
-          (
-              fvm::laplacian( eta()/rho(), U, "laplacian(eta,U)")
-            + (fvc::grad(U) & fvc::grad(eta()/rho()))
-          ); 
-     }
-    else
-     {     
-           if (stabMeth_ == 0) // none
-	     {
-	     
-	      return
-	       (
-		  fvc::div(tau()/rho(), "div(tau)")
-		+ fvm::laplacian(etaS()/rho(), U, "laplacian(eta,U)")
-	       );
-
-	     }
-	    else if (stabMeth_ == 1) // BSD 
-	     {
-	      
-	      return
-	       (
-		  fvc::div(tau()/rho(), "div(tau)")
-		- fvc::laplacian(etaP()/rho(), U, "laplacian(eta,U)")
-		+ fvm::laplacian( (etaP()+ etaS())/rho(), U, "laplacian(eta,U)")
-	       );
-
-	     }   
-	    else // coupling
-	     {
-	      
-	      return
-	       (
-		  fvc::div(tau()/rho(), "div(tau)")
-		- (etaP()/rho()) * fvc::div(fvc::grad(U))
-		+ fvm::laplacian( (etaP() + etaS())/rho(), U, "laplacian(eta,U)")
-	       );
-
-	     }       
-     }    
+ if (isGNF())
+ {   
+   return
+   (
+      fvm::laplacian( eta()/rho(), U, "laplacian(eta,U)")
+    + (fvc::grad(U) & fvc::grad(eta()/rho()))
+   ); 
+ }
+ else
+ {  
+   switch (stabOption_) 
+   {    
+     case soNone : // none       
+     return
+     (
+         fvc::div(tau()/rho(), "div(tau)")
+       + fvm::laplacian(etaS()/rho(), U, "laplacian(eta,U)")
+     );
+   
+     case soBSD : // BSD   
+     return
+     (
+        fvc::div(tau()/rho(), "div(tau)")
+      - fvc::laplacian(etaP()/rho(), U, "laplacian(eta,U)")
+      + fvm::laplacian( (etaP()+ etaS())/rho(), U, "laplacian(eta,U)")
+     );
+  
+     case soCoupling : // coupling       
+     return
+     (
+        fvc::div(tau()/rho(), "div(tau)")
+      - (etaP()/rho()) * fvc::div(fvc::grad(U))
+      + fvm::laplacian( (etaP() + etaS())/rho(), U, "laplacian(eta,U)")
+     );
+     
+     default: // This will never happen
+     return fvVectorMatrix(U, U.dimensions());  
+   }      
+ }    
 }
 
 tmp<fvVectorMatrix> constitutiveEq::divTauS
@@ -110,54 +118,47 @@ tmp<fvVectorMatrix> constitutiveEq::divTauS
    const volVectorField& U,  
    const volScalarField& alpha
 ) const
-{
-        
-   if (isGNF())
-    {   
-    
-	   return
-	    (
-		 fvm::laplacian( eta()*alpha, U, "laplacian(eta,U)")
-	       + fvc::div(eta()*alpha*dev2(T(fvc::grad(U))), "div(eta*alpha*dev2(T(gradU)))")
-	    ); 
-     }
-   else
-     {     
-           if (stabMeth_ == 0) // none
-	     {
-	     
-	      return
-	       (        
-		  fvm::laplacian(etaS()*alpha, U, "laplacian(eta,U)")
-		+ fvc::div(etaS()*alpha*dev2(T(fvc::grad(U))), "div(eta*alpha*dev2(T(gradU)))")
-	       );
-
-	     }
-	   else if (stabMeth_ == 1) // BSD 
-	     {
-	      
-	      return
-	       (
-		- fvc::laplacian(etaP()*alpha, U, "laplacian(eta,U)")
-		+ fvm::laplacian( (etaP()+ etaS())*alpha, U, "laplacian(eta,U)")
-		+ fvc::div(etaS()*alpha*dev2(T(fvc::grad(U))), "div(eta*alpha*dev2(T(gradU)))")
-	       );
-
-	     } 
-	   else // coupling
-	     {
-	      
-	      return
-	       (        
-		- fvc::div( (etaP()*alpha) * fvc::grad(U), "div(grad(U))")
-		+ fvm::laplacian( (etaP() + etaS())*alpha, U, "laplacian(eta,U)")
-		+ fvc::div(etaS()*alpha*dev2(T(fvc::grad(U))), "div(eta*alpha*dev2(T(gradU)))")
-	       );
-
-	     }       
-     }      
+{       
+ if (isGNF())
+ {       
+   return
+   (
+      fvm::laplacian( eta()*alpha, U, "laplacian(eta,U)")
+    + fvc::div(eta()*alpha*dev2(T(fvc::grad(U))), "div(eta*alpha*dev2(T(gradU)))")
+   ); 
+ }
+ else
+ { 
+   switch (stabOption_) 
+   {    
+     case soNone : // none    
+     return
+     (        
+        fvm::laplacian(etaS()*alpha, U, "laplacian(eta,U)")
+      + fvc::div(etaS()*alpha*dev2(T(fvc::grad(U))), "div(eta*alpha*dev2(T(gradU)))")
+     );
+   
+     case soBSD : // BSD 
+     return
+     (
+       - fvc::laplacian(etaP()*alpha, U, "laplacian(eta,U)")
+       + fvm::laplacian( (etaP()+ etaS())*alpha, U, "laplacian(eta,U)")
+       + fvc::div(etaS()*alpha*dev2(T(fvc::grad(U))), "div(eta*alpha*dev2(T(gradU)))")
+     );
+      
+     case soCoupling : // coupling 	      
+     return
+     (        
+       - fvc::div( (etaP()*alpha) * fvc::grad(U), "div(grad(U))")
+       + fvm::laplacian( (etaP() + etaS())*alpha, U, "laplacian(eta,U)")
+       + fvc::div(etaS()*alpha*dev2(T(fvc::grad(U))), "div(eta*alpha*dev2(T(gradU)))")
+     ); 
+     
+     default: // This will never happen
+     return fvVectorMatrix(U, U.dimensions());  
+   }      
+ }      
 }
-
 
 void constitutiveEq::decomposeGradU
 (
@@ -169,82 +170,83 @@ void constitutiveEq::decomposeGradU
 )
 {
 
-     forAll(M, cellI)
-       {
+ forAll(M, cellI)
+ {
+   const tensor& eigValsR = eigVals[cellI];
+   const tensor& MR = M[cellI];
+   tensor& omegaR = omega[cellI];
         
-         B[cellI].xx()=M[cellI].xx();
-         B[cellI].yy()=M[cellI].yy(); 
-         B[cellI].zz()=M[cellI].zz();
- 
+   B[cellI].xx()=MR.xx();
+   B[cellI].yy()=MR.yy(); 
+   B[cellI].zz()=MR.zz(); 
          
-         omega[cellI].xy() = ( eigVals[cellI].yy()*M[cellI].xy() + eigVals[cellI].xx()*M[cellI].yx() ) / ( eigVals[cellI].yy() - eigVals[cellI].xx() + 1e-16);
-         omega[cellI].xz() = ( eigVals[cellI].zz()*M[cellI].xz() + eigVals[cellI].xx()*M[cellI].zx() ) / ( eigVals[cellI].zz() - eigVals[cellI].xx() + 1e-16);
-         omega[cellI].yz() = ( eigVals[cellI].zz()*M[cellI].yz() + eigVals[cellI].yy()*M[cellI].zy() ) / ( eigVals[cellI].zz() - eigVals[cellI].yy() + 1e-16);
+   omegaR.xy() = ( eigValsR.yy()*MR.xy() + eigValsR.xx()*MR.yx() ) / ( eigValsR.yy() - eigValsR.xx() + 1e-16);
+   omegaR.xz() = ( eigValsR.zz()*MR.xz() + eigValsR.xx()*MR.zx() ) / ( eigValsR.zz() - eigValsR.xx() + 1e-16);
+   omegaR.yz() = ( eigValsR.zz()*MR.yz() + eigValsR.yy()*MR.zy() ) / ( eigValsR.zz() - eigValsR.yy() + 1e-16);
 
-         omega[cellI].yx() = -omega[cellI].xy();
-         omega[cellI].zx() = -omega[cellI].xz();
-         omega[cellI].zy() = -omega[cellI].yz(); 
-      }
+   omegaR.yx() = -omegaR.xy();
+   omegaR.zx() = -omegaR.xz();
+   omegaR.zy() = -omegaR.yz(); 
+ }
  
-      omega = ( eigVecs & omega & eigVecs.T() );
-   
-      B = ( eigVecs & B & eigVecs.T() );
+ omega = ( eigVecs & omega & eigVecs.T() );
 
-
+ B = ( eigVecs & B & eigVecs.T() );
+ 
 }
 
 void constitutiveEq::calcEig(const volSymmTensorField& theta, volTensorField& vals, volTensorField& vecs)
 {
  
  // Eigen decomposition using a QR algorithm of Eigen library 
-
-    Eigen::Matrix3d theta_eig(Eigen::Matrix3d::Zero(3,3));
-    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> eigSol;
+ Eigen::Matrix3d theta_eig(Eigen::Matrix3d::Zero(3,3));
+ Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> eigSol;
  
-    forAll(theta, cellI)
-     {
-       // Transfer theta from OF to Eigen
+ forAll(theta, cellI)
+ {
+   // Transfer theta from OF to Eigen        
+   const symmTensor& thetaR = theta[cellI];  
+       
+   theta_eig(0,0)=thetaR.xx();
+   theta_eig(1,1)=thetaR.yy();
+   theta_eig(2,2)=thetaR.zz();
+
+   theta_eig(0,1)=thetaR.xy();
+   theta_eig(1,0)=thetaR.xy();
+
+   theta_eig(0,2)=thetaR.xz();
+   theta_eig(2,0)=thetaR.xz();
+
+   theta_eig(1,2)=thetaR.yz();
+   theta_eig(2,1)=thetaR.yz();
     
-       theta_eig(0,0)=theta[cellI].xx();
-       theta_eig(1,1)=theta[cellI].yy();
-       theta_eig(2,2)=theta[cellI].zz();
+   // Compute eigenvalues/vectors in Eigen
 
-       theta_eig(0,1)=theta[cellI].xy();
-       theta_eig(1,0)=theta[cellI].xy();
+   eigSol.compute(theta_eig);
+   Eigen::Vector3d eival = eigSol.eigenvalues();
+   Eigen::Matrix3d eivect = eigSol.eigenvectors();
 
-       theta_eig(0,2)=theta[cellI].xz();
-       theta_eig(2,0)=theta[cellI].xz();
+   // Transfer eigenvalues/vectors from Eigen to OF 
+   tensor& vecsR = vecs[cellI];  
 
-       theta_eig(1,2)=theta[cellI].yz();
-       theta_eig(2,1)=theta[cellI].yz();
-    
-       // Compute eigenvalues/vectors in Eigen
+   vecsR.xx()=eivect(0,0);
+   vecsR.yx()=eivect(1,0);
+   vecsR.zx()=eivect(2,0);
 
-       eigSol.compute(theta_eig);
-       Eigen::Vector3d eival = eigSol.eigenvalues();
-       Eigen::Matrix3d eivect = eigSol.eigenvectors();
+   vecsR.xy()=eivect(0,1);
+   vecsR.yy()=eivect(1,1);      
+   vecsR.zy()=eivect(2,1);      
 
-       // Transfer eigenvalues/vectors from Eigen to OF 
+   vecsR.xz()=eivect(0,2);  
+   vecsR.yz()=eivect(1,2);
+   vecsR.zz()=eivect(2,2);
 
-       vecs[cellI].xx()=eivect(0,0);
-       vecs[cellI].yx()=eivect(1,0);
-       vecs[cellI].zx()=eivect(2,0);
-
-       vecs[cellI].xy()=eivect(0,1);
-       vecs[cellI].yy()=eivect(1,1);      
-       vecs[cellI].zy()=eivect(2,1);      
-
-       vecs[cellI].xz()=eivect(0,2);  
-       vecs[cellI].yz()=eivect(1,2);
-       vecs[cellI].zz()=eivect(2,2);
-
-
-       vals[cellI]=tensor::zero;
-       vals[cellI].xx()=Foam::exp(eival(0));
-       vals[cellI].yy()=Foam::exp(eival(1));
-       vals[cellI].zz()=Foam::exp(eival(2));
+   vals[cellI] *= 0.;
+   vals[cellI].xx()=Foam::exp(eival(0));
+   vals[cellI].yy()=Foam::exp(eival(1));
+   vals[cellI].zz()=Foam::exp(eival(2));
   
-    }
+ }
 
 /*
  // Eigen decomposition using the iterative jacobi algorithm 
@@ -261,39 +263,26 @@ void constitutiveEq::calcEig(const volSymmTensorField& theta, volTensorField& va
 
 }
 
-tmp<volScalarField> constitutiveEq::strainRate()
-{
-   return ( sqrt(2.0)*mag( symm(fvc::grad(U_)) ) );
-}
-
 void constitutiveEq::checkForStab(const dictionary& dict)
 {
-  // Allow coupling by default
-  word stab_(dict.lookupOrDefault<word>("stabilization", "coupling"));
-  
-  if (stab_ == "none")
-   {
-     stabMeth_ = 0;
-     Info << "Selected stabilization method: none.\n";
-   }
-  else if (stab_ == "BSD")
-   {
-     stabMeth_ = 1;
-     Info << "Selected stabilization method: BSD.\n";
-   }
-  else if (stab_ == "coupling")
-   {
-     stabMeth_ = 2;
-     Info << "Selected stabilization method: coupling.\n";
-   }
-  else
-   {
-       FatalErrorIn("constitutiveEq::checkForStab(const dictionary& dict)\n")
-            << "\nThe stabilizatin method specified does not exist.\n"
-            << "\nAvailable methods are:\n"
-            << "\n. none" <<"\n. BSD" << "\n. coupling" 
-            << abort(FatalError);
-   }   
+  stabOption_ = stabOptionNames_.read
+  (
+     dict.lookup("stabilization")
+  ); 
+}
+
+tmp<volSymmTensorField> constitutiveEq::tauTotal() const
+{
+ volTensorField L = fvc::grad(U_);
+   
+ if (isGNF())
+ {      
+   return eta()*symm(L+L.T()); 
+ }
+ else
+ {
+   return tau() + etaS()*symm(L+L.T()); 
+ }
 }
 
 } //End namespace

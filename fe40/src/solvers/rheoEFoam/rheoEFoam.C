@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    rheoEFoam
+    rheoFoam
 
 Description
     Transient solver for incompressible, laminar electrically-driven flow. Pressure
@@ -38,64 +38,92 @@ Description
 #include "IFstream.H"
 #include "OFstream.H"
 #include "simpleControl.H"
+#include "dynamicFvMesh.H"
 
 #include "ppUtilInterface.H"
 #include "constitutiveModel.H"
 #include "EDFModel.H"
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
- 
+  
 int main(int argc, char *argv[])
 {
-    #include "setRootCase.H"
-    #include "createTime.H"
-    #include "createMesh.H"
+   #   include "setRootCase.H"
+   #   include "createTime.H"
+   #   include "createDynamicFvMeshDict.H"  
+   #   include "createDynamicFvMesh.H"
     
     simpleControl simple(mesh);
      
-    #include "createFields.H" 
-    #include "createPPutil.H"
-    #include "initContinuityErrs.H"
-    #include "createTimeControls.H"
-
+    #   include "initContinuityErrs.H"
+    #   include "createFields.H"
+    #   include "createControls.H"
+    #   include "createPPutil.H"
+  
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     Info<< "\nStarting time loop\n" << endl;
-
+ 
     // --- Time loop ---
 
     while (simple.loop())
     {
-        Info<< "Time = " << runTime.timeName() << nl << endl;
+         
+#       include "readControls.H"
+#       include "CourantNo.H"
+#       include "setDeltaT.H"
 
-        #include "readTimeControls.H"
-        #include "CourantNo.H"
-        #include "setDeltaT.H"
+        // Make the fluxes absolute
+        fvc::makeAbsolute(phi, U);
+         
+        Info<< "Time = " << runTime.timeName() << endl;
+ 
+        mesh.update();
+
+        if (mesh.changing())
+        {
+#         include "volContinuity.H"
+
+          if (checkMeshCourantNo)
+          {
+#           include "meshCourantNo.H"
+          }
+
+          // Mesh motion update
+          if (correctPhi)
+          {
+            // Fluxes will be corrected to absolute velocity
+            // HJ, 6/Feb/2009
+#           include "correctPhi.H"
+          }
+
+#           include "CourantNo.H"
+        }
+
+        // Make the fluxes relative to the mesh motion
+        fvc::makeRelative(phi, U);
 
         // --- Inner loop iterations ---
-
         for (int i=0; i<nInIter; i++)
 	  {
 
-            Info<< "Inner iteration:  " << i << nl << endl; 
+            Info << nl << "Inner iteration:  " << i << nl << endl;  
            
-            // --- Pressure-velocity SIMPLEC corrector
-            {            
-               // ---- Update electric terms ----
-               elecM.correct();
-               
-               if (solveFluid)
-                {
-                  // ---- Solve constitutive equation ----	
-                  constEq.correct();
-               
-                  // ---- Solve U and p ----	
-                  #include "UEqn.H"
-                  #include "pEqn.H" 
-                }
-               
+            if (solveFluid)
+            {
+              // --- Pressure-velocity SIMPLEC corrector
+              {
+                 // ---- Solve U and p ----	
+                 #include "UEqn.H"
+                 #include "pEqn.H"         
+              }
+              
+              // ---- Solve constitutive equation ----	
+              constEq.correct(); 
             }
-
+            
+            // ---- Update electric terms ----
+            elecM.correct();
+            
             // --- Passive Scalar transport
             if (sPS)
              {
@@ -105,8 +133,8 @@ int main(int argc, char *argv[])
          }
          
         //- Post-processing               
-        postProc.update();
-     
+        postProc.update();  
+
         runTime.write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"

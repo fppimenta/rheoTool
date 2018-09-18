@@ -31,14 +31,16 @@ License
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
     defineTypeNameAndDebug(Oldroyd_BSqrt, 0);
     addToRunTimeSelectionTable(constitutiveEq, Oldroyd_BSqrt, dictionary);
 }
-
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::Oldroyd_BSqrt::Oldroyd_BSqrt
+Foam::constitutiveEqs::Oldroyd_BSqrt::Oldroyd_BSqrt
 (
     const word& name,
     const volVectorField& U,
@@ -82,7 +84,7 @@ Foam::Oldroyd_BSqrt::Oldroyd_BSqrt
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::Oldroyd_BSqrt::correct()
+void Foam::constitutiveEqs::Oldroyd_BSqrt::correct()
 {
     // Velocity gradient tensor
     volTensorField L = fvc::grad(U());

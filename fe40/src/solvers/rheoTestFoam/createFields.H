@@ -1,20 +1,20 @@
     Info<< "Reading constitutiveProperties\n" << endl;
     IOdictionary constitutiveProperties
+    (
+	IOobject
 	(
-		IOobject
-		(
-		"constitutiveProperties",
-		runTime.constant(),
-		mesh,
-		IOobject::MUST_READ,
-		IOobject::NO_WRITE
-		)
-	);
+	"constitutiveProperties",
+	runTime.constant(),
+	mesh,
+	IOobject::MUST_READ,
+	IOobject::NO_WRITE,
+	false
+	)
+    );
 
     tensor gradU_(constitutiveProperties.subDict("rheoTestFoamParameters").lookup("gradU"));
     scalarField gammaEpsilonDotL_(constitutiveProperties.subDict("rheoTestFoamParameters").lookup("gammaEpsilonDotL"));
    
-    dimensionedScalar etaS("etaSt", dimensionSet(1, -1, -1, 0, 0, 0, 0), 0.); // Set value later
     bool ramp_(constitutiveProperties.subDict("rheoTestFoamParameters").lookupOrDefault<Switch>("ramp", false));
 
     int idx = 0; scalar cnt = 0;
@@ -49,20 +49,7 @@
         ),
         mesh
     );
-
-    volSymmTensorField extraStress
-    (
-        IOobject
-        (
-            "extraStress",
-            runTime.timeName(),
-            mesh,
-            IOobject::NO_READ,
-            IOobject::AUTO_WRITE
-        ),
-        etaS* symm(fvc::grad(U)) // Initialization just to ensure the right dimensions
-    );
-    
+ 
 tensor gradU = gradU_*gammaEpsilonDotL_[0];
 
 // Change U BC in order to have the desired grad(U)
@@ -157,6 +144,19 @@ constitutiveModel constEq(U, phi);
 
 bool isGNF(constEq.isGNF()); 
 
+volSymmTensorField extraStress
+(
+ IOobject
+ (
+    "extraStress",
+    runTime.timeName(),
+    mesh,
+    IOobject::NO_READ,
+    IOobject::AUTO_WRITE
+ ),
+ constEq.tauTotal()*1. 
+);
+
 // Create file (assume single-processor; won't make sense multiprocessor one 1 cell!)
 
 fileName oFile(runTime.path()/"Report");
@@ -174,7 +174,7 @@ else
    nl << "t"<< tab <<"extStressXX" << tab << "extStressXY" << tab << "extStressXZ" << tab <<"extStressYY" << tab << "extStressYZ" << tab << "extStressZZ" << endl;
  }
 
-// Set lambdaMax and etaS for VE models (distinguish between multi-mode and single-mode cases)
+// Set lambdaMax for VE models (distinguish between multi-mode and single-mode cases)
 
 word CM = constitutiveProperties.subDict("parameters").lookup("type");
 scalar lambdaMax(0.0);
@@ -182,34 +182,26 @@ scalar lambdaMin(1e20);
 
 if (!isGNF) // doesn't care about ramp, although lambdaMax/Min have no sense if ramp is false
 {
-	if(CM=="multiMode")
-	{
+   if(CM=="multiMode")
+    {
+      PtrList<entry> modelEntries(constitutiveProperties.subDict("parameters").lookup("models"));
 
-		PtrList<entry> modelEntries(constitutiveProperties.subDict("parameters").lookup("models"));
-
-		scalar etaCum(0.0);
-
-		    forAll (modelEntries, modelI)
-		    {
-		       dimensionedScalar etaI(modelEntries[modelI].dict().lookup("etaS"));
-		       etaCum += etaI.value();
-
-		       dimensionedScalar lambdaI(modelEntries[modelI].dict().lookup("lambda"));
-		       lambdaMax = Foam::max(lambdaMax, lambdaI.value());
-                       lambdaMin = Foam::min(lambdaMin, lambdaI.value());
-		      
-		    }
-		etaS.value() = etaCum;
-	}
-	else
-	{
-                dimensionedScalar etaStmp(constitutiveProperties.subDict("parameters").lookup("etaS"));
-                dimensionedScalar lambdatmp(constitutiveProperties.subDict("parameters").lookup("lambda"));
-		etaS.value() = etaStmp.value();
-                lambdaMax = lambdatmp.value();
-                lambdaMin = lambdaMax;
-	}
+      forAll(modelEntries, modelI)
+       {
+         dimensionedScalar lambdaI(modelEntries[modelI].dict().lookup("lambda"));
+         lambdaMax = Foam::max(lambdaMax, lambdaI.value());
+         lambdaMin = Foam::min(lambdaMin, lambdaI.value());    
+       }
+    }
+   else
+    {
+      dimensionedScalar lambdatmp(constitutiveProperties.subDict("parameters").lookup("lambda"));
+         
+      lambdaMax = lambdatmp.value();
+      lambdaMin = lambdaMax;
+    }
 }
+
 
 // Automatic selection of time-step in ramp mode
 

@@ -1,0 +1,23 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Parse arguments for library compilation
+. $WM_DIR/scripts/AllwmakeParseArguments
+
+set -x
+
+wmake libso constitutiveEquations
+wmake libso gaussDefCmpwConvectionScheme
+wmake libso EDFModels
+wmake libso boundaryConditions
+
+wmake preProcessing/rndPerturbation
+wmake preProcessing/initMolecules
+
+wmake libso postProcessing/postProcUtils
+wmake postProcessing/writeEfield
+wmake postProcessing/averageMolcN
+wmake postProcessing/averageMolcX
+
+wmake libso brownianDynamics
+

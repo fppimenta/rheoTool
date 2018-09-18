@@ -14,5 +14,7 @@
 
 	They are model-dependent, except the density. All cases are simulated for Wi = 0.1 and Re = 0.
 	
+	EXCEPT cases in directory otherModels/
+	
 	  
 

@@ -31,14 +31,16 @@ License
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
     defineTypeNameAndDebug(RoliePoly, 0);
     addToRunTimeSelectionTable(constitutiveEq, RoliePoly, dictionary);
 }
-
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::RoliePoly::RoliePoly
+Foam::constitutiveEqs::RoliePoly::RoliePoly
 (
     const word& name,
     const volVectorField& U,
@@ -89,7 +91,7 @@ Foam::RoliePoly::RoliePoly
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::RoliePoly::correct()
+void Foam::constitutiveEqs::RoliePoly::correct()
 {
 
    // Velocity gradient tensor
@@ -163,7 +165,7 @@ else
       
        FatalErrorIn
         (
-            "Foam::RoliePoly::correct()"
+            "Foam::constitutiveEqs::RoliePoly::correct()"
         )   << "Solving in tau not implemented!"
             << abort(FatalError);
  } 

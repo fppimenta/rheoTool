@@ -130,27 +130,6 @@ tmp<surfaceScalarField> talphaPhiCorr0;
 
 #include "createMRF.H"
 
-    // Read C field if present, otherwise the field is (always) initialized as 0
-    volScalarField C
-    (
-        IOobject
-        (
-            "C",
-            runTime.timeName(),
-            mesh,
-            IOobject::READ_IF_PRESENT,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-        dimensionedScalar
-        (
-                "0",
-                dimless,
-                pTraits<scalar>::zero
-        ),
-        extrapolatedCalculatedFvPatchField<scalar>::typeName
-    );
- 
     IOdictionary cttProperties
     (
         IOobject
@@ -159,7 +138,31 @@ tmp<surfaceScalarField> talphaPhiCorr0;
             runTime.constant(),
             mesh,
             IOobject::MUST_READ_IF_MODIFIED,
-            IOobject::NO_WRITE
+            IOobject::NO_WRITE,
+            false
         )
     );
+    
+   bool   sPS = cttProperties.subDict("passiveScalarProperties").lookupOrDefault<Switch>("solvePassiveScalar", false);
+ 
+   autoPtr<volScalarField>  C
+   (
+    sPS != true
+    ? 
+    NULL
+    :
+    new volScalarField
+    (
+       IOobject
+       (
+           "C",
+           runTime.timeName(),
+           mesh,
+           IOobject::MUST_READ,
+           IOobject::AUTO_WRITE
+       ),
+       mesh
+    )
+   );
+   
   

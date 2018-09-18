@@ -56,9 +56,8 @@ PostProcessing
       {
         funcType           calcWSS;
         
-        isViscoelastic           false;
-        includeSolventStresses   false; // Only applies for viscoelastic models
-        includePolymericStresses false; // Only applies for viscoelastic models
+        isTwoPhaseFlow           false;
+        includePolymericStresses false; // Only in case of viscoelastic model
 
         enabled            true;
         evaluateInterval   1;       

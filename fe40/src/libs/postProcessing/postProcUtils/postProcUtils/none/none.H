@@ -38,13 +38,14 @@ SourceFiles
 #ifndef none_H
 #define none_H
 
-#include "../ppUtil.H"
+#include "ppUtil.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-
+namespace ppUtils
+{
 /*---------------------------------------------------------------------------*\
                            Class none Declaration
 \*---------------------------------------------------------------------------*/
@@ -99,6 +100,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace ppUtils
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

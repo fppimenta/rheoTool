@@ -32,13 +32,16 @@ License
 
 namespace Foam
 {
+namespace EDFEquations
+{
     defineTypeNameAndDebug(PoissonBoltzmann, 0);
     addToRunTimeSelectionTable(EDFEquation, PoissonBoltzmann, dictionary);
+}
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::PoissonBoltzmann::PBSpecie::PBSpecie
+Foam::EDFEquations::PoissonBoltzmann::PBSpecie::PBSpecie
 (
     const word& name,
     const surfaceScalarField& phi,
@@ -52,7 +55,7 @@ Foam::PoissonBoltzmann::PBSpecie::PBSpecie
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::PoissonBoltzmann::PoissonBoltzmann
+Foam::EDFEquations::PoissonBoltzmann::PoissonBoltzmann
 (
     const word& name,
     const surfaceScalarField& phi,
@@ -140,7 +143,7 @@ Foam::PoissonBoltzmann::PoissonBoltzmann
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volVectorField> Foam::PoissonBoltzmann::Fe() const
+Foam::tmp<Foam::volVectorField> Foam::EDFEquations::PoissonBoltzmann::Fe() const
 {
     volScalarField rhoE( psi_ * dimensionedScalar("norm", epsilonK_.dimensions()/dimArea, 0.) );
     
@@ -189,7 +192,7 @@ Foam::tmp<Foam::volVectorField> Foam::PoissonBoltzmann::Fe() const
      }         
 }
 
-void Foam::PoissonBoltzmann::correct()
+void Foam::EDFEquations::PoissonBoltzmann::correct()
 {
 
        scalar res=GREAT; 

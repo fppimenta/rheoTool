@@ -35,13 +35,16 @@ License
 
 namespace Foam
 {
+namespace ppUtils
+{
     defineTypeNameAndDebug(calcJpatch, 0);
     addToRunTimeSelectionTable(ppUtil, calcJpatch, dictFS);
+}
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::calcJpatch::calcJpatch
+Foam::ppUtils::calcJpatch::calcJpatch
 (
     const word& name,
     const dictionary& dict,
@@ -82,7 +85,7 @@ patchL_(dict.lookup("ListOfPatches"))
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
   
-void Foam::calcJpatch::createFile()
+void Foam::ppUtils::calcJpatch::createFile()
 {
   // Note: ppDir_ is the directory for the output of postPorcessing data.
   // It is defined in the base class and mkdir is called there also.
@@ -112,7 +115,7 @@ void Foam::calcJpatch::createFile()
      }
 }
 
-void Foam::calcJpatch::update()
+void Foam::ppUtils::calcJpatch::update()
 {
 
 if (enabled_)

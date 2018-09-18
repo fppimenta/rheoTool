@@ -32,13 +32,16 @@ License
 
 namespace Foam
 {
+namespace EDFEquations
+{
     defineTypeNameAndDebug(NernstPlanck, 0);
     addToRunTimeSelectionTable(EDFEquation, NernstPlanck, dictionary);
+}
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::NernstPlanck::NPSpecie::NPSpecie
+Foam::EDFEquations::NernstPlanck::NPSpecie::NPSpecie
 (
     const word& name,
     const surfaceScalarField& phi,
@@ -64,7 +67,7 @@ Foam::NernstPlanck::NPSpecie::NPSpecie
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::NernstPlanck::NernstPlanck
+Foam::EDFEquations::NernstPlanck::NernstPlanck
 (
     const word& name,
     const surfaceScalarField& phi,
@@ -140,7 +143,7 @@ Foam::NernstPlanck::NernstPlanck
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volVectorField> Foam::NernstPlanck::Fe() const
+Foam::tmp<Foam::volVectorField> Foam::EDFEquations::NernstPlanck::Fe() const
 {    
     volScalarField rhoE( psi_ * dimensionedScalar("norm", epsilonK_.dimensions()/dimArea, 0.) );
     
@@ -188,7 +191,7 @@ Foam::tmp<Foam::volVectorField> Foam::NernstPlanck::Fe() const
      }      
 }
 
-void Foam::NernstPlanck::correct()
+void Foam::EDFEquations::NernstPlanck::correct()
 {
 
 // Electrokinetic coupling loop

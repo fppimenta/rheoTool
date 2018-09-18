@@ -31,14 +31,16 @@ License
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
     defineTypeNameAndDebug(PTTlinearLog, 0);
     addToRunTimeSelectionTable(constitutiveEq, PTTlinearLog, dictionary);
 }
-
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::PTTlinearLog::PTTlinearLog
+Foam::constitutiveEqs::PTTlinearLog::PTTlinearLog
 (
     const word& name,
     const volVectorField& U,
@@ -122,7 +124,7 @@ Foam::PTTlinearLog::PTTlinearLog
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::PTTlinearLog::correct()
+void Foam::constitutiveEqs::PTTlinearLog::correct()
 {
    // Decompose grad(U).T()
 

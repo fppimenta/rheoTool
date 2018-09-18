@@ -1,0 +1,54 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  6.0                                   |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+
+    movingLid
+    {
+        type            codedFixedValue;
+    	value           uniform (0 0 0);
+    	redirectType    movLid;
+    	code
+    	#{
+          const scalar& t = this->db().time().timeOutputValue() ;
+ 
+          const vectorField& x = patch().Cf();
+
+          operator==(  
+                       vector(1., 0., 0.)  
+                     * 8.0 * (1.0 + tanh( 8.0 * (t - 0.5) ) ) 
+                     * pow( x.component(0), 2.0 ) * pow( ( 1 - x.component(0) ), 2.0  )
+                    );
+   	#};
+    }
+    fixedWalls
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    frontAndBack
+    {
+        type            empty;
+    }
+          
+}
+
+// ************************************************************************* //

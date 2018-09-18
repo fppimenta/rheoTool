@@ -10,5 +10,5 @@
 
     UEqn().relax();
 
-    solve(UEqn() == -fvc::grad(p));
+    solve(UEqn() == -fvc::grad(p)); 
  

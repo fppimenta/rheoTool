@@ -31,13 +31,16 @@ License
 
 namespace Foam
 {
+namespace ppUtils
+{
     defineTypeNameAndDebug(none, 0);
     addToRunTimeSelectionTable(ppUtil, none, dictFS);
+}
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::none::none
+Foam::ppUtils::none::none
 (
     const word& name,
     const dictionary& dict,
@@ -50,7 +53,7 @@ ppUtil(name, dict, U)
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::none::update()
+void Foam::ppUtils::none::update()
 {
 
    // do nothing

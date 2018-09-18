@@ -47,11 +47,13 @@ SourceFiles
 #ifndef calcJpatch_H
 #define calcJpatch_H
 
-#include "../ppUtil.H"
+#include "ppUtil.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
+{
+namespace ppUtils
 {
 
 /*---------------------------------------------------------------------------*\
@@ -116,6 +118,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace ppUtils
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

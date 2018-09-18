@@ -31,14 +31,16 @@ License
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
     defineTypeNameAndDebug(RoliePolyLog, 0);
     addToRunTimeSelectionTable(constitutiveEq, RoliePolyLog, dictionary);
 }
-
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::RoliePolyLog::RoliePolyLog
+Foam::constitutiveEqs::RoliePolyLog::RoliePolyLog
 (
     const word& name,
     const volVectorField& U,
@@ -124,7 +126,7 @@ Foam::RoliePolyLog::RoliePolyLog
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::RoliePolyLog::correct()
+void Foam::constitutiveEqs::RoliePolyLog::correct()
 {
     // Decompose grad(U).T()
 

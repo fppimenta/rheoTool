@@ -1,0 +1,57 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.extend-project.de       |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      sampleDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+setFormat raw;
+
+surfaceFormat raw;
+
+formatOptions
+{
+    ensight
+    {
+        format  ascii;
+    }
+}
+
+interpolationScheme cellPointFace;
+
+fields
+(
+   U  
+   tau
+   
+);
+
+sets
+(
+
+    lineVert
+    {
+        type        face;
+        axis        y;
+
+        start       ( 30e-4 -1.2e-4 0 );
+        end         ( 30e-4 1.2e-4 0 );
+       
+    }
+ 
+);
+
+surfaces
+(
+
+);
+

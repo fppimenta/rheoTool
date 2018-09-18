@@ -1,35 +1,44 @@
 {
-    volScalarField rUA = 1.0/UEqn.A();
-    surfaceScalarField rUAf = fvc::interpolate(rUA);
+    volScalarField rAU = 1.0/UEqn.A();
+    surfaceScalarField rAUf = fvc::interpolate(rAU);
 
-    U = rUA*UEqn.H();
-
+    U = rAU*UEqn.H();
     surfaceScalarField phiU
     (
-        "phiU",
-        (fvc::interpolate(U) & mesh.Sf())
-      + fvc::ddtPhiCorr(rUA, rho, U, phi)
+       "phiU",
+       mesh.changing() == true ?
+       (fvc::interpolate(U) & mesh.Sf())
+       :
+       (fvc::interpolate(U) & mesh.Sf())
+     + fvc::ddtPhiCorr(rAU, rho, U, phi)
     );
 
-    adjustPhi(phiU, U, pd);
-        
+    if (pd.needReference())
+    {
+        adjustPhi(phi, U, pd);
+    }
+
     surfaceScalarField phig
     (
         (
             fvc::interpolate(interface.sigmaK())*fvc::snGrad(alpha1)
           - ghf*fvc::snGrad(rho)
-        )*rUAf*mesh.magSf()
+        )*rAUf*mesh.magSf()
     );
     
     phi = phiU + phig;
         
-    tmp<volScalarField> rAtU(rUA);
+    tmp<volScalarField> rAtU(rAU);
 
-    rAtU = 1.0/(1.0/rUA - UEqn.H1());
-    rAtU().rename("rAtU");
+    if (simplec)
+    {
+      rAtU = 1.0/(1.0/rAU - UEqn.H1());
+      rAtU().rename("rAtU");
     
-    phi += fvc::interpolate(rAtU() - rUA)*fvc::snGrad(pd)*mesh.magSf();
-    U -= (rUA - rAtU())*fvc::grad(pd);
+      phi += fvc::interpolate(rAtU() - rAU)*fvc::snGrad(pd)*mesh.magSf();
+      U -= (rAU - rAtU())*fvc::grad(pd);
+    }
+
 
     while (pimple.correctNonOrthogonal())
     {
@@ -39,11 +48,15 @@
         );
 
         pdEqn.setReference(pdRefCell, pdRefValue);
-
-        pdEqn.solve
-        (
-            mesh.solutionDict().solver(pd.select(pimple.finalInnerIter()))
-        );
+        
+        if (simplec)
+        {
+          pdEqn.solve();
+        }
+        else
+        {
+          pdEqn.solve(mesh.solutionDict().solver(pd.select(pimple.finalInnerIter())));
+        }
 
         if (pimple.finalNonOrthogonalIter())
         {
@@ -51,6 +64,19 @@
         }
     }
 
-    U += rUA*fvc::reconstruct(phig/rUAf) - rAtU()*fvc::grad(pd);
+    if (simplec)
+     {
+          U += rAU*fvc::reconstruct(phig/rAUf) - rAtU()*fvc::grad(pd);
+     }
+    else
+     {
+          U += rAU*fvc::reconstruct((phi - phiU)/rAUf);
+     }
+     
     U.correctBoundaryConditions();
+
+    #include "continuityErrs.H"
+
+    // Make the fluxes relative to the mesh motion
+    fvc::makeRelative(phi, U);
 }

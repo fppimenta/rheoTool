@@ -33,6 +33,8 @@ License
 
 namespace Foam
 {
+namespace EDFEquations
+{
 
 /*---------------------------------------------------------------------------*\
                            Class slipSmoluchowski Declaration
@@ -100,6 +102,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace EDFEquations
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -67,6 +67,11 @@ tmp<volSymmTensorField> constitutiveModel::tau() const
     return eqPtr_->tau();
 }
 
+tmp<volSymmTensorField> constitutiveModel::tauTotal() const
+{
+    return eqPtr_->tauTotal();
+}
+
 const dimensionedScalar constitutiveModel::rho() const
 {
     return eqPtr_->rho();
@@ -77,7 +82,7 @@ tmp<fvVectorMatrix> constitutiveModel::divTau(volVectorField& U) const
     return eqPtr_->divTau(U);
 }
 
-bool constitutiveModel::isGNF()
+bool constitutiveModel::isGNF() const
 {
     return eqPtr_->isGNF();
 }

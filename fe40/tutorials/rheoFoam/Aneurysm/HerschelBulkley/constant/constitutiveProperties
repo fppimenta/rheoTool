@@ -24,6 +24,8 @@ parameters
    		tau0            tau0  [ 1 -1 -2 0 0 0 0 ] .0175; 
    		k               k     [ 1 -1 -1 0 0 0 0 ] 8.9721e-3; 
    		n               n     [ 0 0 0 0 0 0 0 ] 0.8601; 
+   		
+   		PapanastasiouRegularization false; 
                
 }
 

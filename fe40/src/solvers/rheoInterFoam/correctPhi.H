@@ -1,20 +1,6 @@
 {
 #   include "continuityErrs.H"
 
-    wordList pcorrTypes
-    (
-        pd.boundaryField().size(),
-        zeroGradientFvPatchScalarField::typeName
-    );
-
-    for (label i=0; i<pd.boundaryField().size(); i++)
-    {
-        if (pd.boundaryField()[i].fixesValue())
-        {
-            pcorrTypes[i] = fixedValueFvPatchScalarField::typeName;
-        }
-    }
-
     volScalarField pcorr
     (
         IOobject
@@ -30,7 +16,14 @@
         pcorrTypes
     );
 
-    dimensionedScalar rUAf("(1|A(U))", dimTime/rho.dimensions(), 1.0);
+    dimensionedScalar rAUf
+    (
+        "(1|A(U))",
+        dimTime/rho.dimensions(),
+        runTime.deltaT().value()
+    );
+
+    phi = (fvc::interpolate(U) & mesh.Sf());
 
     adjustPhi(phi, U, pcorr);
 
@@ -40,7 +33,7 @@
     {
         fvScalarMatrix pcorrEqn
         (
-            fvm::laplacian(rUAf, pcorr) == fvc::div(phi)
+            fvm::laplacian(rAUf, pcorr) == fvc::div(phi)
         );
 
         pcorrEqn.setReference(pdRefCell, pdRefValue);
@@ -53,4 +46,8 @@
     }
 
 #   include "continuityErrs.H"
+#   include "CourantNo.H"
+
+    // Recalculate rhoPhi from rho
+    rhoPhi = fvc::interpolate(rho)*phi;
 }

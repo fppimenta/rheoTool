@@ -31,14 +31,16 @@ License
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
     defineTypeNameAndDebug(PTTlinear, 0);
     addToRunTimeSelectionTable(constitutiveEq, PTTlinear, dictionary);
 }
-
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::PTTlinear::PTTlinear
+Foam::constitutiveEqs::PTTlinear::PTTlinear
 (
     const word& name,
     const volVectorField& U,
@@ -72,7 +74,7 @@ Foam::PTTlinear::PTTlinear
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::PTTlinear::correct()
+void Foam::constitutiveEqs::PTTlinear::correct()
 {
     // Velocity gradient tensor
     volTensorField L = fvc::grad(U());

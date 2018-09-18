@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    rheoEFoam
+    rheoFoam
 
 Description
     Transient solver for incompressible, laminar electrically-driven flow. Pressure
@@ -31,7 +31,6 @@ Description
     the SIMPLEC algorithm.
     
     This solver is part of rheoTool.
-
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
@@ -40,68 +39,91 @@ Description
 #include "simpleControl.H"
 #include "fvOptions.H"
 #include "extrapolatedCalculatedFvPatchField.H"
-#include "EDFModel.H"
+#include "dynamicFvMesh.H"
+#include "CorrectPhi.H"
+
+#include "adjustCorrPhi.H" 
+
 #include "ppUtilInterface.H"
 #include "constitutiveModel.H"
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+#include "EDFModel.H"
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+   
 int main(int argc, char *argv[])
 {
     #include "postProcess.H"
-
+    
     #include "setRootCase.H"
     #include "createTime.H"
-    #include "createMesh.H"
-    #include "createControl.H"
-    #include "createTimeControls.H"
-    #include "createFields.H"
+    #include "createDynamicFvMeshDict.H"  
+    #include "createDynamicFvMesh.H"  
+    #include "initContinuityErrs.H" 
+    
+    #include "createFields.H"  
+    #include "createControls.H" 
+    #include "createUfIfNeeded.H"
     #include "createFvOptions.H"
     #include "createPPutil.H"
-    #include "initContinuityErrs.H"
-    
-    // Read extra-controls
-
-    int    nInIter = simple.dict().lookupOrDefault<int>("nInIter", 1);
-    bool   solveFluid = mesh.solutionDict().subDict("SIMPLE").lookupOrDefault<Switch>("solveFluid", true); 
-    bool   sPS = cttProperties.subDict("passiveScalarProperties").lookupOrDefault<Switch>("solvePassiveScalar", false);
-    if (sPS) C.writeOpt() = IOobject::AUTO_WRITE;
+    #include "CourantNo.H"
+    #include "setInitialDeltaT.H"
  
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
+    
     Info<< "\nStarting time loop\n" << endl;
-   
+ 
     // --- Time loop ---
 
     while (simple.loop())
     {
-        Info<< "Time = " << runTime.timeName() << nl << endl;
-
-        #include "readTimeControls.H"
+        #include "readControls.H"
         #include "CourantNo.H"
         #include "setDeltaT.H"
+        
+        Info<< "Time = " << runTime.timeName() << nl << endl;
 
+        mesh.update();
+
+        if (mesh.changing())
+         {
+           // Calculate absolute flux from the mapped surface velocity
+           phi = mesh.Sf() & Uf();
+        
+           if (correctPhi)
+           {
+              #include "correctPhi.H"
+           }
+
+           // Make the flux relative to the mesh motion
+           fvc::makeRelative(phi, U);
+
+           if (checkMeshCourantNo)
+           {
+             #include "meshCourantNo.H"
+           }
+         }
+         
         // --- Inner loop iterations ---
- 
         for (int i=0; i<nInIter; i++)
 	  {
 
-            Info<< "Inner iteration:  " << i << nl << endl; 
+            Info << "Inner iteration:  " << i << nl << endl; 
            
-            // --- Pressure-velocity SIMPLEC corrector
+            if (solveFluid)
             {
-               // ---- Update electric terms ----
-               elecM.correct();
-               
-                if (solveFluid)
-                {
-                  // ---- Solve constitutive equation ----	
-                  constEq.correct();
-
-                  // ---- Solve U and p ----	
-                  #include "UEqn.H"
-                  #include "pEqn.H"
-                }
+               // --- Pressure-velocity SIMPLEC corrector
+               {
+                 // ---- Solve U and p ----	
+                 #include "UEqn.H"
+                 #include "pEqn.H"         
+               }
+            
+               // ---- Solve constitutive equation ----	
+               constEq.correct();
             }
+             
+            // ---- Update electric terms ----
+            elecM.correct();
 
             // --- Passive Scalar transport
             if (sPS)
@@ -110,7 +132,7 @@ int main(int argc, char *argv[])
              }
 
          }
-         
+
         postProc.update();
         runTime.write();
 

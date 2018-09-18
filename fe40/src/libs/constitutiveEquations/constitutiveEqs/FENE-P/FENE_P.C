@@ -31,14 +31,17 @@ License
 
 namespace Foam
 {
+namespace constitutiveEqs
+{
     defineTypeNameAndDebug(FENE_P, 0);
     addToRunTimeSelectionTable(constitutiveEq, FENE_P, dictionary);
+}
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::FENE_P::FENE_P
+Foam::constitutiveEqs::FENE_P::FENE_P
 (
     const word& name,
     const volVectorField& U,
@@ -99,7 +102,7 @@ Foam::FENE_P::FENE_P
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::FENE_P::correct()
+void Foam::constitutiveEqs::FENE_P::correct()
 {
 
    dimensionedSymmTensor Ist

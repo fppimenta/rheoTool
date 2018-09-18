@@ -45,6 +45,7 @@ Description
 #include "IOdictionary.H"
 #include "Switch.H"
 #include "autoPtr.H"
+#include "NamedEnum.H"
 #include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -80,11 +81,21 @@ private:
         //- Disallow default bitwise assignment
         void operator=(const constitutiveEq&);
         
+public:
+
+    //- Stabilization options
+    enum stabOptions
+    {
+      soNone,
+      soBSD,
+      soCoupling
+    };
+        
 protected:
 
    // Protected Members
    
-      //- Return B and Sigma matrices after decomposition of grad(U).T() for the LCM
+        //- Return B and Sigma matrices after decomposition of grad(U).T() for the LCM
         void decomposeGradU
         (
           const volTensorField& M,
@@ -94,17 +105,18 @@ protected:
           volTensorField& B
         );
 
-      //- Return eigenvectors/values of theta for the LCM
+        //- Return eigenvectors/values of theta for the LCM
         void calcEig(const volSymmTensorField& theta, volTensorField& vals, volTensorField& vecs);
         
-      //- Return the strain rate magnitude for GNF models
-        tmp<volScalarField> strainRate();
+        //- Return the strain rate magnitude for GNF models
+        inline tmp<volScalarField> strainRate()
+        {
+          return ( sqrt(2.0)*mag( symm(fvc::grad(U_)) ) );
+        }
         
-      //- Check which stabilization method to use
+        //- Check which stabilization method to use
         void checkForStab(const dictionary& dict);
       
-      //- Stabilization method: 0 - none; 1 - BSD; 2 - Coupling  
-        int stabMeth_; 
         
   // The following protected functions are intended to be used inside divTau() and divTauS() functions,
   // which should be general for almost all models (exception: multiMode). Any other use should be
@@ -123,11 +135,14 @@ protected:
        }
        
       //- Return the polymeric viscosity for VE models (default behavior is a null viscosity - for GNF models)
-      // Does not consider possible variation of etaP with shear rate (there is no need for it where it is used)  
+      // Does not consider possible variation of etaP with shear rate (there is no need for it where is used)  
       virtual const dimensionedScalar etaP() const
        {
           return (dimensionedScalar("zeroU", dimensionSet(1, -1, -1, 0, 0, 0, 0), 0));
        }
+       
+      static const NamedEnum<stabOptions, 3> stabOptionNames_;
+      stabOptions stabOption_;
 
 public:
 
@@ -180,7 +195,6 @@ public:
         virtual ~constitutiveEq()
         {}
 
-
     // Member Functions
 
         //- Return name
@@ -204,17 +218,21 @@ public:
         //- Return the viscoelastic stress tensor
         virtual tmp<volSymmTensorField> tau() const = 0;
         
+        //- Return the total stress tensor (solvent + polymeric)
+        //  using alpha1 as weight
+        virtual tmp<volSymmTensorField> tauTotal() const;
+        
         //- Return the density
         virtual const dimensionedScalar rho() const = 0;
 
         //- Return the coupling term for the momentum equation (since it is virtual non-pure,
-        // it does need to be redefined in derived classes, although it can be if any model needs
+        // it does not need to be redefined in derived classes, although it can if any model needs
         // a different implementation)
         virtual tmp<fvVectorMatrix> divTau(const volVectorField& U) const;
         
         //- Return the solvent extra-stress contribution + stabilizing terms for phase alpha
-        // (since it is virtual non-pure, it does need to be redefined in derived classes, 
-        // although it can be if any model needs a different implementation)
+        // (since it is virtual non-pure, it does not need to be redefined in derived classes, 
+        // although it can if any model needs a different implementation)
         virtual tmp<fvVectorMatrix> divTauS(const volVectorField& U, const volScalarField& alpha) const;
         
         //- Return true if GNF (non-elastic)

@@ -7,8 +7,9 @@ EXE_INC = \
     -I../../libs/boundaryConditions/lnInclude \
     -I../../libs/postProcessing/postProcUtils/lnInclude \
     -I../../libs/EDFModels/lnInclude \
-    -I$(LIB_SRC)/sampling/lnInclude
-
+    -I$(LIB_SRC)/sampling/lnInclude \
+    -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
+    -I$(LIB_SRC)/dynamicMesh/lnInclude
 
 EXE_LIBS = \
     -lfiniteVolume \
@@ -19,4 +20,7 @@ EXE_LIBS = \
     -L$(FOAM_USER_LIBBIN) -lBCRheoTool \
     -L$(FOAM_USER_LIBBIN) -lpostProcessingRheoTool \
     -L$(FOAM_USER_LIBBIN) -lEDFModels \
-    -lsampling
+    -lsampling \
+    -ldynamicFvMesh \
+    -ltopoChangerFvMesh \
+    -ldynamicMesh

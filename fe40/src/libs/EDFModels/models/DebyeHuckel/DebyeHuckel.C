@@ -32,13 +32,15 @@ License
 
 namespace Foam
 {
+namespace EDFEquations
+{
     defineTypeNameAndDebug(DebyeHuckel, 0);
     addToRunTimeSelectionTable(EDFEquation, DebyeHuckel, dictionary);
 }
-
+}
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::DebyeHuckel::DHSpecie::DHSpecie
+Foam::EDFEquations::DebyeHuckel::DHSpecie::DHSpecie
 (
     const word& name,
     const surfaceScalarField& phi,
@@ -52,7 +54,7 @@ Foam::DebyeHuckel::DHSpecie::DHSpecie
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::DebyeHuckel::DebyeHuckel
+Foam::EDFEquations::DebyeHuckel::DebyeHuckel
 (
     const word& name,
     const surfaceScalarField& phi,
@@ -141,7 +143,7 @@ Foam::DebyeHuckel::DebyeHuckel
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volVectorField> Foam::DebyeHuckel::Fe() const
+Foam::tmp<Foam::volVectorField> Foam::EDFEquations::DebyeHuckel::Fe() const
 {
     
     volScalarField rhoE( psi_ * dimensionedScalar("norm", epsilonK_.dimensions()/dimArea, 0.) );
@@ -191,7 +193,7 @@ Foam::tmp<Foam::volVectorField> Foam::DebyeHuckel::Fe() const
      }      
 }
 
-void Foam::DebyeHuckel::correct()
+void Foam::EDFEquations::DebyeHuckel::correct()
 {
 
        scalar res=GREAT; 

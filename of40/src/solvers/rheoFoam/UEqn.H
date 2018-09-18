@@ -1,8 +1,11 @@
    // Momentum predictor
 
+    MRF.correctBoundaryVelocity(U);
+    
     tmp<fvVectorMatrix> tUEqn
     (
         fvm::ddt(U) 
+      + MRF.DDt(U)
       + fvm::div(phi, U)
       ==
         fvOptions(U)  
@@ -16,6 +19,6 @@
     fvOptions.constrain(UEqn);
  
     solve(UEqn == -fvc::grad(p));
-
+    
     fvOptions.correct(U);
 

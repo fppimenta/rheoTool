@@ -97,6 +97,9 @@ public:
         //- Return the viscoelastic stress tensor
         virtual tmp<volSymmTensorField> tau() const;
         
+        //- Return the total stress tensor (solvent + polymeric)
+        virtual tmp<volSymmTensorField> tauTotal() const;
+        
         //- Return the density
         virtual const dimensionedScalar rho() const;
 
@@ -104,7 +107,7 @@ public:
         virtual tmp<fvVectorMatrix> divTau(volVectorField& U) const;
         
         //- Return true if GNF (non-elastic)
-        virtual bool isGNF();
+        virtual bool isGNF() const;
 
         //- Correct the viscoelastic stress
         virtual void correct();

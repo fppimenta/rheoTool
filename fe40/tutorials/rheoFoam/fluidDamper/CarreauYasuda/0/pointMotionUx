@@ -1,0 +1,66 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.extend-project.de       |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       pointScalarField;
+    object      pointMotionU;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+     left
+    {
+        type            fixedValue;
+	value           uniform 0;
+    }
+
+    right
+    {
+        type            fixedValue;
+	value           uniform 0; 
+    }
+
+    top
+    {
+        type            slip;
+    }
+    
+    piston
+    {       
+        type            oscillatingFixedValue;
+    	value           uniform 0; 
+    	
+    	refValue        0.;
+    	amplitude       2.412743158;
+    	frequency       32;
+    }
+    
+    shaft
+    {
+        type            slip;
+    }
+
+    wedge0
+    {
+        type            wedge;
+    }
+    
+    wedge1
+    {
+        type            wedge;
+    }
+}
+
+// ************************************************************************* //

@@ -32,13 +32,16 @@ License
 
 namespace Foam
 {
+namespace EDFEquations
+{
     defineTypeNameAndDebug(slipSmoluchowski, 0);
     addToRunTimeSelectionTable(EDFEquation, slipSmoluchowski, dictionary);
+}
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::slipSmoluchowski::slipSmoluchowski
+Foam::EDFEquations::slipSmoluchowski::slipSmoluchowski
 (
     const word& name,
     const surfaceScalarField& phi,
@@ -83,7 +86,7 @@ Foam::slipSmoluchowski::slipSmoluchowski
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volVectorField> Foam::slipSmoluchowski::Fe() const
+Foam::tmp<Foam::volVectorField> Foam::EDFEquations::slipSmoluchowski::Fe() const
 {
     return
     (
@@ -91,7 +94,7 @@ Foam::tmp<Foam::volVectorField> Foam::slipSmoluchowski::Fe() const
     );     
 }
 
-void Foam::slipSmoluchowski::correct()
+void Foam::EDFEquations::slipSmoluchowski::correct()
 {
 
        scalar res=GREAT; 
