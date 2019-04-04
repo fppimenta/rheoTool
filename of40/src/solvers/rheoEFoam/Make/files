@@ -1,3 +1,0 @@
-rheoEFoam.C
-
-EXE = $(FOAM_USER_APPBIN)/rheoEFoam
