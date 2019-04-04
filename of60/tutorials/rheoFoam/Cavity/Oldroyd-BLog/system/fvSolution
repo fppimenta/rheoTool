@@ -16,18 +16,28 @@ FoamFile
 
 solvers
 {
-    "(p)"
-    {
-        solver           PCG;
-        preconditioner   DIC;
-        tolerance        1e-10;
-        relTol           0;
-        minIter          0;
-        maxIter          800;
+    "(p|U)"
+    {        
+        solverType       eigenSolver; 
+         
+        solver           BiCGSTAB;
+                  
+        saveSystem               true;
+        updatePrecondFrequency   -1;
+        updateMatrixCoeffs       true;
         
+        tolerance        1e-12;
+        maxIter          1000;
+       
+        preconditioner
+        {
+            preconditioner       ILUT;
+            dropTol              1e-80;
+            fillFactor           200;
+        }       
     }
 
-    "(theta|tau|U)"
+    "(theta|tau)"
     {
 
         solver           PBiCG;

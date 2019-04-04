@@ -131,6 +131,9 @@ public:
 
         //- Correct the viscoelastic stress
         virtual void correct();
+        
+        //- Adds implicitly the extra-stress polymer contribution in momentum equation 
+        virtual void divTauImplCoupled() const;
 };
 
 

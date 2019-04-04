@@ -86,7 +86,10 @@ Foam::constitutiveEqs::CarreauYasuda::CarreauYasuda
         ),
         strainRate()*dimensionedScalar("zeroU", dimensionSet(1, -1, 0, 0, 0, 0, 0), 0) //Just to ensure dimensions and BCs
     )
-{}
+{
+  // Initialize eta_
+  correct();
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

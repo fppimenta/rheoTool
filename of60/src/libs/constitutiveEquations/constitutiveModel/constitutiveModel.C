@@ -81,6 +81,13 @@ tmp<fvVectorMatrix> constitutiveModel::divTau(volVectorField& U) const
     return eqPtr_->divTau(U);
 }
 
+void constitutiveModel::divTauImplCoupled
+() 
+const
+{
+    return eqPtr_->divTauImplCoupled();
+}
+
 bool constitutiveModel::isGNF() const
 {
     return eqPtr_->isGNF();

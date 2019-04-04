@@ -7,7 +7,7 @@
         fvm::ddt(C()) 
       + fvm::div(phi, C())
       ==
-        fvc::laplacian(D_, C())    
+        fvm::laplacian(D_, C())    
     );
 
     CEqn.relax();

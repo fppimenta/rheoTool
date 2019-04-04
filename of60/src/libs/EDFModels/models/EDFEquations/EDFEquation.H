@@ -158,6 +158,11 @@ public:
 
         //- Return the electric force for the momentum equation
         virtual tmp<volVectorField> Fe() const = 0;
+        
+        virtual void FeImplCoupled
+        (
+          const dimensionedScalar rho
+        ) const;
 
         //- Update the electric force
         virtual void correct() = 0;

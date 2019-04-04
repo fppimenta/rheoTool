@@ -118,7 +118,8 @@ Foam::constitutiveEqs::XPomPomLog::XPomPomLog
     lambdaS_(dict.lookup("lambdaS")),
     lambdaB_(dict.lookup("lambdaB")),
     alpha_(dict.lookup("alpha")),
-    q_(dict.lookup("q"))
+    q_(dict.lookup("q")),
+    n_(dict.lookup("n"))
 {
  checkForStab(dict);
 }
@@ -153,11 +154,16 @@ void Foam::constitutiveEqs::XPomPomLog::correct()
     volScalarField trA(tr(A_));
     
     volScalarField lambda(Foam::sqrt(trA/3.));
-    
+   
     volScalarField f
     ( 
-        2.*(lambdaB_/lambdaS_)*Foam::exp( (2./q_)*(lambda-1.) ) * (1. - 1./lambda)
-     + (1./(lambda*lambda)) * ( 1. - alpha_ - (alpha_/3.) * ( tr(A_&A_) - 2.*trA ) )
+     n_.value() == 0
+     ?
+          2.*(lambdaB_/lambdaS_)*Foam::exp( (2./q_)*(lambda-1.) ) * (1. - 1./lambda)
+       + (1./(lambda*lambda)) * ( 1. - alpha_ - (alpha_/3.) * ( tr(A_&A_) - 2.*trA ) )
+     :
+          2.*(lambdaB_/lambdaS_)*Foam::exp( (2./q_)*(lambda-1.) ) * (1. - 1./Foam::pow(lambda, n_+1))
+       + (1./(lambda*lambda)) * ( 1. - alpha_ - (alpha_/3.) * ( tr(A_&A_) - 2.*trA ) )
     );
 
     fvSymmTensorMatrix thetaEqn

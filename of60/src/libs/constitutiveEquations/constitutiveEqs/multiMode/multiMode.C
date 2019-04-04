@@ -164,5 +164,13 @@ void Foam::constitutiveEqs::multiMode::correct()
     tau();
 }
 
+void Foam::constitutiveEqs::multiMode::divTauImplCoupled() const
+{
+
+    forAll (models_, i)
+       models_[i].divTauImplCoupled();
+     
+}
+
 
 // ************************************************************************* //

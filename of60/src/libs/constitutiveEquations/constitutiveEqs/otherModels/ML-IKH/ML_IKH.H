@@ -48,7 +48,7 @@ namespace constitutiveEqs
 
 class ML_IKH
 :
-    public constitutiveEq
+    public constitutiveEq 
 {
     // Private data
 

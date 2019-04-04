@@ -25,6 +25,7 @@ AllcleanMaster.sh
 AllrunMaster.sh
 limpa.sh
 updateHeader.sh
+foamUpdateCaseFileHeaderExt
 resume
 
 # dependency files - anywhere

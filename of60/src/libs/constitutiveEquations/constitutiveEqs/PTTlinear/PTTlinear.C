@@ -26,6 +26,8 @@ License
 
 #include "PTTlinear.H"
 #include "addToRunTimeSelectionTable.H"
+#include "coupledSolver.H" 
+#include "blockOperators.H" 
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -69,37 +71,68 @@ Foam::constitutiveEqs::PTTlinear::PTTlinear
     lambda_(dict.lookup("lambda"))
 {
  checkForStab(dict);
+ 
+ checkIfCoupledSolver(U.mesh().solutionDict()); 
+ 
+ if (solveCoupled_)
+ {
+   coupledSolver& cps = U().mesh().lookupObjectRef<coupledSolver>("Uptau");  
+   cps.insertField(tau_);    
+ }
 }
-
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 void Foam::constitutiveEqs::PTTlinear::correct()
 {
-    // Velocity gradient tensor
-    volTensorField L = fvc::grad(U());
+ // Velocity gradient tensor
+ volTensorField L = fvc::grad(U());
 
-    // Convected derivate term
-    volTensorField C = tau_ & L;
+ // Convected derivate term
+ volTensorField C = tau_ & L;
 
-    // Twice the rate of deformation tensor
-    volSymmTensorField twoD = twoSymm(L);
+ // Twice the rate of deformation tensor
+ volSymmTensorField twoD = twoSymm(L);
 
-    // Stress transport equation
-    fvSymmTensorMatrix tauEqn
-    (
-        fvm::ddt(tau_)
-      + fvm::div(phi(), tau_)
-     ==
-        etaP_/lambda_*twoD
-      + twoSymm(C)
-      - fvm::Sp(epsilon_/etaP_*tr(tau_) + 1./lambda_, tau_)
-      - 0.5*zeta_*(symm(tau_ & twoD) + symm(twoD & tau_))
-    );
+ // Stress transport equation
+ fvSymmTensorMatrix tauEqn
+ (
+     fvm::ddt(tau_)
+   + fvm::div(phi(), tau_)
+  ==
+     twoSymm(C)
+   - fvm::Sp(epsilon_/etaP_*tr(tau_) + 1./lambda_, tau_)
+   - 0.5*zeta_*(symm(tau_ & twoD) + symm(twoD & tau_))
+ );
 
-    tauEqn.relax();
-    tauEqn.solve();
- 
+ tauEqn.relax();
+   
+ if (!solveCoupled_)
+ {
+   solve(tauEqn == etaP_/lambda_*twoD);
+ }
+ else
+ {   
+   // Get the solver
+   coupledSolver& cps = U().mesh().lookupObjectRef<coupledSolver>("Uptau"); 
+      
+   // Insert tauEqn
+   cps.insertEquation
+   (
+     tau_.name(),
+     tau_.name(),
+     tauEqn
+   );
+
+   // Insert term (gradU + gradU.T)
+   cps.insertEquation
+   (
+     tau_.name(),
+     U().name(),
+     fvmb::twoSymmGrad(-etaP_/lambda_, U())
+   );   
+ }
+
 }
 
 

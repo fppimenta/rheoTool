@@ -86,6 +86,9 @@ class XPomPomLog
             
             //- Number of arms at the end of a backbone
             dimensionedScalar q_;
+            
+            //- Thermodynamic consistency parameter (n = 0 or 1)
+            dimensionedScalar n_;
  
 
     // Private Member Functions

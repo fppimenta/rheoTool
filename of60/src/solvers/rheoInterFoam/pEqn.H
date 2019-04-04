@@ -63,11 +63,11 @@
 
         if (simplec)
         {
-          p_rghEqn.solve();
+          spSolverprgh->solve(p_rghEqn); 
         }
         else
         {
-          p_rghEqn.solve(mesh.solver(p_rgh.select(pimple.finalInnerIter())));
+          spSolverprgh->solve(p_rghEqn, mesh.solver(p_rgh.select(pimple.finalInnerIter()))); 
         }
 
         if (pimple.finalNonOrthogonalIter())
@@ -77,13 +77,13 @@
             p_rgh.relax();
 
             if (simplec)
-             {
+            {
                U = HbyA + rAU()*fvc::reconstruct(phig/rAUf) - rAtU()*fvc::grad(p_rgh);
-             }
+            }
             else
-             {
+            {
                U = HbyA + rAU()*fvc::reconstruct((phig - p_rghEqn.flux())/rAUf);
-             }
+            }
             U.correctBoundaryConditions();
             fvOptions.correct(U);
         }

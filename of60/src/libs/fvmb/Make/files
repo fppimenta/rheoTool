@@ -1,0 +1,4 @@
+LMatrixs.C
+operators/blockOperators.C
+
+LIB = $(FOAM_USER_LIBBIN)/libfvmb

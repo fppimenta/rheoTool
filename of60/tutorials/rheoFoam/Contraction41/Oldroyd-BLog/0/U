@@ -38,7 +38,7 @@ boundaryField
 
           if (t<=tlim)
            {
-             Uav = ( ( (1 - Foam::cos( 3.1415926535897932 * t) ) / fac) * dirN);
+             Uav = ( ( (1 - Foam::cos( 3.1415926535897932 * t/tlim) ) / fac) * dirN);
            }
        
           operator == (Uav);

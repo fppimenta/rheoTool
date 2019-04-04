@@ -36,6 +36,8 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
+#include "sparseMatrixSolvers.H" // Avoid namespace Foam
+
 #include "fvCFD.H"
 #include "dynamicFvMesh.H"
 #include "CMULES.H"
@@ -64,6 +66,7 @@ int main(int argc, char *argv[])
     #include "initContinuityErrs.H"
     #include "createDyMControls.H"
     #include "createFields.H"
+    #include "createSolver.H"
     #include "createAlphaFluxes.H"
     #include "initCorrectPhi.H"
     #include "createUfIfPresent.H"
@@ -127,10 +130,10 @@ int main(int argc, char *argv[])
                         #include "correctPhi.H"
 
                         // Make the flux relative to the mesh motion
-                        fvc::makeRelative(phi, U);
-
-                        mixture.correctInterface();
+                        fvc::makeRelative(phi, U);                     
                     }
+                    
+                    mixture.correctInterface();
 
                     if (checkMeshCourantNo)
                     {
@@ -161,6 +164,7 @@ int main(int argc, char *argv[])
             }
         }
 
+        postProc.update();
         runTime.write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"

@@ -1,0 +1,118 @@
+#!/bin/sh
+#------------------------------------------------------------------------------
+# =========                 |
+# \\      /  F ield         | foam-extend: Open Source CFD
+#  \\    /   O peration     |
+#   \\  /    A nd           | For copyright notice see file Copyright
+#    \\/     M anipulation  |
+#------------------------------------------------------------------------------
+# License
+#     This file is part of rheoTool.
+#
+#     rheoTool is free software: you can redistribute it and/or modify it
+#     under the terms of the GNU General Public License as published by the
+#     Free Software Foundation, either version 3 of the License, or (at your
+#     option) any later version.
+#
+#     rheoTool is distributed in the hope that it will be useful, but
+#     WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#     General Public License for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Description
+#     Download (no install) Eigen.  
+#
+# Requirements:
+#     1: Internet connection
+#     2: file etc/bashrc should be sourced
+#
+# Author:
+#     Francisco Pimenta (2016)
+#
+#------------------------------------------------------------------------------
+
+EigenV="3.2.9"
+
+[ -z "$WM_PROJECT_USER_DIR" ] && { echo " "; echo "ERROR: OpenFOAM vars are not loaded"; echo " "; exit 1; }
+
+mkdir -p $WM_PROJECT_USER_DIR/ThirdParty
+cd $WM_PROJECT_USER_DIR/ThirdParty
+
+wget "http://bitbucket.org/eigen/eigen/get/$EigenV.tar.gz"
+
+state=$?
+
+if [ $state -ne 0 ]; then
+  echo " "
+  echo "********************** "
+  echo " "
+  echo "ERROR: Check your Internet connection"
+  echo " "
+  
+  exit 1;
+fi
+
+tmpname=`tar -tzf $EigenV.tar.gz | head -1 | cut -f1 -d"/"`
+
+tar -xvzf $EigenV.tar.gz
+
+state=$?
+
+if [ $state -eq 0 ]; then
+  rm $EigenV.tar.gz
+
+  mv  $tmpname Eigen$EigenV
+
+  state=$?
+
+  if [ $state -ne 0 ]; then
+
+        echo " "  
+	echo "********************** "
+	echo " "
+	echo "ERROR: it seems Eigen already exists in your system"
+	echo " "
+
+	exit 1;
+  fi
+
+else
+
+  echo " "
+  echo "********************** "
+  echo " "
+  echo "ERROR: untar error"
+  echo " "
+
+  exit 1;
+
+fi
+
+state=$?
+
+if [ $state -eq 0 ]; then
+  echo " "
+  echo "********************** "
+  echo " "
+  echo "Eigen has been downloaded successfully to directory:"
+  echo " "
+  echo "$WM_PROJECT_USER_DIR/ThirdParty/Eigen$EigenV"
+  echo " "
+  echo "If this directory is ok for you as its final location, run the following command to export its path:"
+  echo " "
+  echo " echo \"export EIGEN_RHEO=$WM_PROJECT_USER_DIR/ThirdParty/Eigen$EigenV\">>$HOME/.bashrc "
+  echo " "
+else
+  echo " "
+  echo "********************** "
+  echo " "
+  echo "ERROR: Eigen download failled."
+  echo " "
+  echo "Check if you have writting permission ?"
+  echo " "
+fi
+
+														

@@ -119,5 +119,13 @@ bool Foam::EDFEquation::checkForPhiE
      
 }
 
+void Foam::EDFEquation::FeImplCoupled
+(
+  const dimensionedScalar rho
+) const
+{
+  // Do nothing as default. Implement in derived as needed.
+}
+
 
 // ************************************************************************* //

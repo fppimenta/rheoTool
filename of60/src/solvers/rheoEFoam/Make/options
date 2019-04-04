@@ -8,7 +8,13 @@ EXE_INC = \
     -I../../libs/gaussDefCmpwConvectionScheme/lnInclude \
     -I../../libs/boundaryConditions/lnInclude \
     -I../../libs/postProcessing/postProcUtils/lnInclude \
-    -I../../libs/EDFModels/lnInclude
+    -I../../libs/EDFModels/lnInclude \
+    -I../../libs/fvmb/lnInclude \
+    -I../../libs/sparseMatrixSolvers/lnInclude \
+    -isystem$(EIGEN_RHEO) \
+    -isystem$(PETSC_DIR)/$(PETSC_ARCH)/include \
+    -isystem$(PETSC_DIR)/include \
+    $(shell mpicxx --showme:compile)
 
 EXE_LIBS = \
     -lfiniteVolume \
@@ -22,4 +28,6 @@ EXE_LIBS = \
     -L$(FOAM_USER_LIBBIN) -lgaussDefCmpwConvectionSchemes \
     -L$(FOAM_USER_LIBBIN) -lBCRheoTool \
     -L$(FOAM_USER_LIBBIN) -lpostProcessingRheoTool \
-    -L$(FOAM_USER_LIBBIN) -lEDFModels
+    -L$(FOAM_USER_LIBBIN) -lEDFModels \
+    -L$(FOAM_USER_LIBBIN) -lfvmb \
+    -L$(FOAM_USER_LIBBIN) -lsparseMatrixSolvers

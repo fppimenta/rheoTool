@@ -34,8 +34,8 @@ namespace Foam
 {
 namespace constitutiveEqs 
 {
-    defineTypeNameAndDebug(XPomPomLog, 0);
-    addToRunTimeSelectionTable(constitutiveEq, XPomPomLog, dictionary);
+  defineTypeNameAndDebug(XPomPomLog, 0);
+  addToRunTimeSelectionTable(constitutiveEq, XPomPomLog, dictionary);
 }
 }
 
@@ -43,82 +43,83 @@ namespace constitutiveEqs
 
 Foam::constitutiveEqs::XPomPomLog::XPomPomLog
 (
-    const word& name,
-    const volVectorField& U,
-    const surfaceScalarField& phi,
-    const dictionary& dict
+  const word& name,
+  const volVectorField& U,
+  const surfaceScalarField& phi,
+  const dictionary& dict
 )
 :
-    constitutiveEq(name, U, phi),
-    tau_
+ constitutiveEq(name, U, phi),
+ tau_
+ (
+     IOobject
+     (
+       "tau" + name,
+       U.time().timeName(),
+       U.mesh(),
+       IOobject::MUST_READ,
+       IOobject::AUTO_WRITE
+     ),
+     U.mesh()
+ ),
+ theta_
+ (
+     IOobject
+     (
+       "theta" + name,
+       U.time().timeName(),
+       U.mesh(),
+       IOobject::MUST_READ,
+       IOobject::AUTO_WRITE
+     ),
+     U.mesh()
+ ),
+ eigVals_
+ (
+     IOobject
+     (
+       "eigVals" + name,
+       U.time().timeName(),
+       U.mesh(),
+       IOobject::READ_IF_PRESENT,
+       IOobject::AUTO_WRITE
+     ),
+     U.mesh(),
+     dimensionedTensor
+     (
+       "I",
+       dimless,
+       pTraits<tensor>::I
+     ),
+     extrapolatedCalculatedFvPatchField<tensor>::typeName
+ ),
+ eigVecs_
+ (
+    IOobject
     (
-        IOobject
-        (
-            "tau" + name,
-            U.time().timeName(),
-            U.mesh(),
-            IOobject::MUST_READ,
-            IOobject::AUTO_WRITE
-        ),
-        U.mesh()
+      "eigVecs" + name,
+      U.time().timeName(),
+      U.mesh(),
+      IOobject::READ_IF_PRESENT,
+      IOobject::AUTO_WRITE
     ),
-    theta_
+    U.mesh(),
+    dimensionedTensor
     (
-        IOobject
-        (
-            "theta" + name,
-            U.time().timeName(),
-            U.mesh(),
-            IOobject::MUST_READ,
-            IOobject::AUTO_WRITE
-        ),
-        U.mesh()
+      "I",
+      dimless,
+      pTraits<tensor>::I
     ),
-    eigVals_
-    (
-        IOobject
-        (
-            "eigVals" + name,
-            U.time().timeName(),
-            U.mesh(),
-            IOobject::READ_IF_PRESENT,
-            IOobject::AUTO_WRITE
-        ),
-        U.mesh(),
-        dimensionedTensor
-        (
-                "I",
-                dimless,
-                pTraits<tensor>::I
-        ),
-        extrapolatedCalculatedFvPatchField<tensor>::typeName
-    ),
-    eigVecs_
-    (
-        IOobject
-        (
-            "eigVecs" + name,
-            U.time().timeName(),
-            U.mesh(),
-            IOobject::READ_IF_PRESENT,
-            IOobject::AUTO_WRITE
-        ),
-        U.mesh(),
-        dimensionedTensor
-        (
-                "I",
-                dimless,
-                pTraits<tensor>::I
-        ),
-        extrapolatedCalculatedFvPatchField<tensor>::typeName
-    ),
-    rho_(dict.lookup("rho")),
-    etaS_(dict.lookup("etaS")),
-    etaP_(dict.lookup("etaP")),
-    lambdaS_(dict.lookup("lambdaS")),
-    lambdaB_(dict.lookup("lambdaB")),
-    alpha_(dict.lookup("alpha")),
-    q_(dict.lookup("q"))
+    extrapolatedCalculatedFvPatchField<tensor>::typeName
+ ),
+ rho_(dict.lookup("rho")),
+ etaS_(dict.lookup("etaS")),
+ etaP_(dict.lookup("etaP")),
+ lambdaS_(dict.lookup("lambdaS")),
+ lambdaB_(dict.lookup("lambdaB")),
+ alpha_(dict.lookup("alpha")),
+ q_(dict.lookup("q")),
+ n_(dict.lookup("n"))
 {
  checkForStab(dict);
 }
@@ -128,75 +129,76 @@ Foam::constitutiveEqs::XPomPomLog::XPomPomLog
 
 void Foam::constitutiveEqs::XPomPomLog::correct()
 {
-    // Decompose grad(U).T()
+ // Decompose grad(U).T()
 
-    volTensorField L = fvc::grad(U());
+ volTensorField L = fvc::grad(U());
 
-    dimensionedScalar c1( "zero", dimensionSet(0, 0, -1, 0, 0, 0, 0), 0.);
-    volTensorField   B = c1 * eigVecs_; 
-    volTensorField   omega = B;
-    volTensorField   M = (eigVecs_.T() & L.T() & eigVecs_);
+ dimensionedScalar c1( "zero", dimensionSet(0, 0, -1, 0, 0, 0, 0), 0.);
+ volTensorField   B = c1 * eigVecs_; 
+ volTensorField   omega = B;
+ volTensorField   M = (eigVecs_.T() & L.T() & eigVecs_);
 
-    decomposeGradU(M, eigVals_, eigVecs_, omega, B);
+ decomposeGradU(M, eigVals_, eigVecs_, omega, B);
   
-    // Solve the constitutive Eq in theta = log(c)
+ // Solve the constitutive Eq in theta = log(c)
  
-    dimensionedTensor Itensor
-    ( 
-        "Identity", 
-        dimensionSet(0, 0, 0, 0, 0, 0, 0), 
-        tensor::I 
-    );
+ dimensionedTensor Itensor
+ ( 
+   "Identity", 
+   dimensionSet(0, 0, 0, 0, 0, 0, 0), 
+   tensor::I 
+ );
     
-    volSymmTensorField A_(symm(eigVecs_ & eigVals_ & eigVecs_.T()));
+ volSymmTensorField A_(symm(eigVecs_ & eigVals_ & eigVecs_.T()));
     
-    volScalarField trA(tr(A_));
+ volScalarField trA(tr(A_));
     
-    volScalarField lambda(Foam::sqrt(trA/3.));
+ volScalarField lambda(Foam::sqrt(trA/3.));
     
-    volScalarField f
-    ( 
+ volScalarField f
+ ( 
+   n_.value() == 0
+   ?
         2.*(lambdaB_/lambdaS_)*Foam::exp( (2./q_)*(lambda-1.) ) * (1. - 1./lambda)
      + (1./(lambda*lambda)) * ( 1. - alpha_ - (alpha_/3.) * ( tr(A_&A_) - 2.*trA ) )
-    );
+   :
+        2.*(lambdaB_/lambdaS_)*Foam::exp( (2./q_)*(lambda-1.) ) * (1. - 1./Foam::pow(lambda, n_+1))
+     + (1./(lambda*lambda)) * ( 1. - alpha_ - (alpha_/3.) * ( tr(A_&A_) - 2.*trA ) )
+ );
 
-    fvSymmTensorMatrix thetaEqn
-    (
-         fvm::ddt(theta_)
-       + fvm::div(phi(), theta_)
-       ==
-       symm
-       (  
-         (omega&theta_)
-       - (theta_&omega)
-       + 2. * B
-       - (1./lambdaB_) * 
-         ( 
-           (
-              eigVecs_ &
-                (
-                  inv(eigVals_)  
-                )
-            & eigVecs_.T() 
-           ) &
-           ( A_*(f-2.*alpha_) + alpha_*(A_&A_) + Itensor*(alpha_ - 1.)    )
-         )
-       ) 
-       
-    );
+ fvSymmTensorMatrix thetaEqn
+ (
+    fvm::ddt(theta_)
+  + fvm::div(phi(), theta_)
+  ==
+  symm
+  (  
+    (omega&theta_)
+  - (theta_&omega)
+  + 2. * B
+  - (1./lambdaB_) * 
+    ( 
+      (
+       eigVecs_ & (inv(eigVals_))& eigVecs_.T() 
+      )
+      &
+      ( A_*(f-2.*alpha_) + alpha_*(A_&A_) + Itensor*(alpha_ - 1.)    )
+    )
+  ) 
+ );
    
-    thetaEqn.relax();
-    thetaEqn.solve();
+ thetaEqn.relax();
+ thetaEqn.solve();
   
-    // Diagonalization of theta
+ // Diagonalization of theta
 
-    calcEig(theta_, eigVals_, eigVecs_);
+ calcEig(theta_, eigVals_, eigVecs_);
 
-    // Convert from theta to tau
+ // Convert from theta to tau
 
-    tau_ = (etaP_/lambdaB_) * symm( (eigVecs_ & eigVals_ & eigVecs_.T()) - Itensor);
+ tau_ = (etaP_/lambdaB_) * symm( (eigVecs_ & eigVals_ & eigVecs_.T()) - Itensor);
 
-    tau_.correctBoundaryConditions();
+ tau_.correctBoundaryConditions();
 }
 
 

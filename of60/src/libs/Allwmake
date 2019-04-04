@@ -6,8 +6,11 @@ cd ${0%/*} || exit 1    # Run from this directory
 
 set -x
 
-wmake libso constitutiveEquations
+wmake libso fvmb
+wmake libso sparseMatrixSolvers
 wmake libso gaussDefCmpwConvectionScheme
+
+wmake libso constitutiveEquations
 wmake libso EDFModels
 wmake libso boundaryConditions
 
@@ -20,4 +23,6 @@ wmake postProcessing/averageMolcN
 wmake postProcessing/averageMolcX
 
 wmake libso brownianDynamics
+
+
 

@@ -28,7 +28,7 @@ parameters
                 beta             beta   [0 0 0 0 0 0 0] 500;
                 m                m      [0 0 0 0 0 0 0] 7;
 	
-                uTauCoupling     none;     
+                stabilization    coupling;       
                 etaP             etaP [1 -1 -1 0 0 0 0] 0;  // Only used for stabilization
 }
 

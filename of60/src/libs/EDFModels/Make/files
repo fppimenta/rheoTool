@@ -8,7 +8,9 @@ models/PoissonBoltzmann/PoissonBoltzmann.C
 models/NernstPlanck/NernstPlanck.C
 models/slipSmoluchowski/slipSmoluchowski.C
 models/noModel/noModel.C
- 
+
+models/NernstPlanck/NernstPlanckCoupled/NernstPlanckCoupled.C
+
 models/Ohmic/Ohmic.C
 
 LIB = $(FOAM_USER_LIBBIN)/libEDFModels

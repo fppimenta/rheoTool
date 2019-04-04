@@ -85,7 +85,10 @@ Foam::constitutiveEqs::PowerLaw::PowerLaw
         ),
         strainRate()*dimensionedScalar("zeroU", dimensionSet(1, -1, 0, 0, 0, 0, 0), 0) //Just to ensure dimensions and BCs
     )
-{}
+{
+  // Initialize eta_
+  correct();
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -93,7 +96,6 @@ Foam::constitutiveEqs::PowerLaw::PowerLaw
 
 void Foam::constitutiveEqs::PowerLaw::correct()
 {
-
     eta_ = max
       (
         etaMin_,
@@ -111,7 +113,6 @@ void Foam::constitutiveEqs::PowerLaw::correct()
             )
         )
      );
-
 }
 
 

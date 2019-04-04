@@ -62,24 +62,32 @@ EDFModel::EDFModel
 
 tmp<volVectorField> EDFModel::Fe() const
 {
-    return modelPtr_->Fe();
+  return modelPtr_->Fe();
+}
+
+void EDFModel::FeImplCoupled
+(
+  const dimensionedScalar rho
+) const
+{
+  modelPtr_->FeImplCoupled(rho);
 }
 
 void EDFModel::correct()
 {
-    modelPtr_->correct();
+  modelPtr_->correct();
 }
 
 bool EDFModel::read()
 {
-    if (regIOobject::read())
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+  if (regIOobject::read())
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 

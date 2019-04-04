@@ -116,7 +116,7 @@ public:
 
     // Member Functions
 
-       //- Return the viscoelastic stress tensor
+        //- Return the viscoelastic stress tensor
         virtual tmp<volSymmTensorField> tau() const
         {
             return tau_;

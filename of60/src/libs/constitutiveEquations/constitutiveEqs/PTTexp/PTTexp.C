@@ -24,6 +24,8 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "coupledSolver.H" 
+#include "blockOperators.H"
 #include "PTTexp.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -69,6 +71,14 @@ Foam::constitutiveEqs::PTTexp::PTTexp
     lambda_(dict.lookup("lambda"))
 {
  checkForStab(dict);
+ 
+ checkIfCoupledSolver(U.mesh().solutionDict()); 
+ 
+ if (solveCoupled_)
+ {
+   coupledSolver& cps = U().mesh().lookupObjectRef<coupledSolver>("Uptau");  
+   cps.insertField(tau_);    
+ }
 }
 
 
@@ -91,14 +101,38 @@ void Foam::constitutiveEqs::PTTexp::correct()
         fvm::ddt(tau_)
       + fvm::div(phi(), tau_)
      ==
-        etaP_/lambda_*twoD
-      + twoSymm(C)
+        twoSymm(C)
       - fvm::Sp( (1/lambda_)*Foam::exp(epsilon_*lambda_/etaP_*tr(tau_)), tau_)
       - 0.5*zeta_*(symm(tau_ & twoD) + symm(twoD & tau_))
     );
 
     tauEqn.relax();
-    tauEqn.solve();
+    
+    if (!solveCoupled_)
+    {
+      solve(tauEqn == etaP_/lambda_*twoD);
+    }
+    else
+    {   
+      // Get the solver
+      coupledSolver& cps = U().mesh().lookupObjectRef<coupledSolver>("Uptau"); 
+       
+      // Insert tauEqn
+      cps.insertEquation
+      (
+        tau_.name(),
+        tau_.name(),
+        tauEqn
+      );
+
+      // Insert term (gradU + gradU.T)
+      cps.insertEquation
+      (
+        tau_.name(),
+        U().name(),
+        fvmb::twoSymmGrad(-etaP_/lambda_, U())
+      );   
+    }
  
 }
 

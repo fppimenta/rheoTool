@@ -14,19 +14,22 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+coupledSolvers
+{  
+  Uptau
+  {
+    solveCoupledUp true;
+    solveCoupledTau false;
+    
+    saveSystem true;
+    robustSumCheck  true;
+    updatePrecondFrequency 100000;  
+    updateMatrixCoeffs false;   
+  }
+}
+
 solvers
 {
-   "(p|U)"
-    {
-        solver           PCG;
-        preconditioner   DIC;
-        tolerance        1e-10;
-        relTol           0.001;
-        minIter          0;
-        maxIter          800;
-        
-    }
-
     "(theta|tau)"
     {
 
@@ -37,7 +40,7 @@ solvers
         }
 
         tolerance         1e-10;
-        relTol            0.001;
+        relTol            0;
         minIter           0;
         maxIter           1000;
     }
@@ -59,17 +62,7 @@ SIMPLE
 
 relaxationFactors
 {
-     fields
-      {        
-        p 0.9;
-      }
-
-     equations
-      { 
-        U 1;
-        tau 1;
-        theta 1;
-      }
+      
 }
 
 // ************************************************************************* //

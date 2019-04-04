@@ -24,6 +24,8 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "coupledSolver.H" 
+#include "blockOperators.H"
 #include "WhiteMetznerCY.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -73,6 +75,14 @@ Foam::constitutiveEqs::WhiteMetznerCY::WhiteMetznerCY
     b_(dict.lookup("b"))
 {
  checkForStab(dict);
+ 
+ checkIfCoupledSolver(U.mesh().solutionDict()); 
+ 
+ if (solveCoupled_)
+ {
+   coupledSolver& cps = U().mesh().lookupObjectRef<coupledSolver>("Uptau");  
+   cps.insertField(tau_);    
+ }
 }
 
 
@@ -103,13 +113,37 @@ void Foam::constitutiveEqs::WhiteMetznerCY::correct()
         fvm::ddt(tau_)
       + fvm::div(phi(), tau_)
      ==
-        etaPValue/lambdaValue*twoD
-      + twoSymm(C)
+        twoSymm(C)
       - fvm::Sp(1/lambdaValue, tau_)
     );
 
     tauEqn.relax();
-    tauEqn.solve();
+    
+    if (!solveCoupled_)
+    {
+      solve(tauEqn == etaPValue/lambdaValue*twoD);
+    }
+    else
+    {   
+      // Get the solver
+      coupledSolver& cps = U().mesh().lookupObjectRef<coupledSolver>("Uptau"); 
+      
+      // Insert tauEqn
+      cps.insertEquation
+      (
+        tau_.name(),
+        tau_.name(),
+        tauEqn
+      );
+
+      // Insert term (gradU + gradU.T)
+     cps.insertEquation
+     (
+       tau_.name(),
+       U().name(),
+       fvmb::twoSymmGrad(-etaPValue/lambdaValue, U())
+     );   
+   } 
  
 }
 

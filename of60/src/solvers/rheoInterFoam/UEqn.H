@@ -15,7 +15,7 @@
     fvOptions.constrain(UEqn);
 
      
-    solve
+    spSolverU->solve
     (
       UEqn
       ==

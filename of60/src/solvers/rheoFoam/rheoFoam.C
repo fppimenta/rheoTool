@@ -26,12 +26,15 @@ Application
 
 Description
     Transient solver for incompressible, laminar flow. Any GNF or viscoelastic
-    model of library lconstitutiveEquations can be selected. Pressure-velocity
-    coupling is using the SIMPLEC algorithm.
+    model of library lconstitutiveEquations can be selected. Both coupled and
+    segregated solvers can be runtime selected. In the segregated solver,
+    pressure-velocity coupling is ensured through SIMPLEC algorithm.
     
     This solver is part of rheoTool.
 
 \*---------------------------------------------------------------------------*/
+
+#include "sparseMatrixSolvers.H" // Avoid namespace Foam
 
 #include "fvCFD.H"
 #include "dynamicFvMesh.H"
@@ -42,6 +45,8 @@ Description
 #include "adjustCorrPhi.H"
 #include "ppUtilInterface.H"
 #include "constitutiveModel.H"
+
+#include "blockOperators.H" 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 int main(int argc, char *argv[])
@@ -60,7 +65,7 @@ int main(int argc, char *argv[])
     #include "setInitialDeltaT.H"
     
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
+    
     Info<< "\nStarting time loop\n" << endl;
 
     while (simple.loop(runTime))
@@ -102,24 +107,47 @@ int main(int argc, char *argv[])
                     }
                 }
             }
-
-            // --- Pressure-velocity SIMPLEC corrector
-            {
-               // ---- Solve U and p ----	
-               #include "UEqn.H"
-               #include "pEqn.H"         
-            }
             
-            // ---- Solve constitutive equation ----	
-            constEq.correct();
-
+            if (solveCoupled)
+            {                                
+              #include "pUEqn.H" 
+              
+              // Add/solve constitutive equation 
+              constEq.correct();      
+                
+              // Solve all coupled
+              cps->solve(); 
+                
+              phi =   fvc::flux(U)
+                    + MRF.zeroFilter(fvc::interpolate(rAU)*fvc::ddtCorr(U, phi, Uf)) 
+                    + pRC - fvc::snGrad(p)*fvc::interpolate(rAU)*mesh.magSf(); 
+                    
+              #include "continuityErrs.H"
+              
+              fvOptions.correct(U);
+              
+              // Correct Uf if the mesh is moving
+              fvc::correctUf(Uf, U, phi);
+                                
+              // Make the fluxes relative to the mesh motion
+              fvc::makeRelative(phi, U);                                         
+            } 
+            else
+            {
+              #include "UEqn.H"
+              #include "pEqn.H"
+                
+              // ---- Solve constitutive equation ----	
+              constEq.correct();
+            }   
+            
             // --- Passive Scalar transport
             if (sPS)
-             {
-               #include "CEqn.H"
-             }            
+            {
+              #include "CEqn.H"
+            }        
         }
-
+         
         postProc.update();
         runTime.write();
 

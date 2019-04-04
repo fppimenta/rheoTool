@@ -67,7 +67,8 @@ Foam::constitutiveEqs::XPomPom::XPomPom
     lambdaS_(dict.lookup("lambdaS")),
     lambdaB_(dict.lookup("lambdaB")),
     alpha_(dict.lookup("alpha")),
-    q_(dict.lookup("q"))
+    q_(dict.lookup("q")),
+    n_(dict.lookup("n"))
 {
  checkForStab(dict);
 }
@@ -94,11 +95,16 @@ void Foam::constitutiveEqs::XPomPom::correct()
     );
     
     volScalarField lambda( Foam::sqrt( 1. + tr(tau_)/(3.*etaP_/lambdaB_) ) );
-    
+        
     volScalarField f
     ( 
-        2.*(lambdaB_/lambdaS_)*Foam::exp( (2./q_)*(lambda-1.) ) * (1. - 1./lambda)
-     + (1./(lambda*lambda)) * ( 1. - (alpha_/3.) * tr(tau_&tau_) / Foam::sqr(etaP_/lambdaB_) )
+     n_.value() == 0
+     ?
+          2.*(lambdaB_/lambdaS_)*Foam::exp( (2./q_)*(lambda-1.) ) * (1. - 1./lambda)
+       + (1./(lambda*lambda)) * ( 1. - (alpha_/3.) * tr(tau_&tau_) / Foam::sqr(etaP_/lambdaB_) )
+     :
+          2.*(lambdaB_/lambdaS_)*Foam::exp( (2./q_)*(lambda-1.) ) * (1. - 1./Foam::pow(lambda, n_+1))
+       + (1./(lambda*lambda)) * ( 1. - (alpha_/3.) * tr(tau_&tau_) / Foam::sqr(etaP_/lambdaB_) )
     );
 
     // Stress transport equation

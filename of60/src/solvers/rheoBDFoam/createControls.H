@@ -6,7 +6,7 @@ bool correctPhi
 (
     simple.dict().lookupOrDefault("correctPhi", mesh.dynamic())
 );
-
+ 
 bool checkMeshCourantNo
 (
     simple.dict().lookupOrDefault("checkMeshCourantNo", false)

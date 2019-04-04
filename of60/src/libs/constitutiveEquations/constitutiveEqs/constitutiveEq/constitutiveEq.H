@@ -117,6 +117,9 @@ protected:
         
         //- Check which stabilization method to use
         void checkForStab(const dictionary& dict);
+        
+        //- Check is solver is coupled
+        void checkIfCoupledSolver(const dictionary& dict);
       
         
   // The following protected functions are intended to be used inside divTau() and divTauS() functions,
@@ -144,6 +147,10 @@ protected:
        
       static const NamedEnum<stabOptions, 3> stabOptionNames_;
       stabOptions stabOption_;
+      
+      //- Should the constitutive equation be solved coupled with momentum
+      // and continuity?
+      bool solveCoupled_;
 
 public:
 
@@ -235,6 +242,9 @@ public:
         // (since it is virtual non-pure, it does not need to be redefined in derived classes, 
         // although it can if any model needs a different implementation)
         virtual tmp<fvVectorMatrix> divTauS(const volVectorField& U, const volScalarField& alpha) const;
+        
+        //- Adds implicitly the extra-stress polymer contribution in momentum equation 
+        virtual void divTauImplCoupled() const;
         
         //- Return true if GNF (non-elastic)
         virtual bool isGNF() const = 0;

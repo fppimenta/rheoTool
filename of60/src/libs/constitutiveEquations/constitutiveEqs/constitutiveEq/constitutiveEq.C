@@ -25,6 +25,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "constitutiveEq.H"
+#include "coupledSolver.H" 
+#include "blockOperators.H" 
 #include <Eigen/Dense> // For eigen decomposition
 #include "jacobi.H"    // Only required for jacobi decomposition
 
@@ -61,7 +63,8 @@ constitutiveEq::constitutiveEq
 :
   name_(name),
   U_(U),
-  phi_(phi)
+  phi_(phi),
+  solveCoupled_(false)
 {}
 
 // * * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
@@ -87,24 +90,39 @@ tmp<fvVectorMatrix> constitutiveEq::divTau
      case soNone : // none       
      return
      (
-         fvc::div(tau()/rho(), "div(tau)")
-       + fvm::laplacian(etaS()/rho(), U, "laplacian(eta,U)")
+       solveCoupled_
+       ?
+          fvm::laplacian(etaS()/rho(), U, "laplacian(eta,U)")
+       :
+          fvc::div(tau()/rho(), "div(tau)")
+        + fvm::laplacian(etaS()/rho(), U, "laplacian(eta,U)")
      );
    
      case soBSD : // BSD   
      return
      (
-        fvc::div(tau()/rho(), "div(tau)")
-      - fvc::laplacian(etaP()/rho(), U, "laplacian(eta,U)")
-      + fvm::laplacian( (etaP()+ etaS())/rho(), U, "laplacian(eta,U)")
+       solveCoupled_
+       ?
+        - fvc::laplacian(etaP()/rho(), U, "laplacian(eta,U)")
+        + fvm::laplacian( (etaP()+ etaS())/rho(), U, "laplacian(eta,U)")
+       :
+          fvc::div(tau()/rho(), "div(tau)")
+        - fvc::laplacian(etaP()/rho(), U, "laplacian(eta,U)")
+        + fvm::laplacian( (etaP()+ etaS())/rho(), U, "laplacian(eta,U)")
      );
   
      case soCoupling : // coupling       
      return
      (
-        fvc::div(tau()/rho(), "div(tau)")
-      - (etaP()/rho()) * fvc::div(fvc::grad(U))
-      + fvm::laplacian( (etaP() + etaS())/rho(), U, "laplacian(eta,U)")
+       solveCoupled_
+       ?
+        - (etaP()/rho()) * fvc::div(fvc::grad(U))
+        + fvm::laplacian( (etaP() + etaS())/rho(), U, "laplacian(eta,U)")
+       
+       :
+          fvc::div(tau()/rho(), "div(tau)")
+        - (etaP()/rho()) * fvc::div(fvc::grad(U))
+        + fvm::laplacian( (etaP() + etaS())/rho(), U, "laplacian(eta,U)")
      );
      
      default: // This will never happen
@@ -160,6 +178,26 @@ tmp<fvVectorMatrix> constitutiveEq::divTauS
  }      
 }
 
+void constitutiveEq::divTauImplCoupled
+()
+const
+{
+ if (solveCoupled_ && !isGNF())
+ {
+  coupledSolver& cps = const_cast<coupledSolver&>
+  (
+    U().mesh().lookupObject<coupledSolver>("Uptau")
+  );
+   
+  cps.insertEquation
+  (
+    U().name(),
+    tau()().name(),
+    fvmb::div(-1./rho().value(), tau())
+  );
+ }
+}
+
 void constitutiveEq::decomposeGradU
 (
   const volTensorField& M,
@@ -195,7 +233,12 @@ void constitutiveEq::decomposeGradU
  
 }
 
-void constitutiveEq::calcEig(const volSymmTensorField& theta, volTensorField& vals, volTensorField& vecs)
+void constitutiveEq::calcEig
+(
+  const volSymmTensorField& theta,
+  volTensorField& vals,
+  volTensorField& vecs
+)
 {
  
  // Eigen decomposition using a QR algorithm of Eigen library 
@@ -263,12 +306,37 @@ void constitutiveEq::calcEig(const volSymmTensorField& theta, volTensorField& va
 
 }
 
-void constitutiveEq::checkForStab(const dictionary& dict)
+void constitutiveEq::checkForStab
+(
+ const dictionary& dict
+)
 {
   stabOption_ = stabOptionNames_.read
   (
      dict.lookup("stabilization")
   ); 
+}
+
+void constitutiveEq::checkIfCoupledSolver
+(
+  const dictionary& dict
+)
+{
+
+ const dictionary* cSDict = dict.subDictPtr("coupledSolvers");
+ 
+ if (cSDict != NULL)
+ {
+   const dictionary* cSDictUpTau = cSDict->subDictPtr("Uptau");
+   if (cSDictUpTau != NULL)
+   {
+    solveCoupled_ = 
+    (
+        readBool(cSDictUpTau->lookup("solveCoupledTau"))
+     && readBool(cSDictUpTau->lookup("solveCoupledUp"))
+    );
+   }
+ } 
 }
 
 tmp<volSymmTensorField> constitutiveEq::tauTotal() const

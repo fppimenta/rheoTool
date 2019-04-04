@@ -24,7 +24,7 @@ stopAt          endTime;
 
 endTime         15;
 
-deltaT          1e-3;
+deltaT          2e-2;
 
 writeControl    runTime;
 
@@ -60,7 +60,7 @@ functions
 	 type coded;
 	 redirectType calCd;
 	 writeControl timeStep;
-         writeInterval      50;
+         writeInterval      10;
          enabled             yes;
 
 	 codeWrite

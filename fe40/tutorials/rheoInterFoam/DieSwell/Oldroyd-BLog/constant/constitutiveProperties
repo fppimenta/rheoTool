@@ -25,7 +25,7 @@ phase1
          etaP             etaP [1 -1 -1 0 0 0 0] 0.88889;  
          lambda           lambda [0 0 1 0 0 0 0] 2.;
          
-         uTauCoupling     true;
+         stabilization    coupling;
        }      
 }
 

@@ -16,7 +16,7 @@ FoamFile
  
 parameters
 {
-        type             NernstPlanck;      
+        type              NernstPlanckCoupled;   
   
         relPerm          relPerm [ 0 0 0 0 0 0 0 ] 84.112494010;  
         T                T [ 0 0 0 1 0 0 0 ] 300.682117548;

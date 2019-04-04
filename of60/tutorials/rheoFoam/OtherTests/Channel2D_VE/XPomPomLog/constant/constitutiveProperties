@@ -26,6 +26,7 @@ parameters
                 lambdaS          lambdaS [0 0 1 0 0 0 0] .02;
                 alpha            alpha [0 0 0 0 0 0 0] 0.06;
                 q                q [0 0 0 0 0 0 0] 5;
+                n                n [0 0 0 0 0 0 0] 0;
                 
                
                 stabilization    coupling;              

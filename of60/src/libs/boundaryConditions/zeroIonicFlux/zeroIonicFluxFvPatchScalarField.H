@@ -20,6 +20,16 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+    
+    
+Description
+    Boundary condition imposing a null flux of ions through a patch where
+    the velocity is zero.
+    Switch isCoupled is optional and should be set to true (ONLY) when
+    using the NernstPlanckCoupled model.
+
+SourceFiles
+    zeroIonicFluxFvPatchScalarFields.C
  
 \*---------------------------------------------------------------------------*/
 
@@ -45,8 +55,12 @@ class zeroIonicFluxFvPatchScalarField
 {
     // Private data
         
-      //- Ionic valence
+        //- Ionic valence
         scalar zib_;
+        
+        //- Should we use the BC for coupled system (only changes
+        //  the coeffs of laplacian)
+        bool isCoupled_;
        
 public:
 
@@ -122,6 +136,13 @@ public:
         //- Update the coefficients associated with the patch field
             virtual void updateCoeffs();
          
+        //- Set the coupling flag. It is false by default and should only 
+        // be set to true by coupled solvers.    
+            inline void setFlagCoupled(bool flag)
+            {
+              isCoupled_ = flag;
+            }
+         
         //- Evaluate the patch field
             virtual void evaluate
             (
@@ -138,6 +159,11 @@ public:
             (
                 const tmp<scalarField>&
             ) const;
+            
+            
+            virtual tmp<Field<Foam::scalar> > gradientInternalCoeffs() const;
+ 
+            virtual tmp<Field<Foam::scalar> > gradientBoundaryCoeffs() const;
             
                 
         //- Write

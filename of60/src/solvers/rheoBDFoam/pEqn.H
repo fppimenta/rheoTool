@@ -37,12 +37,12 @@ while (simple.correctNonOrthogonal())
 
     pEqn.setReference(pRefCell, pRefValue);
  
-    pEqn.solve();           
+    spSolverp->solve(pEqn);             
       
     if (simple.finalNonOrthogonalIter())
-     {
+    {
        phi = phiHbyA - pEqn.flux();
-     }
+    }
 }
 
 #include "continuityErrs.H"

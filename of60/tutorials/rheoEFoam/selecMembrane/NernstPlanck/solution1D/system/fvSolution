@@ -14,6 +14,27 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+coupledSolvers
+{
+  Uptau
+  {
+    solveCoupledUp false;
+    solveCoupledTau false;
+    
+    saveSystem false;
+  }
+  
+  ciPsi
+  {
+    solveWithUptau    false;
+     
+    saveSystem true;
+    robustSumCheck  true;
+    updatePrecondFrequency 1; 
+    updateMatrixCoeffs true;   
+  }
+}
+
 solvers
 {
     "(p|psi|U)"
@@ -82,7 +103,7 @@ functions
         "reservoir"
       );                        // List of patches for where to compute J
      enabled           true;
-     evaluateInterval  10000;   // Time-steps between outputs
+     evaluateInterval  1000;   // Time-steps between outputs
    }
    
  );
@@ -106,16 +127,7 @@ SIMPLE
 
 relaxationFactors
 {
-    fields
-     {        
-	p 	1;
-     }
-
-    equations
-     { 
-       U 	1;
-       ci      .1; 
-     }
+    
 }
 
 // ************************************************************************* //

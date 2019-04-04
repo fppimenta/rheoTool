@@ -118,13 +118,13 @@ navierSlipFvPatchVectorField
     }
     
     if (m_<0. || beta_<0. || alpha_<0. )
-     {
+    {
         FatalErrorIn("Foam::navierSlipFvPatchVectorField::navierSlipFvPatchVectorField\n")
         << "\nError defining negative value of m and/or alpha and/or beta in the Navier slip BC for field "
         << this->internalField().name() << ".\n"
         << "\nPlease ensure that m>0, alpha>0 and beta>0.\n"
         << abort(FatalError);
-     }
+    }
     
     fvPatchField<vector>::operator=
     (
@@ -215,7 +215,7 @@ void Foam::navierSlipFvPatchVectorField::calcUws
   symmTensorField tauP = tauTotalPtr().boundaryField()[patchi]; 
     
   if (model_ == "nonLinearNavierSlip")
-   {
+  {
      if (m_ == 1)
      {
         uws = -knl_ * ( (tauP&n) - n*((tauP&n)&n) );
@@ -225,12 +225,12 @@ void Foam::navierSlipFvPatchVectorField::calcUws
         vectorField tt = (tauP&n) - n*((tauP&n)&n);
         uws = -knl_ * Foam::pow(Foam::mag(tt), m_) * tt/(mag(tt) + 1e-20);
      }
-   }
+  }
   else if (model_ == "slipTT")
-   {
+  {
       vectorField tt = (tauP&n) - n*((tauP&n)&n);
       uws = -alpha_ * tt / Foam::sqrt(1.-mag(tt)*beta_);
-   } 
+  } 
 
 }
 
@@ -290,16 +290,16 @@ void Foam::navierSlipFvPatchVectorField::updateCoeffs()
     else
     {
         if (URF_>0 && URF_<1)
-         {
+        {
            const volVectorField& U = db().lookupObject< volVectorField>("U");
            label patchi = this->patch().index();
        
            vectorField::operator=( U.oldTime().boundaryField()[patchi] * (1.-URF_) + URF_*uws );
-         }
+        }
         else
-         {
+        {
            vectorField::operator=( uws );
-         }
+        }
     }
 
     fixedValueFvPatchVectorField::updateCoeffs();
@@ -327,15 +327,15 @@ void Foam::navierSlipFvPatchVectorField::write(Ostream& os) const
     os.writeKeyword("model") << model_ << token::END_STATEMENT << nl;
     
     if (model_ == "nonLinearNavierSlip")
-     {
+    {
        os.writeKeyword("m") << m_ << token::END_STATEMENT << nl;
        os.writeKeyword("knl") << knl_ << token::END_STATEMENT << nl;
-     }
+    }
     else if (model_ == "slipTT")
-     {
+    {
        os.writeKeyword("alpha") << alpha_ << token::END_STATEMENT << nl;
        os.writeKeyword("beta") << beta_ << token::END_STATEMENT << nl;
-     }
+    }
    
     os.writeKeyword("URF") << URF_ << token::END_STATEMENT << nl;
     os.writeKeyword("isTwoPhaseFlow") << isTwoPhaseFlow_ << token::END_STATEMENT << nl;

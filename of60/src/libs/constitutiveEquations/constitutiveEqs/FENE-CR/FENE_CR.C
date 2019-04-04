@@ -24,6 +24,8 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "coupledSolver.H" 
+#include "blockOperators.H" 
 #include "FENE_CR.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -96,6 +98,14 @@ Foam::constitutiveEqs::FENE_CR::FENE_CR
     )
 {
  checkForStab(dict);
+ 
+ checkIfCoupledSolver(U.mesh().solutionDict()); 
+ 
+ if (solveCoupled_)
+ {
+   coupledSolver& cps = U().mesh().lookupObjectRef<coupledSolver>("Uptau");  
+   cps.insertField(tau_);    
+ }
 }
 
 
@@ -107,7 +117,7 @@ void Foam::constitutiveEqs::FENE_CR::correct()
    // Velocity gradient tensor
     volTensorField L = fvc::grad(U());
 
-if (!solveInTau_)
+ if (!solveInTau_)
  {
    
     dimensionedSymmTensor Ist
@@ -161,18 +171,42 @@ if (!solveInTau_)
         fvm::ddt(tau_)
       + fvm::div(phi(), tau_)
      ==
-        (etaP_/lambda_)*twoD*1./varf_
-      + twoSymm(C)
+        twoSymm(C)
       - fvm::Sp(1./(lambda_*varf_), tau_)
     );
     
     if(!modifiedForm_)
-     {
+    {
        tauEqn += (tau_/varf_)*( fvc::ddt(varf_) + fvc::div(phi(), varf_, "div(phi,1|f)") ); 
-     }
+    }
 
     tauEqn.relax();
-    tauEqn.solve(); 
+
+    if (!solveCoupled_)
+    {
+      solve(tauEqn == (etaP_/lambda_)*twoD*1./varf_);
+    }
+    else
+    {   
+      // Get the solver
+      coupledSolver& cps = U().mesh().lookupObjectRef<coupledSolver>("Uptau"); 
+      
+      // Insert tauEqn
+      cps.insertEquation
+      (
+        tau_.name(),
+        tau_.name(),
+        tauEqn
+      );
+
+      // Insert term (gradU + gradU.T)
+      cps.insertEquation
+      (
+        tau_.name(),
+        U().name(),
+        fvmb::twoSymmGrad(-(etaP_/lambda_)*1./varf_, U())
+      );         
+    }  
  } 
  
 }

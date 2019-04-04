@@ -39,7 +39,8 @@ Foam::zeroIonicFluxFvPatchScalarField::zeroIonicFluxFvPatchScalarField
 )
 :
     fixedGradientFvPatchScalarField(p, iF),
-    zib_()
+    zib_(),
+    isCoupled_(false)
 {}
 
 
@@ -52,7 +53,8 @@ Foam::zeroIonicFluxFvPatchScalarField::zeroIonicFluxFvPatchScalarField
 )
 :
     fixedGradientFvPatchScalarField(ptf, p, iF, mapper),
-    zib_(ptf.zib_)
+    zib_(ptf.zib_),
+    isCoupled_(ptf.isCoupled_)
 {}
 
 
@@ -64,7 +66,8 @@ Foam::zeroIonicFluxFvPatchScalarField::zeroIonicFluxFvPatchScalarField
 )
 :
     fixedGradientFvPatchScalarField(p, iF),
-    zib_(0)
+    zib_(0),
+    isCoupled_(false)
 {
 
     if (dict.found("value") && dict.found("gradient"))
@@ -103,7 +106,8 @@ Foam::zeroIonicFluxFvPatchScalarField::zeroIonicFluxFvPatchScalarField
 )
 :
     fixedGradientFvPatchScalarField(wbppsf),
-    zib_(wbppsf.zib_)
+    zib_(wbppsf.zib_),
+    isCoupled_(wbppsf.isCoupled_)
 {}
 
 
@@ -114,13 +118,12 @@ Foam::zeroIonicFluxFvPatchScalarField::zeroIonicFluxFvPatchScalarField
 )
 :
     fixedGradientFvPatchScalarField(wbppsf, iF),
-    zib_(wbppsf.zib_)
+    zib_(wbppsf.zib_),
+    isCoupled_(wbppsf.isCoupled_)
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-
 void Foam::zeroIonicFluxFvPatchScalarField::updateCoeffs()
 {
     if (updated())
@@ -153,7 +156,7 @@ void Foam::zeroIonicFluxFvPatchScalarField::updateCoeffs()
 
 void Foam::zeroIonicFluxFvPatchScalarField::evaluate(const Pstream::commsTypes)
 {
-        
+   
     const dictionary& elecDict = db().lookupObject<IOdictionary>("electricProperties");
         
     dimensionedScalar T_(elecDict.subDict("parameters").lookup("T"));
@@ -170,6 +173,11 @@ void Foam::zeroIonicFluxFvPatchScalarField::evaluate(const Pstream::commsTypes)
     (
         this->patchInternalField() * Foam::exp( -eK_ * zib_ * deltaPsi/ (kbK_ * T_.value()) ) 
     );
+    
+    // This will set update_ = false and force updateCoeffs(). Gradient
+    // should be updated always we call operator= in order to ensure
+    // that both use the same deltaPsi.  
+    fvPatchField<Foam::scalar>::evaluate();
     
     if (!this->updated())
     {
@@ -197,6 +205,33 @@ Foam::tmp<Field<Foam::scalar> > Foam::zeroIonicFluxFvPatchScalarField::valueInte
 ) const
 {
     return tmp<Field<Foam::scalar> >(new Field<Foam::scalar>(this->size(), pTraits<Foam::scalar>::zero));
+}
+ 
+Foam::tmp<Field<Foam::scalar> > 
+Foam::zeroIonicFluxFvPatchScalarField::gradientInternalCoeffs() const
+{
+    return tmp<Field<Foam::scalar>>
+    (
+        new Field<Foam::scalar>(this->size(), Zero)
+    );
+}
+ 
+Foam::tmp<Field<Foam::scalar> > 
+Foam::zeroIonicFluxFvPatchScalarField::gradientBoundaryCoeffs() const
+{
+  // If coupled, the contribution to fvm is the same as if it was zeroGradient type.
+  // This is to be used EXCLUSIVELY within model NernstPlanckCoupled.
+  if (isCoupled_)
+  {
+     return tmp<Field<Foam::scalar>>
+     (
+        new Field<Foam::scalar>(this->size(), Zero)
+     );
+  }
+  else
+  {
+     return gradient();    
+  }
 }
 
  

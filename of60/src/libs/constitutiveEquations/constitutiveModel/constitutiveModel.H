@@ -106,6 +106,9 @@ public:
         //- Return the coupling term for the momentum equation
         virtual tmp<fvVectorMatrix> divTau(volVectorField& U) const;
         
+        //- Adds implicitly the extra-stress polymer contribution in momentum equation 
+        virtual void divTauImplCoupled() const;
+        
         //- Is GNF or VE
         virtual bool isGNF() const;
        

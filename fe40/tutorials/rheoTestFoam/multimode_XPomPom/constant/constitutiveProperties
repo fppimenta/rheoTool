@@ -41,6 +41,7 @@ parameters
                 lambdaS          lambdaS [0 0 1 0 0 0 0] 0.000556371;
                 alpha            alpha [0 0 0 0 0 0 0] .3;
                 q                q [0 0 0 0 0 0 0] 1;
+                n                n [0 0 0 0 0 0 0] 0;
                 
                 lambda           lambda [0 0 1 0 0 0 0] 0.0038946; // Dummy equal to lambdaB
                
