@@ -1,0 +1,156 @@
+//************************************************************\\
+// #####   #    # ###### ###### ######## ############ #       \\
+// #   #   #    # #      #    #    #     #    ##    # #       \\
+// #####   ###### ####   #    #    #     #    ##    # #       \\
+// #   #   #    # #      #    #    #     #    ##    # #       \\
+// #    #  #    # ###### ######    #     ############ ######  \\
+//************************************************************\\
+
+//************************************************************\\
+
+Version 4.0
+
+Released on 04/04/2019.
+
+o Generic:
+
+	- Add: added interfaces to PETSc, Hypre and Eigen libraries, allowing the use of their (direct and iterative) sparse matrix solvers.
+		   All the interfaces can be used in parallel, except the one for Eigen. Only for the OpenFOAM version.
+	
+	- Add: rheoTool needs PETSc as an extra dependency. Added a script to install this package. The instructions to install rheoTool have
+		   been updated (see Chapter 2). Only for the OpenFOAM version.
+	
+	- Add: added coupled solvers for both pressure- and electrically-driven flows. Most viscoelastic models can be solved within a coupled
+		   solution method. Only for the OpenFOAM version.
+	
+	- Change: rheoTool version compatible with OpenFOAM v4.0/4.1 is discontinued.
+
+o Electrically-driven flows:
+
+	- Add: added coupled Poisson-Nernst-Planck model to EDF models (TypeName = NernstPlanckCoupled). Only for the OpenFOAM version.
+
+o Constitutive equations:
+ 
+	- Change: the eXtended Pom-Pom model implementation has been changed in order to allow using its thermodynamically consistent version [8].
+		      Parameter n has been added (see Table 4.1) and should be adjusted by the user (n = 1 for thermodynamic consistency and n = 0 otherwise).
+	
+	- Change: the code for the constitutive equations of viscoelastic models has been modified to allow integration with coupled solvers. Only for the
+			  OpenFOAM version.
+
+o Solvers:
+
+	- Fix: fixed bug in rheoInterFoam for OpenFOAM version 6.0, which was preventing post-processing (missing call to update()).
+
+o Tutorials:
+
+	- Change: tutorial rheoFoam/Cavity now uses sparse matrix solvers from Eigen library and is 1.6 times faster. Only for the OpenFOAM version.
+	
+	- Change: tutorial rheoFoam/Cylinder is now solved coupled, being 30 times faster. Only for the OpenFOAM version.
+
+	- Change: tutorial rheoEFoam/ICEO/NernstPlanck is now solved with the coupled implementation of the PNP model and is 30 times faster. The name
+			  of the tutorial was changed to rheoEFoam/ICEO/NernstPlanckCoupled. Only for the OpenFOAM version.
+	
+	- Change: tutorial rheoEFoam/selecMembrane/NernstPlanck/solution1D is now solved with the coupled implementation of the PNP model and is twice
+			  faster. Moreover, under-relaxation is not needed anymore to avoid numerical divergence. Only for the OpenFOAM version.
+	
+	- Fix: fixed bug related to the old flag for stabilization methods in several tutorials, which was aborting the runs.
+
+//************************************************************\\
+
+Version 3.0
+
+Released on 18/09/2018.
+
+o Brownian dynamics solver:
+
+	- Add: solvers, libraries, utilities and tutorials for Brownian dynamics simulations of polymer molecules.
+
+o Generic:
+
+	- Add: all solvers are now compatible with dynamic meshes. Due to this change, and for convenience, momentum equation is the first to be solved, followed by pressure equation and then the equations for the remaining variables (extra-stresses, passive scalar, etc.).
+
+	- Add: tutorial fuidDamper showing the use of rheoFoam with dynamic meshes.
+	
+	- Add: added an explicit Navier slip boundary condition for velocity.
+	
+	- Change: Namespace encapsulation of several derived classes.
+	
+	- Change: rheoTool version compatible with OpenFOAM v2.2.2 is discontinued.
+	
+	- Add: added rheoTool patch for OpenFOAM v6.0.
+	
+	- Add: added note in the user-guide (Section 2.5) about parallel compilation of rheoTool.
+
+o Constitutive equations:
+
+	- Add: Papanastasiou regularization is now available for yield-stress GNF models (Hershel-Bulkley/Bingham and Casson models). 
+	
+	- Add: Casson model has been added to the library of constitutive equations.
+	
+	- Add: the Multi-Lambda Isotropic Kinematic Hardening (MLK-IKH) model has been added to the library of constitutive equations.
+
+	- Add: the Vasquez-Cook-Mckinley (VCM) model has been added to the library of constitutive equations.
+	
+	- Add: the Reactive Rod Model (RRM) model has been added to the library of constitutive equations.
+
+	- Add: Saramito's elastoviscoplastic model has been added to the library of constitutive equations. Both stress and log-conformation versions are available.
+	
+	- Add: the Bautista-Manero-Puig (BMP) model has been added to the library of constitutive equations. Both stress and log-conformation versions are available.
+	
+	- Change: implemented functions tauTotal() and tauTotalMF() in base classes. Solver rheoTestFoam and the utility retrieving the wall shear-stresses were modified accordingly.
+
+//************************************************************\\
+
+Version 2.0
+
+Released on 09/02/2018.
+
+o Electrically-driven flows:
+	 
+	- Add: solvers, libraries, utilities and tutorials for electrically-driven flows.
+	 
+o Constitutive equations:
+	
+	- Add: the Rolie-Poly viscoelastic model has been added to the library of constitutive equations. Both the stress and log-conformation versions are available.   
+	
+	- Add: the (single-equation) eXtended Pom-Pom viscoelastic model has been added to the library of constitutive equations. Both the stress and log-conformation versions are available.   
+	
+	- Change: sPTT models have been generalized to their full form by replacing the upper-convected derivative by the Gordon-Schowalter derivative. It is now possible to simulate PTT models with non-affine deformation, in both the stress and log-conformation versions.
+	
+	- Change: the stabilization method in viscoelastic simulations has been made general and run time selectable: none, BSD or coupling.
+	
+	- Change: a verification step has been added to the WhiteMetznerLog model in order to prevent its incorrect use (see note in the user-guide table with the constitutive equations).  
+	
+o Post-Processing:
+	
+	- Add: class ppUtil for post-processing purposes has been added to the versions for OpenFOAM and the one existing for foam-extend has been modified. Enable the use of multiple ppUtil in simultaneous.
+	
+	- Fix: sampling error was fixed for the tutorials of versions of40 and fe40.
+	
+o Multiphase flows:
+	
+	- Change: (fvc::grad(U) & fvc::grad(etaS()*alpha)) has been replaced by fvc::div(etaS()*alpha*dev2(T(fvc::grad(U)))) for the use in multiphase flows (constitutiveEq.C).
+	
+	- Fix: call to constrainPressure() in reoInterFoam, version of40, has been corrected for the SIMPLEC algorithm (pEqn.H). Added a section in the user-guide on how to use properly the fixedFluxPressure BC with reoInterFoam in versions of222 and fe40. 
+	
+	- Add: tutorials on the die swell problem.
+	
+o Generic: 
+	
+	- Fix: code clean-up and bug fix in BC evaluation of the explicit fvc::div(phi,X) operator in class GaussDefCmpw.
+	 
+	- Change/Add: replace boundary condition extST by the Type-independent linearExtrapolation boundary condition (no backward compatibility). Added optional second-order regression.
+	
+	- Change: major update of the user guide to include electrically-driven flows. Other changes were made in its content and organization, and some typos were corrected.
+	
+	- Change: ensure compatibility with foam-extend 4.0 and OpenFOAM v4.1.			
+	
+//***********************************************************\\
+ 
+Version 1.0  
+
+Released on 6/12/2016.
+
+Initial version.
+
+//***********************************************************\\
