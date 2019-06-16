@@ -26,11 +26,8 @@ constitutiveEqs/constitutiveEq/newConstitutiveEq.C
  constitutiveEqs/XPomPom/XPomPom.C
  constitutiveEqs/XPomPom/XPomPomLog/XPomPomLog.C
   
- constitutiveEqs/PTTlinear/PTTlinear.C
- constitutiveEqs/PTTlinear/PTTlinearLog/PTTlinearLog.C
-
- constitutiveEqs/PTTexp/PTTexp.C
- constitutiveEqs/PTTexp/PTTexpLog/PTTexpLog.C
+ constitutiveEqs/PTT/PTT.C
+ constitutiveEqs/PTT/PTTLog/PTTLog.C
 
  constitutiveEqs/GNF/Newtonian/Newtonian.C
  constitutiveEqs/GNF/CarreauYasuda/CarreauYasuda.C

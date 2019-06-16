@@ -76,9 +76,9 @@ autoPrecond(false)
     if (Pstream::parRun())
       petscOptFile = std::string(mesh.time().path()/".."/"system"/"petscDict");
    
-    int argc = 1;
-    char** argv = new char*[argc+1];
-    argv[1] = NULL;
+    int argc = 0;
+    char** argv = new char*[argc];
+    argv[0] = NULL;
  
     PetscInitialize(&argc,&argv,petscOptFile.c_str(),NULL);
     

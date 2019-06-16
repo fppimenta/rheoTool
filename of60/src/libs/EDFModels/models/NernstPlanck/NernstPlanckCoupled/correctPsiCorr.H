@@ -7,6 +7,7 @@ if (i != 0)
 forAll(ci.boundaryField(), pI)
 {
   if (isType<zeroIonicFluxFvPatchScalarField>(ci.boundaryField()[pI])) 
-    bndPsiCorr.set(pI, new zeroGradientFvPatchField<scalar>(psi_.mesh().boundary()[pI], psi_.ref()));
+    bndPsiCorr.set(pI, new zeroGradientFvPatchField<scalar>(psi_.mesh().boundary()[pI], psiCorr.internalField()));
 }
- 
+  
+psiCorr.correctBoundaryConditions();

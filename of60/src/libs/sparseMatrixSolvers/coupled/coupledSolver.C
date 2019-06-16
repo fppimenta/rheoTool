@@ -103,9 +103,9 @@ if (this->counterPetsc_ == 0)
   if (Pstream::parRun())
     petscOptFile = std::string(mesh.time().path()/".."/"system"/"petscDict");
    
-  int argc = 1;
-  char** argv = new char*[argc+1];
-  argv[1] = NULL;
+  int argc = 0;
+  char** argv = new char*[1];
+  argv[0] = NULL;
  
   PetscInitialize(&argc,&argv,petscOptFile.c_str(),NULL);
     
@@ -136,6 +136,14 @@ Foam::coupledSolver::~coupledSolver()
   {
     VecDestroy(&x); 
   }
+  
+  // It may happen that the number of solve() calls is less 
+  // than nEvalInit_, so in this case the robust sum check was not done,
+  // hence A0 is still alive and we need to destoy it. Only applies if
+  // robustsumcheck flag is on, otherwise the autoPtr is always NULL and
+  // nothing is done
+  if (!A0.empty())
+   MatDestroy(&A0()); 
             
   this->counterPetsc_--;
   
@@ -476,7 +484,7 @@ void Foam::coupledSolver::getResiduals
  
  ierr = VecSet(xpart,0.); CHKERRV(ierr);
  ierr = VecSet(xCum,0.); CHKERRV(ierr);
- ierr = VecCopy(b,AxMb);CHKERRV(ierr); // AxMb is b
+ ierr = VecCopy(b,AxMb); CHKERRV(ierr); // AxMb is b
  
  //- Numerator: |Ax - b|
  ierr = MatMult(A,x,Ax); CHKERRV(ierr);  
@@ -485,7 +493,7 @@ void Foam::coupledSolver::getResiduals
  scalarList numNormW(firstCmpList.last(), 0.);
  scalarList den1W(firstCmpList.last(), 0.);
  scalarList den2W(firstCmpList.last(), 0.);
-  
+ 
  int ilower = this->sharedData.ilower;
  scalar val(1.); 
  scalar xAvW(0.);
@@ -501,7 +509,7 @@ void Foam::coupledSolver::getResiduals
    ierr = VecAssemblyEnd(xpart);CHKERRV(ierr);
    
    // |Ax-b|
-   ierr = VecPointwiseMult(tmpV, xpart, AxMb);CHKERRV(ierr);
+   ierr = VecPointwiseMult(tmpV, xpart, AxMb); CHKERRV(ierr);
    ierr = VecNorm(tmpV, NORM_1, &numNormW[i]); CHKERRV(ierr);  
    
    // xmean
@@ -535,8 +543,16 @@ void Foam::coupledSolver::getResiduals
      {
       // Udpdate A0
       if (initTimeFlag)   
-      {      
-        ierr = MatDuplicate(A,MAT_COPY_VALUES,&A0);CHKERRV(ierr); 
+      {  
+        if (A0.empty())
+        {
+          A0.set(new Mat);    
+          ierr = MatDuplicate(A,MAT_COPY_VALUES,&A0());CHKERRV(ierr);         
+        }
+        else
+        {
+          ierr = MatCopy(A,A0(),SAME_NONZERO_PATTERN);CHKERRV(ierr);          
+        }          
       }
       // Perform mat subtraction and decide
       else
@@ -544,11 +560,11 @@ void Foam::coupledSolver::getResiduals
         Vec xc;
         PetscScalar norm;
         ierr = VecDuplicate(b,&xc);CHKERRV(ierr);
-        ierr = MatAXPY(A0,-1,A,SAME_NONZERO_PATTERN);CHKERRV(ierr);
-        ierr = MatGetRowMaxAbs(A0,xc,NULL);
+        ierr = MatAXPY(A0(),-1,A,SAME_NONZERO_PATTERN);CHKERRV(ierr);
+        ierr = MatGetRowMaxAbs(A0(),xc,NULL); CHKERRV(ierr);
         ierr = VecNorm(xc, NORM_1, &norm); CHKERRV(ierr);
         VecDestroy(&xc);
-        MatDestroy(&A0); 
+        MatDestroy(&A0()); A0.clear(); // Make autoPtr NULL as flag in dtor
         if (mag(norm) > 1e-20)
         {
           if (Pstream::master)
@@ -630,19 +646,19 @@ void Foam::coupledSolver::getResiduals
    // Reset filter   
    ierr = VecSet(xpart,0.); CHKERRV(ierr);
  }
- 
+  
  // Compute residual per block equation
  forAll(numNormW, i)
  {
    scalar n = numNormW[i];
    scalar d1 = den1W[i];
    scalar d2 = den2W[i];
-   if ( n + d1 + d2 < 1e-30)
-     residual[i] = 1;
-   else
+   if ( n + d1 + d2 < 1e-30)                     
+     residual[i] = 1;                           
+   else                                         
      residual[i] = n/(d1+d2+1e-20);
  }
- 
+  
  // Cleanup
  VecDestroy(&Ax); 
  VecDestroy(&xpart); 

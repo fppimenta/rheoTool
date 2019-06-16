@@ -1,3 +1,6 @@
+sinclude $(GENERAL_RULES)/mplib$(WM_MPLIB)
+sinclude $(RULES)/mplib$(WM_MPLIB)
+
 EXE_INC = \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude \
@@ -16,7 +19,7 @@ EXE_INC = \
     -isystem$(EIGEN_RHEO) \
     -isystem$(PETSC_DIR)/$(PETSC_ARCH)/include \
     -isystem$(PETSC_DIR)/include \
-    $(shell mpicxx --showme:compile)
+    $(PFLAGS) $(PINC)
 
 EXE_LIBS = \
     -lfiniteVolume \

@@ -1,3 +1,6 @@
+sinclude $(GENERAL_RULES)/mplib$(WM_MPLIB)
+sinclude $(RULES)/mplib$(WM_MPLIB)
+
 EXE_INC = \
     -isystem$(EIGEN_RHEO) \
     -I/constitutiveEqs/utils \
@@ -9,7 +12,7 @@ EXE_INC = \
     -I../fvmb/lnInclude \
     -isystem$(PETSC_DIR)/$(PETSC_ARCH)/include \
     -isystem$(PETSC_DIR)/include \
-    $(shell mpicxx --showme:compile)
+    $(PFLAGS) $(PINC)
  
 LIB_LIBS = \
     -lfiniteVolume \
@@ -21,4 +24,4 @@ LIB_LIBS = \
     -L$(FOAM_USER_LIBBIN) -lfvmb \
     -L$(PETSC_DIR)/$(PETSC_ARCH)/lib -lHYPRE \
     -L$(PETSC_DIR)/$(PETSC_ARCH)/lib -lpetsc \
-    $(shell mpicxx --showme:link) 
+    $(PLIBS)

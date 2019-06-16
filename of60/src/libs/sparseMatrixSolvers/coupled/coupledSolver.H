@@ -134,7 +134,7 @@ class coupledSolver
         
         // Matrix of coefficients in the previous time-step (only used to check
         // if the matrix is changing over time, in case saveSystem is enabled) 
-        Mat A0;
+        autoPtr<Mat> A0;
         
         // Source vector
         Vec b;

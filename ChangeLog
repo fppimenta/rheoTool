@@ -8,6 +8,37 @@
 
 //************************************************************\\
 
+Version 4.1
+
+Released on 17/06/2019.
+
+o Sparse matrix solvers:
+	
+	- Fix:fixed two memory leaks in class coupledSolver, one minor (argv for PETSc) and one major (related with matrix A0). Only for the OpenFOAM version.
+	
+	- Change: changed the options file of several classes and applications to be more generic regarding the MPI implementation (it will now automatically
+      share the one used by OpenFOAM, defined in $WM_MPLIB). Only for the OpenFOAM version.
+
+	Note: running PETSc with OpenMPI seems to generate a small memory leak in function PetscInitialize(). This leak is of small importance, but can
+	be avoided under other MPI implementations (e.g. MPICH).
+
+o Constitutive equations
+
+	- Add and change: the class for the PTT constitutive equation was modified to incorporate all variants of this model in a single class. Therefore, the
+	  previous PTTexp and PTTlinear classes are now variants of a single class named PTT, whose typename is also PTT. In addition to the linear and
+	  exponential variants of the model, a third one, denoted generalized, was added based on Ref. [27]. The selection between variants relies on keyword
+	  destructionFunctionType (see the tutorials). All the changes/additions are for both stress-tensor and log-conformation tensor approaches. See Table 4.1.
+
+o Electrically-driven flows
+
+	- Fix: fixed a bug in model NernstPlanckCoupled which was leading to spurious simulation aborts in some cases. Only for the OpenFOAM version.
+
+o Tutorials
+
+	- Change: all tutorials involving the PTT constitutive equation were modified according to the new syntax of this model, arising from code reorganization.
+
+//************************************************************\\
+
 Version 4.0
 
 Released on 04/04/2019.

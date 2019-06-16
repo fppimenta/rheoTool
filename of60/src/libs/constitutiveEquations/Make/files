@@ -19,12 +19,9 @@ constitutiveEqs/constitutiveEq/newConstitutiveEq.C
 
  constitutiveEqs/FENE-P/FENE_P.C
  constitutiveEqs/FENE-P/FENE-PLog/FENE_PLog.C
-
- constitutiveEqs/PTTlinear/PTTlinear.C
- constitutiveEqs/PTTlinear/PTTlinearLog/PTTlinearLog.C
-
- constitutiveEqs/PTTexp/PTTexp.C
- constitutiveEqs/PTTexp/PTTexpLog/PTTexpLog.C
+ 
+ constitutiveEqs/PTT/PTT.C
+ constitutiveEqs/PTT/PTTLog/PTTLog.C
  
  constitutiveEqs/Rolie-Poly/RoliePoly.C
  constitutiveEqs/Rolie-Poly/Rolie-PolyLog/RoliePolyLog.C

@@ -17,7 +17,7 @@ FoamFile
 parameters
 {
                 
-                type             PTTlinearLog;
+                type             PTTLog;
 
                 rho              rho [1 -3 0 0 0 0 0] 1;
                 etaS             etaS [1 -1 -1 0 0 0 0] 0.1111111;
@@ -25,6 +25,8 @@ parameters
                 lambda           lambda [0 0 1 0 0 0 0] 0.6; 
                 epsilon          epsilon [0 0 0 0 0 0 0] 0.02;  
                 zeta             zeta [0 0 0 0 0 0 0] 0.; // Simplified PTT -> zeta = 0 
+                
+                destructionFunctionType  linear;
 
                 stabilization    coupling;                     
 }

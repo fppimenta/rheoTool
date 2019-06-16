@@ -21,7 +21,7 @@ ddtSchemes
 
 gradSchemes
 {
-    default         cellLimited Gauss linear 1;
+    default         Gauss linear;
     grad(p)         Gauss linear;
     grad(U)         Gauss linear;
 }
