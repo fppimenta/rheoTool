@@ -49,10 +49,12 @@ if (solveElecM)
 
 //------- p -----------//
 
+// Pressure and flux ddt correction
 surfaceScalarField pRC
 (
   "pRC",
   fvc::interpolate(rAU)*(fvc::interpolate(fvc::grad(p)) & mesh.Sf())
+ +MRF.zeroFilter(fvc::interpolate(rAU)*fvc::ddtCorr(U, phi, Uf)) 
 );
 
 fvScalarMatrix pEqn

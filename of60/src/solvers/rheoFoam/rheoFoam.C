@@ -118,9 +118,7 @@ int main(int argc, char *argv[])
               // Solve all coupled
               cps->solve(); 
                 
-              phi =   fvc::flux(U)
-                    + MRF.zeroFilter(fvc::interpolate(rAU)*fvc::ddtCorr(U, phi, Uf)) 
-                    + pRC - fvc::snGrad(p)*fvc::interpolate(rAU)*mesh.magSf(); 
+              phi = fvc::flux(U) + pRC - fvc::snGrad(p)*fvc::interpolate(rAU)*mesh.magSf(); 
                     
               #include "continuityErrs.H"
               
