@@ -41,7 +41,7 @@
     {
       rAtU = 1.0/(1.0/rAU() - UEqn.H1());
       phiHbyA += fvc::interpolate(rAtU() - rAU())*fvc::snGrad(p_rgh)*mesh.magSf();
-      HbyA -= (rAU() - rAtU())*fvc::grad(p_rgh);
+      HbyA -= (rAU() - rAtU()) * fvc::reconstruct( fvc::snGrad(p_rgh) * mesh.magSf() );
       
       // Update the pressure BCs to ensure flux consistency
       constrainPressure(p_rgh, U, phiHbyA, rAtU(), MRF);
@@ -78,7 +78,8 @@
 
             if (simplec)
             {
-               U = HbyA + rAU()*fvc::reconstruct(phig/rAUf) - rAtU()*fvc::grad(p_rgh);
+               surfaceScalarField rAtUf("rAtUf", fvc::interpolate(rAtU()));
+               U = HbyA + rAU()*fvc::reconstruct(phig/rAUf) - rAtU()*fvc::reconstruct(p_rghEqn.flux()/rAtUf);
             }
             else
             {

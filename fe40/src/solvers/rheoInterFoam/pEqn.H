@@ -36,7 +36,7 @@
       rAtU().rename("rAtU");
     
       phi += fvc::interpolate(rAtU() - rAU)*fvc::snGrad(pd)*mesh.magSf();
-      U -= (rAU - rAtU())*fvc::grad(pd);
+      U -= (rAU - rAtU()) * fvc::reconstruct( fvc::snGrad(pd) * mesh.magSf() );
     }
 
 
@@ -66,7 +66,8 @@
 
     if (simplec)
      {
-          U += rAU*fvc::reconstruct(phig/rAUf) - rAtU()*fvc::grad(pd);
+          surfaceScalarField rAtUf("rAtUf", fvc::interpolate(rAtU()));
+          U += rAU*fvc::reconstruct(phig/rAUf) - rAtU()*fvc::reconstruct(pdEqn.flux()/rAtUf); 
      }
     else
      {
