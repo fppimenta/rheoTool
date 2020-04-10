@@ -1,0 +1,12 @@
+EXE_INC = \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/lagrangian/basic/lnInclude \
+    -IspringModel \
+    -IexternalForcingInterp \
+    -isystem$(EIGEN_RHEO)
+
+LIB_LIBS = \
+    -lfiniteVolume \
+    -lmeshTools \
+    -llagrangian

@@ -1,0 +1,27 @@
+sinclude $(GENERAL_RULES)/mplib$(WM_MPLIB)
+sinclude $(RULES)/mplib$(WM_MPLIB)
+
+EXE_INC = \
+    -isystem$(EIGEN_RHEO) \
+    -I/constitutiveEqs/utils \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/transportModels/twoPhaseMixture/lnInclude \
+    -I$(LIB_SRC)/transportModels/interfaceProperties/lnInclude \
+    -I../sparseMatrixSolvers/lnInclude \
+    -I../fvmb/lnInclude \
+    -isystem$(PETSC_DIR)/$(PETSC_ARCH)/include \
+    -isystem$(PETSC_DIR)/include \
+    $(PFLAGS) $(PINC)
+ 
+LIB_LIBS = \
+    -lfiniteVolume \
+    -lmeshTools \
+    -ltwoPhaseMixture \
+    -linterfaceProperties \
+    -ltwoPhaseProperties \
+    -L$(FOAM_USER_LIBBIN) -lsparseMatrixSolvers \
+    -L$(FOAM_USER_LIBBIN) -lfvmb \
+    -L$(PETSC_DIR)/$(PETSC_ARCH)/lib -lHYPRE \
+    -L$(PETSC_DIR)/$(PETSC_ARCH)/lib -lpetsc \
+    $(PLIBS)

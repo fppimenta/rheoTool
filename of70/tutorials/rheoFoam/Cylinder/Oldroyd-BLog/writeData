@@ -1,0 +1,12 @@
+#!/bin/bash
+
+curDir=$(pwd)
+fileDir=$curDir/$1
+
+if [ ! -e $fileDir ]; then
+    echo "${@:2}" > "$fileDir"
+else
+    echo "${@:2}" >> "$fileDir"
+fi
+ 
+

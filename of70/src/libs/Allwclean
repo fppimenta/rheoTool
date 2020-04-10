@@ -1,0 +1,22 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+ 
+set -x
+
+wclean libso fvmb
+wclean libso sparseMatrixSolvers
+wclean libso gaussDefCmpwConvectionScheme
+
+wclean libso constitutiveEquations
+wclean libso EDFModels
+wclean libso boundaryConditions
+
+wclean preProcessing/rndPerturbation
+wclean preProcessing/initMolecules
+
+wclean libso postProcessing/postProcUtils
+wclean postProcessing/writeEfield
+wclean postProcessing/averageMolcN
+wclean postProcessing/averageMolcX
+
+wclean libso brownianDynamics

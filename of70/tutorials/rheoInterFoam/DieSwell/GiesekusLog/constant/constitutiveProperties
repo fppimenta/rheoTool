@@ -1,0 +1,53 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  6.0                                   |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      constitutiveProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+ 
+phases (water air);
+
+water
+{     
+       parameters
+       {		        
+         type             GiesekusLog;
+         rho              rho [ 1 -3 0 0 0 0 0 ] 0.03;
+         etaS             etaS [1 -1 -1 0 0 0 0] 0.11111;
+         etaP             etaP [1 -1 -1 0 0 0 0] 0.88889; 
+          
+         lambda           lambda [0 0 1 0 0 0 0] 4.;
+         alpha            alpha [0 0 0 0 0 0 0] 0.5; 
+         
+         stabilization    coupling;
+       }      
+}
+
+air
+{
+     parameters
+       {		        
+         type            Newtonian;
+         rho             rho [1 -3 0 0 0 0 0] 1.5e-4;
+         eta             eta [1 -1 -1 0 0 0 0] 1e-3;
+       }
+}
+
+passiveScalarProperties
+{
+                solvePassiveScalar   off;
+                D                    D [ 0 2 -1 0 0 0 0 ] 1e-9; 
+}
+
+sigma           sigma [ 1 0 -2 0 0 0 0 ] 0.;
+
+// ************************************************************************* //

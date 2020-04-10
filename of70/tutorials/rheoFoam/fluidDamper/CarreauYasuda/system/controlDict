@@ -1,0 +1,121 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  6.0                                   |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     rheoInterFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         .0625; 
+
+deltaT          1e-5;
+
+writeControl    timeStep;
+
+writeInterval   125;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep  false;
+
+maxCo           0.05;
+
+maxAlphaCo      0.05;
+
+maxDeltaT       0.1;
+
+functions
+{
+   outputCd
+    {
+	 functionObjectLibs ("libutilityFunctionObjects.so");
+	 type coded;
+	 redirectType calFfl;
+	 writeControl timeStep;
+         writeInterval      50;
+         enabled             yes;
+
+	 codeWrite
+	 #{
+ 
+          // Lookup/create variable 
+	     
+	   const volVectorField& U = mesh().lookupObject<volVectorField>("U");
+           const volScalarField& p = mesh().lookupObject<volScalarField>("p");
+           const dictionary& constDict = mesh().lookupObject<IOdictionary>("constitutiveProperties");
+           dimensionedScalar rho_(constDict.subDict("parameters").lookup("rho"));
+           const volScalarField& eta_ = mesh().lookupObject<volScalarField>("eta");
+        
+           label pistL = mesh().boundaryMesh().findPatchID("piston");
+           label shaftL = mesh().boundaryMesh().findPatchID("shaft");
+           scalarList list;
+    
+          // Compute Ffl
+ 
+           volTensorField L = fvc::grad(U);
+
+	   volSymmTensorField F = symm( L + L.T() ) * eta_ - p * symmTensor::I * rho_;
+
+           vector Fpatch =  gSum( ( -mesh().boundaryMesh()[pistL].faceAreas() ) & F.boundaryField()[pistL] )
+                          + gSum( ( -mesh().boundaryMesh()[shaftL].faceAreas() ) & F.boundaryField()[shaftL] );
+           
+           // Note: the angle of our wedge is 5º, but we want to report the force acting on all the surface. 
+           // We do not account for the real curvature (the wall of the outer cage is straight rather than curved).                
+           Fpatch *= 360./5.;               
+  
+           list.append(mesh().time().value());  // Time (col 0)  
+           list.append(Fpatch.x());             // Ffl   (col 1)  
+
+          // Write data
+
+           string comsh;           
+           string filename("F_fl.txt");
+	   std::stringstream doub2str; doub2str.precision(12);
+
+           comsh = "./writeData " + filename;
+           forAll(list, id)
+            {
+              doub2str.str(std::string());
+              doub2str << list[id]; 
+              comsh += " " + doub2str.str();
+            }
+           
+           if (Pstream::master())
+            {
+	      system(comsh);
+            }
+
+	 #};
+    }
+ 
+}
+
+// ************************************************************************* //

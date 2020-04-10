@@ -1,0 +1,44 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  6.0                                   |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      particleProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+ 
+groups
+(
+    G1
+    {
+        nMolecules   1000;
+        
+        // Physical properties
+        D            0.065e-12; 
+        a            .077e-6;  
+        Nks           19.81132075;             
+        nuEV         1.2e-21;    
+        Ls           2.1e-6;     
+        
+        spatialDistibutionCoeffs
+         {
+            p0              (2e-5 2e-5 2e-5); 
+            p1              (2e-5 2e-5 2e-5); 
+          
+            branches
+            (
+                  (0 0 11) ( 0.7  0. 0. ) (false true)
+            );
+            
+         }       
+    }     
+);
+ 
+// ************************************************************************* //

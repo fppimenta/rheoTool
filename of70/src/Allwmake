@@ -1,0 +1,34 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Parse arguments for library compilation
+. $WM_DIR/scripts/AllwmakeParseArguments
+
+# Check env vars
+if [ -z "${EIGEN_RHEO}" ]; then
+  echo " "
+  echo "ERROR: Environmental variable \$EIGEN_RHEO is not defined. Possible causes:"
+  echo " "
+  echo " . Eigen is not present in your system, perhaps ./downloadEigen terminated with error."
+  echo " . Eigen is in your system, but you forgot exporting variable \$EIGEN_RHEO after running ./downloadEigen."
+  echo " . Eigen is in your system, but you are running ./Allwmake in the same terminal as the one used for ./downloadEigen, so the environmental variable was not loaded. In this case, simply open a new terminal and run again ./Allwmake."
+  echo " "
+  exit 1
+fi
+
+if [ -z "${PETSC_DIR}" ]; then
+  echo " "
+  echo "ERROR: Environmental variable \$PETSC_DIR is not defined. Possible causes:"
+  echo " "
+  echo " . PETSC is not installed in your system, perhaps ./installPetsc terminated with error."
+  echo " . Petsc is installed your system, but you are running ./Allwmake in the same terminal as the one used for ./installPetsc, so the environmental variable was not loaded. In this case, simply open a new terminal and run again ./Allwmake."
+  echo " "
+  exit 1
+fi
+
+# Compile
+
+(cd libs && ./Allwmake)
+
+(cd solvers && ./Allwmake)
+ 
