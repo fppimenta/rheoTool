@@ -1,0 +1,51 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  7.0                                   |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      T;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [ 0 0 0 1 0 0 0 ];
+
+internalField   uniform 100;
+
+boundaryField
+{
+    #includeEtc "caseDicts/setConstraintTypes"
+
+    left0
+    {
+        type            fixedValue;
+        value           uniform 100;
+    }
+    right0
+    {
+        type            fixedValue;
+        value           uniform 100;
+    }
+    down0
+    {
+        type            fixedValue;
+        value           uniform 100;
+    }
+    
+    inter0
+    {   
+        type                    coupledT;
+        nbrFieldName            "T";
+        isContactResistance     true;
+        hres                    500;
+        value                   uniform 10;
+    }
+}
+
+// ************************************************************************* //

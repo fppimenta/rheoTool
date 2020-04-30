@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
               cps->solve(); 
                 
               phi = fvc::flux(U) + pRC - fvc::snGrad(p)*fvc::interpolate(rAU)*mesh.magSf(); 
-                    
+                     
               #include "continuityErrs.H"
               
               fvOptions.correct(U);

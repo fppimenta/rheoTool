@@ -34,4 +34,7 @@ EXE_LIBS = \
     -L$(FOAM_USER_LIBBIN) -lBCRheoTool \
     -L$(FOAM_USER_LIBBIN) -lpostProcessingRheoTool \
     -L$(FOAM_USER_LIBBIN) -lfvmb \
-    -L$(FOAM_USER_LIBBIN) -lsparseMatrixSolvers
+    -L$(FOAM_USER_LIBBIN) -lsparseMatrixSolvers \
+    -L$(PETSC_DIR)/$(PETSC_ARCH)/lib -lHYPRE \
+    -L$(PETSC_DIR)/$(PETSC_ARCH)/lib -lpetsc \
+    $(PLIBS)

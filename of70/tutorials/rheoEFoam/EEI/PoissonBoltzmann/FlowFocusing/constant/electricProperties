@@ -1,0 +1,41 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  7.0                                   |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      electricProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+ 
+parameters
+{
+        type             PoissonBoltzmann;      
+  
+        relPerm          relPerm [ 0 0 0 0 0 0 0 ] 78;  
+        T                T [ 0 0 0 1 0 0 0 ] 295;
+        psiContrib       false;
+        
+        species
+        (        
+           cations
+           {        
+              z                 z [ 0 0 0 0 0 0 0 ] 1;      
+              c0                c0 [ 0 -3 0 0 1 0 0 ] 9.110e-05;          
+           }
+           
+           anions
+           {  
+              z                 z [ 0 0 0 0 0 0 0 ] -1;         
+              c0                c0 [ 0 -3 0 0 1 0 0 ] 9.110e-05;         
+           }               
+        ); 
+}
+
+// ************************************************************************* //

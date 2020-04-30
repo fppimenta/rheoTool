@@ -1,0 +1,68 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  7.0                                   |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+coupledSolvers
+{  
+  Uptau
+  {
+    solveCoupledUp true;
+    solveCoupledTau false;
+    
+    saveSystem true;
+    robustSumCheck  true;
+    updatePrecondFrequency 100000;  
+    updateMatrixCoeffs false;   
+  }
+}
+
+solvers
+{
+    "(theta|tau)"
+    {
+
+        solver           PBiCG;
+        preconditioner
+        {
+            preconditioner DILU;
+        }
+
+        tolerance         1e-10;
+        relTol            0;
+        minIter           0;
+        maxIter           1000;
+    }
+ 
+}
+
+SIMPLE
+{
+    nInIter         1;
+    nNonOrthogonalCorrectors 0;
+    pRefCell        0;
+    pRefValue       0;
+
+    residualControl
+    {
+       
+    }
+}
+
+relaxationFactors
+{
+      
+}
+
+// ************************************************************************* //

@@ -1,0 +1,22 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+# Run the relaxation test
+(cd relaxation && ./Allrun)
+
+# Copy the equilibrium configurations from there
+cp -rf relaxation/50/lagrangian  0/ 
+
+mkdir -p constant/runTimeInfo/50
+cp -rf relaxation/constant/runTimeInfo/50  constant/runTimeInfo 
+mv constant/runTimeInfo/50 constant/runTimeInfo/0
+
+# Run for the extensional flow 
+runApplication blockMesh
+
+runApplication rheoBDFoam
+
+runApplication averageMolcN 0

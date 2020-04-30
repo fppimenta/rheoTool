@@ -8,6 +8,40 @@
 
 //************************************************************\\
 
+Version 5.0
+
+Released on 30/04/2020.
+
+o Generic
+
+	- Add: added rheoTool version for OpenFOAM v7.0. The version compatible with OpenFOAM v6.0 will be discontinued in a future release.
+
+	- Change: the rheoTool version compatible with foam-extend is no longer updated. The last updated version is rheoTool v4.1.
+
+o Non-isothermal solvers
+	
+	- Add: solver rheoHeatFoam is now available to solve for non-isothermal flows. The corresponding tutorials and theory in the user-guide are also available.
+	
+	- Add: solver rheoMultiRegionFoam is now available to solve for non-isothermal flows in multi-region domains with explicit/implicit coupling of
+	  the energy equation between regions. The corresponding tutorials and theory in the user-guide are also available.
+
+o Coupled solvers
+
+	- Fix: fixed bug related with ddt-phi correction for coupled solvers.
+	
+	- Change: the library containing the machinery for coupled solvers has been (significantly) modified in order to handle multi-region domains in a single coupled matrix.
+
+o Sparse matrix solvers
+
+	- Add: added support for cyclicAMI patches in coupled and segregated solvers. However, cyclicAMI patches of rotational type are only partially supported
+	 (explicitly handled in segregated solvers and not available in coupled solvers).
+
+o Multiphase
+
+	- Fix: improved consistency of SIMPLEC algorithm in the two-phase flow solver (rheoInterFoam).
+
+//************************************************************\\
+
 Version 4.1
 
 Released on 17/06/2019.

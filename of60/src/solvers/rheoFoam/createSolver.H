@@ -14,7 +14,7 @@ autoPtr<coupledSolver>  cps
 (
   solveCoupled
   ? 
-  new coupledSolver("Uptau", mesh)
+  new coupledSolver("Uptau",mesh.name(),runTime,mesh.solutionDict())
   :
   NULL
 );
@@ -22,6 +22,7 @@ autoPtr<coupledSolver>  cps
 //- Add fields to coupled solver
 if (solveCoupled)
 {
+ cps->insertMesh(mesh);
  cps->insertField(p);
  cps->insertField(U);  
 }

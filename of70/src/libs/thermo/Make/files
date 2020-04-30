@@ -1,0 +1,27 @@
+thermoFunctions/thermoFunctions/thermoFunction.C
+thermoFunctions/thermoFunctions/newThermoFunction.C
+
+thermoFunctions/Constant/Constant.C
+thermoFunctions/Arrhenius/Arrhenius.C
+thermoFunctions/ArrheniusModified/ArrheniusModified.C
+thermoFunctions/WLF/WLF.C
+thermoFunctions/VFT/VFT.C
+
+thermoModels/fluidThermo/fluidThermoModel.C
+thermoModels/fluidThermo/newFluidThermoModel.C
+
+thermoModels/fluidThermo/boussinesq/boussinesq.C
+thermoModels/fluidThermo/frozenTemperature/frozenTemperature.C
+
+thermoModels/solidThermo/solidThermoModel.C
+thermoModels/solidThermo/newSolidThermoModel.C
+
+thermoModels/solidThermo/isotropic/isotropic.C
+
+thermoModels/fluidThermoMixture/fluidThermoMixtureModel.C
+thermoModels/fluidThermoMixture/newFluidThermoMixtureModel.C
+
+thermoModels/fluidThermoMixture/isotropicMixture/isotropicMixture.C
+thermoModels/fluidThermoMixture/frozenTemperatureMixture/frozenTemperatureMixture.C
+
+LIB = $(FOAM_USER_LIBBIN)/libthermoRheoTool

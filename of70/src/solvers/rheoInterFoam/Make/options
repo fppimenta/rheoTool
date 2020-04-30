@@ -1,0 +1,41 @@
+sinclude $(GENERAL_RULES)/mplib$(WM_MPLIB)
+sinclude $(RULES)/mplib$(WM_MPLIB)
+
+EXE_INC = \
+    -I../shared/twoPhase/VoF \
+    -I../shared/twoPhase \
+    -I$(LIB_SRC)/transportModels/twoPhaseMixture/lnInclude \
+    -I$(LIB_SRC)/transportModels/interfaceProperties/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/sampling/lnInclude \
+    -I../../libs/constitutiveEquations/lnInclude \
+    -I../../libs/gaussDefCmpwConvectionScheme/lnInclude \
+    -I../../libs/boundaryConditions/lnInclude \
+    -I../../libs/postProcessing/postProcUtils/lnInclude \
+    -I../../libs/fvmb/lnInclude \
+    -I../../libs/sparseMatrixSolvers/lnInclude \
+    -isystem$(EIGEN_RHEO) \
+    -isystem$(PETSC_DIR)/$(PETSC_ARCH)/include \
+    -isystem$(PETSC_DIR)/include \
+    $(PFLAGS) $(PINC)
+    
+EXE_LIBS = \
+    -limmiscibleIncompressibleTwoPhaseMixture \
+    -lturbulenceModels \
+    -lincompressibleTurbulenceModels \
+    -lfiniteVolume \
+    -ldynamicFvMesh \
+    -lfvOptions \
+    -lmeshTools \
+    -lsampling \
+    -L$(FOAM_USER_LIBBIN) -lconstitutiveEquations \
+    -L$(FOAM_USER_LIBBIN) -lgaussDefCmpwConvectionSchemes \
+    -L$(FOAM_USER_LIBBIN) -lBCRheoTool \
+    -L$(FOAM_USER_LIBBIN) -lpostProcessingRheoTool \
+    -L$(FOAM_USER_LIBBIN) -lfvmb \
+    -L$(FOAM_USER_LIBBIN) -lsparseMatrixSolvers \
+    -L$(PETSC_DIR)/$(PETSC_ARCH)/lib -lHYPRE \
+    -L$(PETSC_DIR)/$(PETSC_ARCH)/lib -lpetsc \
+    $(PLIBS)

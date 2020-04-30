@@ -125,7 +125,7 @@ void linearExtrapolationFvPatchField<Type>::updateCoeffs()
      // but speedup was not signficative due to lookup for faces on patches.
      
      for (direction cmp = 0; cmp < pTraits<Type>::nComponents; cmp++)
-      {          
+     {          
         tmp<volScalarField> tvarI = var.component(cmp);
         if ( pTraits<Type>::nComponents == 1)      
            tvarI = tmp<volScalarField>(var.component(cmp)*1.);
@@ -134,20 +134,20 @@ void linearExtrapolationFvPatchField<Type>::updateCoeffs()
         volVectorField gradT = fvc::grad(varI, "linExtrapGrad");
     
         forAll(this->patch(), facei )        
-          {
-             vector r_face = this->patch().Cf()[facei];  
+        {
+          vector r_face = this->patch().Cf()[facei];  
 
-             label cellA = this->patch().faceCells()[facei];
+          label cellA = this->patch().faceCells()[facei];
 
-             vector r_cellA = mesh.cellCentres()[cellA];  
+          vector r_cellA = mesh.cellCentres()[cellA];  
 
-             vector CtoF = (r_face - r_cellA);
+          vector CtoF = (r_face - r_cellA);
 
-             varpI[facei] = varI[cellA] + (gradT[cellA] & CtoF );
-          }
+          varpI[facei] = varI[cellA] + (gradT[cellA] & CtoF );
+        }
        
         varp.replace(cmp, varpI);          
-      }
+     }
    }
    else
    {       
@@ -158,7 +158,7 @@ void linearExtrapolationFvPatchField<Type>::updateCoeffs()
      const vectorField& Sf = mesh.faceAreas();        
     
      forAll(this->patch(), facepi )        
-      {
+     {
           label cellA = this->patch().faceCells()[facepi];
           const cell& faces = mesh.cells()[cellA];
           vector n = this->patch().Sf()[facepi]/mag(this->patch().Sf()[facepi]);
@@ -172,13 +172,13 @@ void linearExtrapolationFvPatchField<Type>::updateCoeffs()
           scalar xav(0.);
           Type yav(pTraits<Type>::zero);
           forAll(faces, fi)     
-           {
+          {
              label  facei = faces[fi];  
              
              // Only use internal cells (pitfall: faces on coupled patches
              // will not be used).
              if (mesh.isInternalFace(facei))
-              {
+             {
                 scalar SfdOwn = mag(Sf[facei] & (Cf[facei] - C[owner[facei]]));
                 scalar SfdNei = mag(Sf[facei] & (C[neighbour[facei]] - Cf[facei]));
                 scalar w = SfdOwn/(SfdOwn + SfdNei);
@@ -190,8 +190,8 @@ void linearExtrapolationFvPatchField<Type>::updateCoeffs()
                 xav += x[id]; 
                 
                 id++;            
-              }                   
-           }  
+             }                   
+          }  
          
           // Last pair x-y is for cell P (there is always space for it in the lists
           // because at least one of the cell's faces is on the boundary)
@@ -209,14 +209,13 @@ void linearExtrapolationFvPatchField<Type>::updateCoeffs()
           Type num(pTraits<Type>::zero);
           scalar den(0.);
           for (int i=0; i<id; i++)
-           {
+          {
              num += (x[i]-xav)*(y[i]-yav);
              den += (x[i]-xav)*(x[i]-xav); 
-           }
+          }
           
           varp[facepi] = yav - xav*num/den;    
-      }  
-    
+     }  
    }
    
    this->operator==(varp);      

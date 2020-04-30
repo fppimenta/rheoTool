@@ -1,0 +1,54 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  7.0                                   |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      p;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 10;
+
+boundaryField
+{
+   
+    movingLid
+    {
+        type            heatFlux; 
+	
+	// Fixed flux
+	Q               0;
+	q               uniform 0;
+	
+	// Convection
+	h               uniform 1000;
+	Ta              10;
+	
+	// Radiation
+	Ts              0;
+	emissivity      0;
+	
+	value           uniform 10;     
+    }
+    fixedWalls
+    {
+       type            fixedValue;
+       value           uniform 100;
+    }
+    frontAndBack
+    {
+        type            empty;
+    }
+    
+}
+
+// ************************************************************************* //

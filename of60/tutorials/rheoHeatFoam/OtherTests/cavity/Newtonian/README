@@ -1,0 +1,7 @@
+This tutorial exemplifies the use of the "heatFlux" BC and the WLF model for viscosity in case of Newtonian fluid.
+
+It is the #cavity# tutorial of rheoFoam applied here to a Newtonian fluid,
+in non-isothermal conditions and different Reynolds. 
+
+The "heatFlux" BC is applied on the top lid as a convective BC where the 
+external temperature is set to 10. The remaining walls of the cavity have T = 100.  

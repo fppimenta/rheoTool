@@ -1,0 +1,7 @@
+This tutorial exemplifies the use of rheoHeatFoam in an EDF flow. 
+
+The base case is the #channelEDF# tutorial of rheoEFoam. A #heatFlux# BC is applied at the walls, which cools down the 
+fluid by external convection. The viscosity and relaxation time of the fluid are temperature sensitive (WLF model for both).
+
+NOTE: none of the eletric-related physical properties of the fluid is sensitive to temperature.
+This feature will likely come in a future version.

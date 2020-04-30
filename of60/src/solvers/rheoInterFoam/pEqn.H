@@ -20,17 +20,17 @@
 
     if (p_rgh.needReference())
     {
-        fvc::makeRelative(phiHbyA, U);
-        adjustCorrPhi(phiHbyA, U, p_rgh);
-        fvc::makeAbsolute(phiHbyA, U);
+       fvc::makeRelative(phiHbyA, U);
+       adjustCorrPhi(phiHbyA, U, p_rgh);
+       fvc::makeAbsolute(phiHbyA, U);
     }
 
     surfaceScalarField phig
     (
-        (
-            mixture.surfaceTensionForce()
-          - ghf*fvc::snGrad(rho)
-        )*rAUf*mesh.magSf()
+      (
+          mixture.surfaceTensionForce()
+        - ghf*fvc::snGrad(rho)
+      )*rAUf*mesh.magSf()
     );
 
     phiHbyA += phig;
@@ -56,7 +56,7 @@
     {
         fvScalarMatrix p_rghEqn
         (
-            fvm::laplacian(rAtU(), p_rgh) == fvc::div(phiHbyA)
+            fvm::laplacian(rAtU(), p_rgh, "laplacian(p|rAtU)") == fvc::div(phiHbyA)
         );
 
         p_rghEqn.setReference(pRefCell, getRefCellValue(p_rgh, pRefCell));

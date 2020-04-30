@@ -1,0 +1,79 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+
+if [ "$#" -ne 1 ]; then
+    echo "ERROR: Illegal number of parameters"
+    echo "Usage is: ./Allrun n" 
+    echo "where n is the number of processors to be used"
+    exit 1
+fi
+ 
+foamDictionary -entry "writeFormat" -set "binary" system/controlDict
+
+runApplication blockMesh
+
+runApplication extrudeMesh
+ 
+(cd ./solid.mesh && ./Allrun) 
+
+runApplication mergeMeshes ./ ./solid.mesh -overwrite
+
+runApplication createPatch -overwrite
+
+runApplication splitMeshRegions -overwrite
+
+cp -rf constant/fluid.back/constitutiveProperties    constant/fluid/constitutiveProperties
+cp -rf constant/fluid.back/electricProperties    constant/fluid/electricProperties
+cp -rf constant/fluid.back/g    constant/fluid/g
+cp -rf constant/fluid.back/thermoProperties    constant/fluid/thermoProperties
+
+cp -rf constant/sphere.back/thermoProperties    constant/sphere/thermoProperties
+cp -rf constant/sphere.back/fvOptions           constant/sphere/fvOptions
+
+foamDictionary -entry "writeFormat" -set "ascii" system/controlDict
+ 
+if [ "$1" -gt 1 ]; then
+ foamDictionary -entry "numberOfSubdomains" -set $1 system/decomposeParDict
+ foamDictionary -entry "numberOfSubdomains" -set $1 system/fluid/decomposeParDict
+ foamDictionary -entry "numberOfSubdomains" -set $1 system/sphere/decomposeParDict
+ runApplication decomposePar -allRegions 
+ runParallel rheoMultiRegionFoam
+ runApplication reconstructPar -latestTime -allRegions 
+else
+ runApplication rheoMultiRegionFoam
+fi
+
+runApplication paraFoam -touchAll
+
+## We will now pick the flow variables and re-solve for the temperature in a
+## coupled way. The result should be close to the computed using the explicit
+## form of the BC. 
+## Only aim is to test the implicit implementation of the BC.
+
+mkdir ./runCoupledT
+cp -rf ./200 ./runCoupledT/200
+cp -rf ./0/fluid/T ./runCoupledT/200/fluid/T
+cp -rf ./0/sphere/T ./runCoupledT/200/sphere/T
+cp -rf ./constant ./runCoupledT/constant 
+cp -rf ./system ./runCoupledT/system
+cp -rf ./writeData ./runCoupledT/writeData
+
+foamDictionary -entry "endTime" -set "201" ./runCoupledT/system/controlDict
+foamDictionary -entry "writeInterval" -set "1" ./runCoupledT/system/controlDict
+
+foamDictionary -entry "coupledSolvers.T.solveCoupledT" -set "true" ./runCoupledT/system/fvSolution
+
+# Flow is already known
+foamDictionary -entry "PIMPLE.frozenFlow" -set "true" ./runCoupledT/system/fluid/fvSolution
+
+# No time-derivatives
+foamDictionary -entry "ddtSchemes.default" -set "steadyState" ./runCoupledT/system/fluid/fvSchemes
+foamDictionary -entry "ddtSchemes.default" -set "steadyState" ./runCoupledT/system/sphere/fvSchemes
+
+(cd ./runCoupledT && runApplication rheoMultiRegionFoam) 
+
+(cd ./runCoupledT && runApplication paraFoam -touchAll)

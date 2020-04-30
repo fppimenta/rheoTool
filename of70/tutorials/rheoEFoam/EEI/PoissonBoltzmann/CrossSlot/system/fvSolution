@@ -1,0 +1,86 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  7.0                                   |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    "(phiE|psi)"
+    {
+    
+        solver           PCG;
+        preconditioner   DIC;
+        tolerance        1e-10;
+        relTol           0;
+        minIter          0;
+        maxIter          800;
+    }
+    
+    p
+    {
+    
+        solver           PCG;
+        preconditioner   DIC;
+        tolerance        1e-8;
+        relTol           0.;
+        minIter          0;
+        maxIter          800;
+    }
+
+    "(theta|tau|C|U)"
+    {
+
+        solver           PBiCG;
+        preconditioner
+        {
+            preconditioner DILU;
+        }
+
+        tolerance         1e-10;
+        relTol            0.;
+        minIter           0;
+        maxIter           1000;
+    }
+ 
+}
+
+electricControls
+{
+  phiEEqn
+   {
+      residuals 1e-7;
+      maxIter      1;
+   }
+
+  psiEqn
+   {
+      residuals 1e-7;
+      maxIter      1;
+   }
+}
+
+SIMPLE
+{
+    nInIter         1;
+    nNonOrthogonalCorrectors 1;
+    pRefCell        0;
+    pRefValue       0;
+
+    residualControl
+    {
+       
+    }
+}
+
+// ************************************************************************* //

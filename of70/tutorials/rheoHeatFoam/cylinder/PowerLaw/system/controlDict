@@ -1,0 +1,220 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  7.0                                   |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     rheoHeatFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         100;
+
+deltaT          5e-2;
+
+writeControl    runTime;
+
+writeInterval   20;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  12;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   10;
+
+graphFormat     raw;
+
+runTimeModifiable yes;
+
+adjustTimeStep off;
+
+maxCo          0.1;
+
+maxDeltaT      0.01;
+
+functions
+{
+
+ // Monitor for convergence
+
+    probes
+    {
+        // Where to load it from
+        functionObjectLibs ( "libsampling.so" );
+
+        type            probes;
+
+        // Name of the directory for probe data
+        name            probes;
+
+        // Write at same frequency as fields
+        writeControl   timeStep;
+        writeInterval  25;
+
+        // Fields to be probed
+        fields
+        (
+            U
+            T
+        );
+
+        probeLocations
+        (
+             (3 0 0.5)
+             (10 0 0.5)
+        );
+    }
+    
+    outputCd
+    {
+        functionObjectLibs ( "libutilityFunctionObjects.so" );
+        type            coded;
+        redirectType    calCd;
+        writeControl    timeStep;
+        writeInterval   25;
+        enabled         yes;
+        codeWrite       #{
+ 
+ 
+          // User-input
+           scalar R_(1.); // Radius 
+           scalar U0(1.); // far-field velocity 
+ 
+          // Lookup/create variable 
+	     
+	   const volVectorField& U = mesh().lookupObject<volVectorField>("U");
+           const volScalarField& p = mesh().lookupObject<volScalarField>("p");
+           const dictionary& constDict = mesh().lookupObject<IOdictionary>("constitutiveProperties");
+           dimensionedScalar rho_(constDict.subDict("parameters").lookup("rho"));
+           const volScalarField& eta = mesh().lookupObject<volScalarField>("eta");
+  
+           label cyl = mesh().boundaryMesh().findPatchID("cylinder");
+           scalarList list;
+    
+          // Compute cd
+ 
+           volTensorField L = fvc::grad(U);
+
+	   volSymmTensorField F = symm( L + L.T() ) * eta - p * symmTensor::I * rho_;
+
+           vector Fpatch = gSum( ( -mesh().boundaryMesh()[cyl].faceAreas() ) & F.boundaryField()[cyl] );
+            
+           Fpatch *= 4./(rho_.value() * U0 * U0 * M_PI * R_ * R_); // multiplies 4 instead of 2 because of symmetry  
+           
+  
+           list.append(mesh().time().value());  // Time (col 0)  
+           list.append(Fpatch.x());             // Cd   (col 1)  
+
+          // Write data
+
+           string comsh;           
+           string filename("Cd.txt");
+	   std::stringstream doub2str; doub2str.precision(12);
+
+           comsh = "./writeData " + filename;
+           forAll(list, id)
+           {
+              doub2str.str(std::string());
+              doub2str << list[id]; 
+              comsh += " " + doub2str.str();
+           }
+           
+           if (Pstream::master())
+           {
+	      system(comsh);
+           }
+
+	 #};
+    }
+   
+    outputNu
+    {
+        functionObjectLibs ( "libutilityFunctionObjects.so" );
+        type            coded;
+        redirectType    calcNu;
+        writeControl    timeStep;
+        writeInterval   25;
+        enabled         yes;
+        codeWrite       #{
+        
+           // User-input
+           scalar D_(2.);   // Diameter
+ 
+           scalarList list;
+         
+           label cyl = mesh().boundaryMesh().findPatchID("cylinder");
+           const volScalarField& T = mesh().lookupObject<volScalarField>("T");
+           scalar Tref = gAverage(T.boundaryField()[mesh().boundaryMesh().findPatchID("inlet")]); // T at inlet patch
+           scalarField Nu(T.boundaryField()[cyl].size(), 0);
+           scalar sumNu(0);
+           scalar sumS(0);
+           vectorField n(mesh().boundary()[cyl].nf()());
+           vectorField Cf(mesh().boundary()[cyl].Cf());
+           scalarField Tb = T.boundaryField()[cyl];
+           scalarField Sf = mesh().boundary()[cyl].magSf();
+           forAll(T.boundaryField()[cyl], i)
+           {
+              label celli = mesh().boundary()[cyl].faceCells()[i];
+              scalar Ti = T[celli];
+              scalar Tf = Tb[i]; 
+              scalar d = ((Cf[i] - mesh().C()[celli]) & n[i]);
+              scalar sngT = (Tf-Ti)/d;
+              Nu[i] = D_*sngT/(Tf-Tref+1e-16);
+              sumNu += Nu[i]*Sf[i];
+              sumS += Sf[i];
+           }
+              
+           reduce(sumNu, sumOp<scalar>()); 
+           reduce(sumS, sumOp<scalar>());
+           scalar avNu = sumNu/sumS;
+           
+            
+           list.append(mesh().time().value());  // Time (col 0)  
+           list.append(avNu);                   // Nu  (col 1)  
+
+          // Write data
+
+           string comsh;           
+           string filename("Nu.txt");
+	   std::stringstream doub2str; doub2str.precision(12);
+
+           comsh = "./writeData " + filename;
+           forAll(list, id)
+           {
+              doub2str.str(std::string());
+              doub2str << list[id]; 
+              comsh += " " + doub2str.str();
+           }
+           
+           if (Pstream::master())
+           {
+	      system(comsh);
+           }
+
+	 #};
+	 
+    }
+
+}
+
+// ************************************************************************* //

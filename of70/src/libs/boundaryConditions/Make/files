@@ -1,0 +1,15 @@
+linearExtrapolation/linearExtrapolationFvPatchFields.C
+navierSlip/navierSlipFvPatchVectorField.C
+
+zeroIonicFlux/zeroIonicFluxFvPatchScalarField.C
+ 
+boltzmannEquilibrium/boltzmannEquilibriumFvPatchScalarField.C
+
+slipSmoluchowski/slipSmoluchowskiFvPatchVectorField.C
+slipSigmaDependent/slipSigmaDependentFvPatchVectorField.C
+
+inducedPotential/inducedPotentialFvPatchScalarField.C
+
+heatFlux/heatFluxFvPatchScalarField.C
+
+LIB = $(FOAM_USER_LIBBIN)/libBCRheoTool

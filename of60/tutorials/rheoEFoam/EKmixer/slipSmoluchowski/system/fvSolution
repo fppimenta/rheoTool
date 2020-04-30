@@ -31,17 +31,17 @@ solvers
     
     "(C|U)"
     {
-        solver          GAMG;
-        tolerance       1e-8;
-        relTol          0.;
-        smoother        DILU;
-        cacheAgglomeration true;
-        nCellsInCoarsestLevel 10;
-        agglomerator    faceAreaPair;
-        mergeLevels     1;
-        
+        solver           PBiCGStab;
+        preconditioner
+        {
+            preconditioner DILU;
+        }
+
+        tolerance         1e-8;
+        relTol            0.;
+        minIter           0;
+        maxIter           1000;       
     }
- 
 }
 
 electricControls
@@ -75,16 +75,7 @@ SIMPLE
 
 relaxationFactors
 {
-    fields
-     {        
-	p 	1;
-     }
-
-    equations
-     { 
-       U 	1;
-       C        1;
-     }
+   
 }
 
 // ************************************************************************* //

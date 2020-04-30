@@ -35,13 +35,7 @@ air
          eta             eta [1 -1 -1 0 0 0 0] 1.48e-5;  
        }
 }
-
-passiveScalarProperties
-{
-
-                solvePassiveScalar   off;
-                D                    D [ 0 2 -1 0 0 0 0 ] 1e-9; 
-}
+ 
 
 sigma           sigma [ 1 0 -2 0 0 0 0 ] 0.07;
 

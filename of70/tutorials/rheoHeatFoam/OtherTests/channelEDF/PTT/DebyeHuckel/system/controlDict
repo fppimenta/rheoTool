@@ -1,0 +1,89 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  7.0                                   |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     rheoHeatFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         25;
+
+deltaT          1e-7;
+
+writeControl    adjustableRunTime;
+
+writeInterval   5;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  12;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   10;
+
+graphFormat     raw;
+
+runTimeModifiable yes;
+
+adjustTimeStep on;
+
+maxCo          .05;
+
+maxDeltaT      10;
+
+functions
+{
+
+ // Monitor for convergence
+
+    probes
+    {
+        // Where to load it from
+        functionObjectLibs ( "libsampling.so" );
+
+        type            probes;
+
+        // Name of the directory for probe data
+        name            probes;
+
+        // Write at same frequency as fields
+        writeControl   timeStep;
+        writeInterval  25;
+
+        // Fields to be probed
+        fields
+        (
+            U
+            tau
+        );
+
+        probeLocations
+        (
+             (.002 0. 0.00005)
+        );
+    }
+
+}
+
+// ************************************************************************* //

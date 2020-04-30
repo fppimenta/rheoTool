@@ -31,7 +31,6 @@ divSchemes
     default                  none;
     div(phi,U)               GaussDefCmpw none;  
     div(phi,ci)              GaussDefCmpw cubista;
-    div(eMigFlux,ci)         Gauss linear;
 }
 
 laplacianSchemes

@@ -1,0 +1,255 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  6
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version         2;
+    format          ascii;
+    class           dictionary;
+    location        "system";
+    object          controlDict;
+}
+
+application     rheoMultiRegionFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         200;
+
+deltaT          0.02;
+
+writeControl    adjustableRunTime;
+
+writeInterval   50;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+maxCo           1;
+
+maxDi           1;
+
+adjustTimeStep  no;
+
+functions
+{
+    probes
+    {
+        type            probes;
+        name            probes;
+        region          fluid;
+        writeControl    timeStep;
+        writeInterval   100;
+        fields          ( tau T );
+        probeLocations  ( ( 1 0 0 ) ( 2 0 0 ) ( 4 0 0 ) ( 6 0 0 ) ( 10 0 0 ) );
+    }
+    outputCd
+    {
+        functionObjectLibs ( "libutilityFunctionObjects.so" );
+        type            coded;
+        region          fluid;
+        redirectType    calCd;
+        writeControl    timeStep;
+        writeInterval   25;
+        enabled         yes;
+        codeWrite       #{
+ 
+ 
+          // User-input
+           scalar R_(1.); // sphere radius
+           scalar U0(1.); // far-field velocity 
+ 
+          // Lookup/create variable 
+	     
+	   const volVectorField& U = mesh().lookupObject<volVectorField>("U");
+           const volSymmTensorField& tau = mesh().lookupObject<volSymmTensorField>("tau");
+           const volScalarField& p = mesh().lookupObject<volScalarField>("p");
+           const dictionary& constDict = mesh().lookupObject<IOdictionary>("constitutiveProperties");
+           dimensionedScalar rho_(constDict.subDict("parameters").lookup("rho"));
+           dimensionedScalar etaS_(constDict.subDict("parameters").lookup("etaS"));
+  
+           label sph = mesh().boundaryMesh().findPatchID("map.fluid");
+           scalarList list;
+    
+          // Compute cd
+ 
+           volTensorField L = fvc::grad(U);
+
+	   volSymmTensorField F = tau + symm( L + L.T() ) * etaS_ - p * symmTensor::I * rho_;
+
+           vector Fpatch = gSum( ( -mesh().boundaryMesh()[sph].faceAreas() ) & F.boundaryField()[sph] );
+           
+           scalar S = gSum( mesh().boundary()[sph].magSf() ); 
+           
+           //- Scale surface area
+           Fpatch *= max((4.*M_PI*R_*R_)/S, 1.);  
+      
+           Fpatch /= (0.5 * rho_.value() * U0*U0 * M_PI*R_*R_);  
+           
+  
+           list.append(mesh().time().value());  // Time (col 0)  
+           list.append(Fpatch.x());             // Cd   (col 1)  
+
+          // Write data
+
+           string comsh;           
+           string filename("Cd.txt");
+	   std::stringstream doub2str; doub2str.precision(12);
+
+           comsh = "./writeData " + filename;
+           forAll(list, id)
+           {
+              doub2str.str(std::string());
+              doub2str << list[id]; 
+              comsh += " " + doub2str.str();
+           }
+           
+           if (Pstream::master())
+           {
+	      system(comsh);
+           }
+
+	 #};
+    }
+    outputNu
+    {
+        functionObjectLibs ( "libutilityFunctionObjects.so" );
+        type            coded;
+        region          fluid;
+        redirectType    calcNu;
+        writeControl    timeStep;
+        writeInterval   25;
+        enabled         yes;
+        codeWrite       #{
+        
+           // User-input
+           scalar R_(1.); // sphere radius
+ 
+           scalarList list;
+         
+           label sph = mesh().boundaryMesh().findPatchID("map.fluid");
+           const volScalarField& T = mesh().lookupObject<volScalarField>("T");
+           scalar Tref = gAverage(T.boundaryField()[mesh().boundaryMesh().findPatchID("inlet")]); // T at inlet patch
+           scalarField Nu(T.boundaryField()[sph].size(), 0);
+           scalar sumNu(0);
+           scalar sumS(0);
+           vectorField n(mesh().boundary()[sph].nf()());
+           vectorField Cf(mesh().boundary()[sph].Cf());
+           scalarField Tb = T.boundaryField()[sph];
+           scalarField Sf = mesh().boundary()[sph].magSf();
+           forAll(T.boundaryField()[sph], i)
+           {
+              label celli = mesh().boundary()[sph].faceCells()[i];
+              scalar Ti = T[celli];
+              scalar Tf = Tb[i]; 
+              scalar d = ((Cf[i] - mesh().C()[celli]) & n[i]);
+              scalar sngT = (Tf-Ti)/d;
+              Nu[i] = 2*R_*sngT/(Tf-Tref+1e-16);
+              sumNu += Nu[i]*Sf[i];
+              sumS += Sf[i];
+           }
+              
+           reduce(sumNu, sumOp<scalar>()); 
+           reduce(sumS, sumOp<scalar>());
+           scalar avNu = sumNu/sumS;
+           
+            
+           list.append(mesh().time().value());  // Time (col 0)  
+           list.append(avNu);                   // Nu  (col 1)  
+
+          // Write data
+
+           string comsh;           
+           string filename("Nu.txt");
+	   std::stringstream doub2str; doub2str.precision(12);
+
+           comsh = "./writeData " + filename;
+           forAll(list, id)
+           {
+              doub2str.str(std::string());
+              doub2str << list[id]; 
+              comsh += " " + doub2str.str();
+           }
+           
+           if (Pstream::master())
+           {
+	      system(comsh);
+           }
+
+	 #};
+    }
+    outputTav
+    {
+        functionObjectLibs ( "libutilityFunctionObjects.so" );
+        type            coded;
+        region          sphere;
+        redirectType    calcTav;
+        writeControl    timeStep;
+        writeInterval   25;
+        enabled         yes;
+        codeWrite       #{
+         
+           scalarList list;
+         
+           const volScalarField& T = mesh().lookupObject<volScalarField>("T");
+           scalar avT(0);
+           scalar sumV(0);
+           const DimensionedField<scalar, volMesh>& V = mesh().V();
+           forAll(T, i)
+           {
+             avT += T[i] * V[i];
+             sumV += V[i];
+           }
+           reduce(avT, sumOp<scalar>()); 
+           reduce(sumV, sumOp<scalar>()); 
+           
+           scalar gavT = avT/sumV;
+           
+            
+           list.append(mesh().time().value());  // Time (col 0)  
+           list.append(gavT );                   // Nu  (col 1)  
+
+          // Write data
+
+           string comsh;           
+           string filename("TavSphere.txt");
+	   std::stringstream doub2str; doub2str.precision(12);
+
+           comsh = "./writeData " + filename;
+           forAll(list, id)
+           {
+              doub2str.str(std::string());
+              doub2str << list[id]; 
+              comsh += " " + doub2str.str();
+           }
+           
+           if (Pstream::master())
+           {
+	      system(comsh);
+           }
+
+	 #};
+    }
+}
+
+
+// ************************************************************************* //

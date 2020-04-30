@@ -1,0 +1,62 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  7.0                                   |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      particleProperties;
+}
+externalFlow
+{
+    writeFields     true;
+    frozenFlow      false;
+    tethered        false;
+    interpolation   BarycentricWeights;
+    gradU           ( 0 0 0 0 0 0 0 0 0 );
+    pushBackCmp     ( 1 1 1 );
+    pushBackFreq    1;
+}
+
+outputOptions
+{
+    writeStats      true;
+    outputStatsInterval 20;
+    writeVTK        true;
+}
+
+exclusionVolumeProperties
+{
+    activeExclusionVolume true;
+    activeWallRepulsion false;
+    repulsiveDistance 1e-07;
+}
+
+HIProperties
+{
+    activeHI        true;
+}
+
+electrophoresis
+{
+    active          false;
+    mobility        5.95767e-10;
+}
+
+springModelProperties
+{
+    springModel     MarkoSiggia;
+    timeScheme      semiImplicit;
+    maxIter         20;
+    relTol          1e-06;
+    tresholdF       0.9;
+    cutOffStretch   0.99;
+    solver          QR;
+}
+
+// ************************************************************************* //

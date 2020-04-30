@@ -1,0 +1,67 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  6.0                                   |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      constitutiveProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+parameters
+{
+                
+                type            Newtonian;
+
+                rho             rho [1 -3 0 0 0 0 0]  1.;
+                eta             eta [1 -1 -1 0 0 0 0] 1.;
+                
+                thermoEta
+                {
+                  type          WLF;
+                  c1            c1 [0 0 0 0 0 0 0]  0.1;
+                  c2            c2 [0 0 0 1 0 0 0]  80;
+                  T0            T0 [ 0 0 0 1 0 0 0] 200;
+                  
+                //-- All remaining models (parameters not set for this tutorial):
+                
+                //type          Constant;
+                  
+                /*
+                  type          Arrhenius;
+                  alpha         alpha [0 0 0 1 0 0 0] 1000;
+                  T0            T0 [ 0 0 0 1 0 0 0] 273;
+                */ 
+                 
+                 /*
+                  type          ArrheniusModified;
+                  alpha         alpha [0 0 0 -1 0 0 0] 0.01;
+                  T0            T0 [ 0 0 0 1 0 0 0] 273;
+                 */
+                  
+                  /*
+                  type          VFT;
+                  A             A [0 0 0 1 0 0 0] 0.001;
+                  B             B [0 0 0 0 0 0 0] 0.001;
+                  T0            T0 [ 0 0 0 1 0 0 0] 273;
+                  */
+                    
+                } 
+                
+                
+}
+
+passiveScalarProperties
+{
+
+                solvePassiveScalar   off;
+                D                    D [ 0 2 -1 0 0 0 0 ] 1e-9; 
+}
+
+// ************************************************************************* //

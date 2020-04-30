@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-  =========                 |
+| =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  6.0                                   |
-|   \\  /    A nd           | Website:  https://openfoam.org                  |
+|  \\    /   O peration     | Version:  4.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -44,7 +44,7 @@ parameters
                 
                 dims             (1 1 0); // Valid geom dimensions (optional, only needed with rheoTestFoam)
                 
-                stabilization    coupling;       
+                stabilization    coupling;      
 }
 
 passiveScalarProperties

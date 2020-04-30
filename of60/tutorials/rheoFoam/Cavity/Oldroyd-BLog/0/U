@@ -37,6 +37,8 @@ boundaryField
                      * 8.0 * (1.0 + tanh( 8.0 * (t - 0.5) ) ) 
                      * pow( x.component(0), 2.0 ) * pow( ( 1 - x.component(0) ), 2.0  )
                     );
+                    
+          fixedValueFvPatchVectorField::updateCoeffs();
    	#};
     }
     fixedWalls

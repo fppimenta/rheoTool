@@ -1,0 +1,35 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  7.0                                   |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      constitutiveProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+parameters
+{                
+                type             Oldroyd-BLog;
+
+                rho              rho [1 -3 0 0 0 0 0] 1000;
+                etaS             etaS [1 -1 -1 0 0 0 0] 0.0006;
+                etaP             etaP [1 -1 -1 0 0 0 0] 0.0009;
+                lambda           lambda [0 0 1 0 0 0 0] .05;
+                
+                stabilization    coupling;       
+}
+
+passiveScalarProperties
+{
+                solvePassiveScalar   yes;
+                D                    D [ 0 2 -1 0 0 0 0 ] 4e-11; 
+}
+
+// ************************************************************************* //

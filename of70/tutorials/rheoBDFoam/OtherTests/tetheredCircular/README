@@ -1,0 +1,10 @@
+--> Purpose
+
+   This case tests the solver for tethered and circular molecules. All molecules are tethered. The molecules in y+ are linear, while the ones
+   in y- are circular (they correspond to the linear ones with the last bead connected to the fisrt bead).
+   The physical parameters for the linear molecules are typical of lambda-DNA (relaxation time = 4.1 s). The parameters for the circular
+   molecules are the same, but they do not model any specific molecule.
+   The forcing is analytical and corresponds to a planar extensional flow.
+   
+   Tethered molecules are more easily stretched (apparent Wi is higher; dt should be low to keep stability).
+   

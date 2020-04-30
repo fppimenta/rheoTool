@@ -62,33 +62,33 @@ int main(int argc, char *argv[])
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
         for (int i=0; i<nInIter; i++)
-         {
+        {
            Info<< "Iteration  " << i << nl << endl; 
             
            // --- Solve only the constitutive equation           
            constEq.correct();
-         }
+        }
         
         extraStress = constEq.tauTotal();
 
 //      runTime.write(); // Uncomment if needed
       
         if (ramp_)
-         {
-              scalar relError = Foam::mag(extraStress[0]-oldExtraStress)/(Foam::mag(extraStress[0]) + SMALL); 
+        {
+           scalar relError = Foam::mag(extraStress[0]-oldExtraStress)/(Foam::mag(extraStress[0]) + SMALL); 
            
-              if (relError < 1e-8 || cnt > 5000)
-               {
-                 #include "reStartOrEnd.H"
-               }
+           if (relError < 1e-8 || cnt > 5000)
+           {
+             #include "reStartOrEnd.H"
+           }
                
-              oldExtraStress = extraStress[0];
-              cnt++;
-         }
+           oldExtraStress = extraStress[0];
+           cnt++;
+        }
         else
-         {
-             #include "timeWrite.H"
-         }
+        {
+           #include "timeWrite.H"
+        }
          
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
@@ -96,6 +96,8 @@ int main(int argc, char *argv[])
     }
 
     Info<< "End\n" << endl;
+    
+    res << endl;
 
     return 0;
 }

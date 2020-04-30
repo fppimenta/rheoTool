@@ -1,0 +1,26 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+if [ "$#" -ne 1 ]; then
+    echo "ERROR: Illegal number of parameters"
+    echo "Usage is: ./Allrun n" 
+    echo "where n is the number of processors to be used"
+    exit 1
+fi
+   
+runApplication blockMesh
+
+if [ "$1" -gt 1 ]; then
+ foamDictionary -entry "numberOfSubdomains" -set $1 system/decomposeParDict
+ runApplication decomposePar   
+ runParallel rheoHeatFoam
+ runApplication reconstructPar -latestTime   
+else
+ runApplication rheoHeatFoam
+fi
+
+runApplication postProcess -func sampleDict -latestTime
+ 
