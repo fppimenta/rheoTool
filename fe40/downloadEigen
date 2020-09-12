@@ -1,7 +1,7 @@
 #!/bin/sh
 #------------------------------------------------------------------------------
 # =========                 |
-# \\      /  F ield         | foam-extend: Open Source CFD
+# \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
 #   \\  /    A nd           | For copyright notice see file Copyright
 #    \\/     M anipulation  |
@@ -41,7 +41,7 @@ EigenV="3.2.9"
 mkdir -p $WM_PROJECT_USER_DIR/ThirdParty
 cd $WM_PROJECT_USER_DIR/ThirdParty
 
-wget "http://bitbucket.org/eigen/eigen/get/$EigenV.tar.gz"
+wget "https://gitlab.com/libeigen/eigen/-/archive/$EigenV/eigen-$EigenV.tar.gz"
 
 state=$?
 
@@ -55,14 +55,14 @@ if [ $state -ne 0 ]; then
   exit 1;
 fi
 
-tmpname=`tar -tzf $EigenV.tar.gz | head -1 | cut -f1 -d"/"`
+tmpname=`tar -tzf eigen-$EigenV.tar.gz | head -1 | cut -f1 -d"/"`
 
-tar -xvzf $EigenV.tar.gz
+tar -xvzf eigen-$EigenV.tar.gz
 
 state=$?
 
 if [ $state -eq 0 ]; then
-  rm $EigenV.tar.gz
+  rm eigen-$EigenV.tar.gz
 
   mv  $tmpname Eigen$EigenV
 
