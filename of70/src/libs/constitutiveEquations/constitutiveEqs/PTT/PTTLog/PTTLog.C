@@ -31,27 +31,23 @@ License
 
 namespace Foam
 {
- namespace constitutiveEqs 
- {
+  namespace constitutiveEqs 
+  {
     defineTypeNameAndDebug(PTTLog, 0);
     addToRunTimeSelectionTable(constitutiveEq, PTTLog, dictionary);
-    
+  }
+}
+
     template<>
-    const char* NamedEnum
-    <
-      PTTLog::PTTFunctions,
-      3
-    >::names[] =
+    const char* Foam::NamedEnum<Foam::constitutiveEqs::PTTLog::PTTFunctions, 3>::names[] =
     {
       "linear",
       "exponential",
       "generalized"
     };
   
-    const NamedEnum<PTTLog::PTTFunctions, 3> PTTLog::PTTFunctionNames_;
- }
-}
-
+    const Foam::NamedEnum<Foam::constitutiveEqs::PTTLog::PTTFunctions, 3>
+    Foam::constitutiveEqs::PTTLog::PTTFunctionNames_;
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::constitutiveEqs::PTTLog::PTTLog
@@ -175,16 +171,16 @@ Foam::constitutiveEqs::PTTLog::PTTLog
 void Foam::constitutiveEqs::PTTLog::correct()
 {
     // Update temperature-dependent properties
-    volScalarField lambda = thermoLambdaPtr_->createField(lambda_);
-    volScalarField etaP = thermoEtaPtr_->createField(etaP_);
+    volScalarField lambda(thermoLambdaPtr_->createField(lambda_));
+    volScalarField etaP(thermoEtaPtr_->createField(etaP_));
  
     // Decompose grad(U).T()
-    volTensorField L = fvc::grad(U());
+    volTensorField L(fvc::grad(U()));
 
     dimensionedScalar c1( "zero", dimensionSet(0, 0, -1, 0, 0, 0, 0), 0.);
-    volTensorField   B = c1 * eigVecs_; 
-    volTensorField   omega = B;
-    volTensorField   M = (eigVecs_.T() & ( L.T() - zeta_*symm(L) ) & eigVecs_);
+    volTensorField   B(c1 * eigVecs_); 
+    volTensorField   omega(B);
+    volTensorField   M(eigVecs_.T() & ( L.T() - zeta_*symm(L) ) & eigVecs_);
 
     decomposeGradU(M, eigVals_, eigVecs_, omega, B);
     
@@ -196,7 +192,7 @@ void Foam::constitutiveEqs::PTTLog::correct()
     );
         
     // Select function    
-    volTensorField extFun = (1.0/lambda) * ( eigVecs_ & (inv(eigVals_) - Itensor) & eigVecs_.T() ); 
+    volTensorField extFun((1.0/lambda) * ( eigVecs_ & (inv(eigVals_) - Itensor) & eigVecs_.T())); 
       
     switch (PTTFunction_) 
     {    
@@ -210,7 +206,7 @@ void Foam::constitutiveEqs::PTTLog::correct()
       
       case pfGen :
         scalar gammaBeta(gammaFunValues_[0]);
-        volScalarField z = (epsilon_/(1-zeta_))*(tr((eigVecs_ & eigVals_ & eigVecs_.T())) - 3.);
+        volScalarField z((epsilon_/(1-zeta_))*(tr((eigVecs_ & eigVals_ & eigVecs_.T())) - 3.));
         volScalarField Eab(z);        
         forAll(z, i)
         {

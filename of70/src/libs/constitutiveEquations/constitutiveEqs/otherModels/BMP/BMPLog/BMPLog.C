@@ -142,7 +142,7 @@ Foam::constitutiveEqs::BMPLog::BMPLog
 void Foam::constitutiveEqs::BMPLog::correct()
 {
     // Velocity gradient tensor
-    volTensorField L = fvc::grad(U());
+    volTensorField L(fvc::grad(U()));
     
     // Fluidity transport equation  
     fvScalarMatrix PhiEqn
@@ -161,9 +161,9 @@ void Foam::constitutiveEqs::BMPLog::correct()
     // Decompose grad(U).T()
     
     dimensionedScalar c1( "zero", dimensionSet(0, 0, -1, 0, 0, 0, 0), 0.);
-    volTensorField   B = c1 * eigVecs_; 
-    volTensorField   omega = B;
-    volTensorField   M = (eigVecs_.T() & L.T() & eigVecs_);
+    volTensorField   B(c1 * eigVecs_); 
+    volTensorField   omega (B);
+    volTensorField   M(eigVecs_.T() & L.T() & eigVecs_);
 
     decomposeGradU(M, eigVals_, eigVecs_, omega, B);
   

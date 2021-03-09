@@ -30,20 +30,20 @@ License
 namespace Foam
 {
 
-namespace fvmb
-{
+//namespace fvmb
+//{
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-defineTemplateTypeNameAndDebug(LMatrix<scalar>, 0);
-defineTemplateTypeNameAndDebug(LMatrix<vector>, 0);
-defineTemplateTypeNameAndDebug(LMatrix<sphericalTensor>, 0);
-defineTemplateTypeNameAndDebug(LMatrix<symmTensor>, 0);
-defineTemplateTypeNameAndDebug(LMatrix<tensor>, 0);
+defineTemplateTypeNameAndDebug(fvmb::LMatrix<scalar>, 0);
+defineTemplateTypeNameAndDebug(fvmb::LMatrix<vector>, 0);
+defineTemplateTypeNameAndDebug(fvmb::LMatrix<sphericalTensor>, 0);
+defineTemplateTypeNameAndDebug(fvmb::LMatrix<symmTensor>, 0);
+defineTemplateTypeNameAndDebug(fvmb::LMatrix<tensor>, 0);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace fvmb
+//} // End namespace fvmb
 
 } // End namespace Foam
 

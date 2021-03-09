@@ -87,20 +87,20 @@ Foam::constitutiveEqs::WhiteMetznerCY::WhiteMetznerCY
 void Foam::constitutiveEqs::WhiteMetznerCY::correct()
 {
     // Velocity gradient tensor
-    volTensorField L = fvc::grad(U());
+    volTensorField L(fvc::grad(U()));
 
     // Convected derivate term
-    volTensorField C = tau_ & L;
+    volTensorField C(tau_ & L);
 
     // Twice the rate of deformation tensor
-    volSymmTensorField twoD = twoSymm(L);
+    volSymmTensorField twoD(twoSymm(L));
 
     // Effective viscosity and relaxation time
-    volScalarField etaP = etaP_*
-        Foam::pow(1 + Foam::pow(K_* sqrt(2.0)*mag(symm(L)),a_), (n_- 1)/a_);
+    volScalarField etaP(etaP_*
+        Foam::pow(1 + Foam::pow(K_* sqrt(2.0)*mag(symm(L)),a_), (n_- 1)/a_));
 
-    volScalarField lambda = lambda_*
-        Foam::pow(1 + Foam::pow( L_* sqrt(2.0)*mag(symm(L)),b_), (m_- 1)/b_);
+    volScalarField lambda(lambda_*
+        Foam::pow(1 + Foam::pow( L_* sqrt(2.0)*mag(symm(L)),b_), (m_- 1)/b_));
 
     // Update temperature-dependent properties
     thermoLambdaPtr_->multiply(lambda);

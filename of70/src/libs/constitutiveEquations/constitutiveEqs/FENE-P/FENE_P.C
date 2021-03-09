@@ -110,8 +110,8 @@ void Foam::constitutiveEqs::FENE_P::correct()
 {
 
 // Update temperature-dependent properties
-volScalarField lambda = thermoLambdaPtr_->createField(lambda_);
-volScalarField etaP = thermoEtaPtr_->createField(etaP_);
+volScalarField lambda(thermoLambdaPtr_->createField(lambda_));
+volScalarField etaP(thermoEtaPtr_->createField(etaP_));
 
 dimensionedSymmTensor Ist
 ( 
@@ -121,12 +121,12 @@ dimensionedSymmTensor Ist
 );
     
 // Velocity gradient tensor
-volTensorField L = fvc::grad(U());
+volTensorField L(fvc::grad(U()));
 
 if (!solveInTau_)
 {
     // Convected derivate term
-    volTensorField C = A_ & L;
+    volTensorField C(A_ & L);
     
     // Update varf
     dimensionedScalar a = L2_/(L2_-3); 
@@ -155,10 +155,10 @@ if (!solveInTau_)
 else
 {
     // Convected derivate term
-    volTensorField C = tau_ & L;
+    volTensorField C(tau_ & L);
 
     // Twice the rate of deformation tensor
-    volSymmTensorField twoD = twoSymm(L);
+    volSymmTensorField twoD(twoSymm(L));
     
     // Update f
     dimensionedScalar a = L2_/(L2_-3); 

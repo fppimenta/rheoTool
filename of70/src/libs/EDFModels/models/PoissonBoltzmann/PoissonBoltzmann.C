@@ -228,7 +228,7 @@ void Foam::EDFEquations::PoissonBoltzmann::correct()
          {
            
            dimensionedScalar bi = -eK_*species_[i].zi()/(kbK_*T_); 
-           volScalarField ai = (species_[i].zi()*species_[i].c0i()*FK_) * Foam::exp(bi*psi_);
+           volScalarField ai((species_[i].zi()*species_[i].c0i()*FK_) * Foam::exp(bi*psi_));
        
            souE 
              += (

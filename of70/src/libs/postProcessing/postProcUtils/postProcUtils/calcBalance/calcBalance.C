@@ -167,13 +167,13 @@ if (enabled_)
           const fvPatch& pt = mesh().boundary()[pI];          
            
            {
-             scalarField J = 
+             scalarField J( 
              specI.boundaryField()[pI] * phi.boundaryField()[pI]
 	    -Di*
 	     (
 	        specI.boundaryField()[pI].snGrad()
 	      + (eK_*zi/(kbK_*T_)) * (psi.boundaryField()[pI].snGrad() + phiE.boundaryField()[pI].snGrad()) * specI.boundaryField()[pI]
-	     )*pt.magSf();
+	     )*pt.magSf());
 	
 	     fluxBC += gSum(J);
 	     ttArea += gSum(pt.magSf());

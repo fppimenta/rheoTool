@@ -122,7 +122,7 @@ tmp<LMatrix<vector> >  grad
     const fvPatchField<scalar>& pvf = vf.boundaryField()[patchi];
     const fvsPatchField<scalar>& bw = weights.boundaryField()[patchi];   
     vectorField Sfb = pvf.patch().Sf(); 
-    const scalarField cpI = c.boundaryField()[patchi].patchInternalField();
+    const scalarField cpI(c.boundaryField()[patchi].patchInternalField());
             
     // bw refer to the f-C fractional distance on the other processor. The
     // cell on each processor is always the owner, so bw still corresponds 

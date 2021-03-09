@@ -146,12 +146,12 @@ void Foam::constitutiveEqs::WhiteMetznerCYLog::correct()
 {
     // Decompose grad(U).T()
 
-    volTensorField L = fvc::grad(U());
+    volTensorField L(fvc::grad(U()));
 
     dimensionedScalar c1( "zero", dimensionSet(0, 0, -1, 0, 0, 0, 0), 0.);
-    volTensorField   B = c1 * eigVecs_; 
-    volTensorField   omega = B;
-    volTensorField   M = (eigVecs_.T() & L.T() & eigVecs_);
+    volTensorField   B(c1 * eigVecs_); 
+    volTensorField   omega(B);
+    volTensorField   M(eigVecs_.T() & L.T() & eigVecs_);
 
     decomposeGradU(M, eigVals_, eigVecs_, omega, B);
 
@@ -166,11 +166,11 @@ void Foam::constitutiveEqs::WhiteMetznerCYLog::correct()
     );
 
     // Effective viscosity and relaxation time
-    volScalarField etaP = etaP_*
-        Foam::pow(1 + Foam::pow(K_* sqrt(2.0)*mag(symm(L)),a_), (n_- 1)/a_);
+    volScalarField etaP(etaP_*
+        Foam::pow(1 + Foam::pow(K_* sqrt(2.0)*mag(symm(L)),a_), (n_- 1)/a_));
 
-    volScalarField lambda = lambda_*
-        Foam::pow(1 + Foam::pow( L_* sqrt(2.0)*mag(symm(L)),b_), (m_- 1)/b_);
+    volScalarField lambda(lambda_*
+        Foam::pow(1 + Foam::pow( L_* sqrt(2.0)*mag(symm(L)),b_), (m_- 1)/b_));
 
     // Update temperature-dependent properties
     thermoLambdaPtr_->multiply(lambda);

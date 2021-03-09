@@ -117,7 +117,7 @@ void Foam::sparseSolver<Type>::addBoundaryDiag
   forAll(matrix.internalCoeffs(), patchi)
   {
     const labelUList& addr(matrix.lduMatrix::lduAddr().patchAddr(patchi));
-    scalarField iF = matrix.internalCoeffs()[patchi].component(solveCmpt);
+    scalarField iF(matrix.internalCoeffs()[patchi].component(solveCmpt));
         
     forAll(addr, facei)
     {

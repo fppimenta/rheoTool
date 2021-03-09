@@ -98,12 +98,12 @@ void Foam::constitutiveEqs::RoliePoly::correct()
 {
 
 // Update temperature-dependent properties
-volScalarField lambdaD = thermoLambdaDPtr_->createField(lambdaD_);
-volScalarField lambdaR = thermoLambdaRPtr_->createField(lambdaR_);
-volScalarField etaP = thermoEtaPtr_->createField(etaP_);
+volScalarField lambdaD(thermoLambdaDPtr_->createField(lambdaD_));
+volScalarField lambdaR(thermoLambdaRPtr_->createField(lambdaR_));
+volScalarField etaP(thermoEtaPtr_->createField(etaP_));
 
 // Velocity gradient tensor
-volTensorField L = fvc::grad(U());
+volTensorField L(fvc::grad(U()));
 
 if (!solveInTau_)
 {  
@@ -115,7 +115,7 @@ if (!solveInTau_)
     );
     
     // Convected derivate term
-    volTensorField C = A_ & L;
+    volTensorField C(A_ & L);
     
     volScalarField trA(tr(A_));
     

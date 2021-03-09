@@ -178,17 +178,17 @@ void Foam::constitutiveEqs::SaramitoLog::correct()
 {
    // Decompose grad(U).T()
 
-    volTensorField L = fvc::grad(U());
+    volTensorField L(fvc::grad(U()));
  
     dimensionedScalar c1( "zero", dimensionSet(0, 0, -1, 0, 0, 0, 0), 0.);
-    volTensorField   B = c1 * eigVecs_; 
-    volTensorField   omega = B;
-    volTensorField   M = (eigVecs_.T() & ( L.T() - zeta_*symm(L) ) & eigVecs_);
+    volTensorField   B(c1 * eigVecs_); 
+    volTensorField   omega(B);
+    volTensorField   M(eigVecs_.T() & ( L.T() - zeta_*symm(L) ) & eigVecs_);
 
     decomposeGradU(M, eigVals_, eigVecs_, omega, B);
     
     // 2nd invariant of deviatoric stress 
-    volScalarField tauDMag = Foam::mag(tau_-Itensor*tr(tau_)/nDims)/Foam::sqrt(2.);
+    volScalarField tauDMag(Foam::mag(tau_-Itensor*tr(tau_)/nDims)/Foam::sqrt(2.));
     if (writeII_ && tau_.time().outputTime())
      {
        tauDMag.rename("II_tauD");

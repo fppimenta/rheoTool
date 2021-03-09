@@ -106,7 +106,7 @@ Foam::constitutiveEqs::RRM::RRM
 void Foam::constitutiveEqs::RRM::correct()
 {
     // Evolve Lstar    
-    volScalarField Rsby = lambdaS_ / (1. - Foam::sqr( Lstar_/(alpha_ + beta_/ ( strainRate()/Dr0_ + 1e-16 ) ) ) ); 
+    volScalarField Rsby(lambdaS_ / (1. - Foam::sqr( Lstar_/(alpha_ + beta_/ ( strainRate()/Dr0_ + 1e-16 ) ) ) )); 
   
     fvScalarMatrix LstarEqn
     (
@@ -122,16 +122,16 @@ void Foam::constitutiveEqs::RRM::correct()
     LstarEqn.solve();
     
     // Dr
-    volScalarField Dr = Dr0_*Foam::pow(Lstar_, -3) * (1. + Foam::log(Lstar_)/m_); 
+    volScalarField Dr(Dr0_*Foam::pow(Lstar_, -3) * (1. + Foam::log(Lstar_)/m_)); 
 
     // Velocity gradient tensor
-    volTensorField K = fvc::grad(U());   
+    volTensorField K(fvc::grad(U()));   
     
     // Convected derivate term
-    volTensorField C = S_ & K; 
+    volTensorField C(S_ & K); 
  
     // Rate of strain
-    volSymmTensorField D = symm(K);
+    volSymmTensorField D(symm(K));
  
     // Orientation tensor transport equation
     fvSymmTensorMatrix SEqn

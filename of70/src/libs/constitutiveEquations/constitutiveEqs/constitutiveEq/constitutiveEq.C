@@ -464,7 +464,7 @@ void constitutiveEq::checkIfCoupledSolver
 
 tmp<volSymmTensorField> constitutiveEq::tauTotal() const
 {
- volTensorField L = fvc::grad(U_);
+ volTensorField L(fvc::grad(U_));
    
  // Last term is only meaningfull for two-phase flows
  if (isGNF())

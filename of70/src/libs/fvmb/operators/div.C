@@ -77,7 +77,7 @@ tmp< LMatrix<tensor> >  div
    
   const labelUList& own = mesh.owner();
   const labelUList& neig = mesh.neighbour();
-  const vectorField Sf = mesh.faceAreas()*c; // Multiply constant
+  const vectorField Sf(mesh.faceAreas()*c); // Multiply constant
   
   surfaceScalarField weights = vf.mesh().surfaceInterpolation::weights();
 
@@ -101,7 +101,7 @@ tmp< LMatrix<tensor> >  div
   {
     const fvPatchField<symmTensor>& pvf = vf.boundaryField()[patchi];
     const fvsPatchField<scalar>& bw = weights.boundaryField()[patchi];
-    const vectorField Sfb = pvf.patch().Sf()*c; // Multiply constant
+    const vectorField Sfb(pvf.patch().Sf()*c); // Multiply constant
     tensorField& internalCoeffsFvm(fvm.internalCoeffs()[patchi]);
     tensorField& boundaryCoeffsFvm(fvm.boundaryCoeffs()[patchi]);
         
@@ -217,7 +217,7 @@ tmp< LMatrix<vector> >  div
    
   const labelUList& own = mesh.owner();
   const labelUList& neig = mesh.neighbour();
-  const vectorField Sf = mesh.faceAreas()*c; // Multiply constant
+  const vectorField Sf(mesh.faceAreas()*c); // Multiply constant
   
   surfaceScalarField weights = vf.mesh().surfaceInterpolation::weights();
 
@@ -238,7 +238,7 @@ tmp< LMatrix<vector> >  div
   {
     const fvPatchField<vector>& pvf = vf.boundaryField()[patchi];
     const fvsPatchField<scalar>& bw = weights.boundaryField()[patchi];
-    const vectorField Sfb = pvf.patch().Sf()*c; // Multiply constant
+    const vectorField Sfb(pvf.patch().Sf()*c); // Multiply constant
     
     // bw refer to the f-C fractional distance on the other processor. The
     // cell on each processor is always the owner, so bw still corresponds 

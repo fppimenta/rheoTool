@@ -102,12 +102,12 @@ void Foam::constitutiveEqs::Casson::correct()
  if (reg_)
   {
     volScalarField
-    strainRate_ =
+    strainRate_(
     max
     (
         strainRate(),
         dimensionedScalar("VSMALL", dimless/dimTime, VSMALL)
-    );
+    ));
     
     eta_ = sqr( sqrt(tau0_/strainRate_)*( 1. - exp(-sqrt(m_*strainRate_)) ) + sqrt(etaInf_) );  
   }

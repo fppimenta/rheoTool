@@ -942,7 +942,7 @@ void Foam::hypreSolver<Type>::assembleHypreAbx
  std::vector<double> x_values(nc);
  std::vector<int> rows(nc);
 
- scalarField source = eqn.source().component(cmpI);   
+ scalarField source(eqn.source().component(cmpI));   
  for (int cellI=0; cellI<nc; cellI++) 
  {  
    // Diagonal
@@ -958,8 +958,8 @@ void Foam::hypreSolver<Type>::assembleHypreAbx
  //- Contribution from BCs
  forAll(T.boundaryField(), patchI)
  {
-   scalarField bC = eqn.boundaryCoeffs()[patchI].component(cmpI);  
-   scalarField iC = eqn.internalCoeffs()[patchI].component(cmpI);  
+   scalarField bC(eqn.boundaryCoeffs()[patchI].component(cmpI));  
+   scalarField iC(eqn.internalCoeffs()[patchI].component(cmpI));  
    const labelUList& addr = eqn.lduMatrix::lduAddr().patchAddr(patchI);      
    const fvPatch& pfvPatch = T.mesh().boundary()[patchI]; 
    
@@ -1046,7 +1046,7 @@ void Foam::hypreSolver<Type>::assembleHypreAbx
        // Apply the rotation
        refCast<const cyclicFvPatchField<Type> >(T.boundaryField()[patchI]).transformCoupleField(pnf);
 
-       scalarField pnfc = pnf.component(cmpI);
+       scalarField pnfc(pnf.component(cmpI));
       
        forAll(ownFC, facei)
        {           
@@ -1254,7 +1254,7 @@ void Foam::hypreSolver<Type>::assembleHypreBx
  std::vector<double> x_values(nc);
  std::vector<int> rows(nc);
 
- scalarField source = eqn.source().component(cmpI);   
+ scalarField source(eqn.source().component(cmpI));   
  for (int cellI=0; cellI<nc; cellI++) 
  {  
    // Source vector   
@@ -1266,7 +1266,7 @@ void Foam::hypreSolver<Type>::assembleHypreBx
  //- Contribution from BCs
  forAll(T.boundaryField(), patchI)
  {
-   scalarField bC = eqn.boundaryCoeffs()[patchI].component(cmpI);  
+   scalarField bC(eqn.boundaryCoeffs()[patchI].component(cmpI));  
    const labelUList& addr = eqn.lduMatrix::lduAddr().patchAddr(patchI);      
     
    // Non-coupled
@@ -1295,7 +1295,7 @@ void Foam::hypreSolver<Type>::assembleHypreBx
          
      refCast<const cyclicFvPatchField<Type> >(T.boundaryField()[patchI]).transformCoupleField(pnf);
 
-     scalarField pnfc = pnf.component(cmpI);
+     scalarField pnfc(pnf.component(cmpI));
       
      const labelList& ownFC = T.mesh().boundaryMesh()[patchI].faceCells(); 
      forAll(ownFC, facei)

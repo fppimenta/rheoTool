@@ -90,7 +90,7 @@ gaussDefCmpwConvectionScheme<Type>::fvmDiv
 
     if (scheme_ == "none") {fvm.diag() = 0; return tfvm;}
   
-    surfaceScalarField upw = Foam::pos(faceFlux);
+    surfaceScalarField upw(Foam::pos(faceFlux));
 
     const labelUList& own = mesh.owner();
     const labelUList& neig = mesh.neighbour();
@@ -251,7 +251,7 @@ gaussDefCmpwConvectionScheme<Type>::phifDefC
                       
        volScalarField& vfc = tvfc.ref();
        
-       volVectorField gradcmp = fvc::grad(vfc); 
+       volVectorField gradcmp(fvc::grad(vfc)); 
        Field<scalar>  tf(sfi.size(), pTraits<scalar>::zero);
       
        forAll (sfi, f)
@@ -288,10 +288,10 @@ gaussDefCmpwConvectionScheme<Type>::phifDefC
            
            if (vf.boundaryField()[patchI].coupled())
            {
-              const Field<scalar> pPF = vfc.boundaryField()[patchI].patchInternalField();
-              const Field<scalar> pNF = vfc.boundaryField()[patchI].patchNeighbourField();
-              const vectorField gradcmpNF = gradcmp.boundaryField()[patchI].patchNeighbourField(); 
-              const vectorField gradcmpPF = gradcmp.boundaryField()[patchI].patchInternalField(); 
+              const Field<scalar> pPF(vfc.boundaryField()[patchI].patchInternalField());
+              const Field<scalar> pNF(vfc.boundaryField()[patchI].patchNeighbourField());
+              const vectorField gradcmpNF(gradcmp.boundaryField()[patchI].patchNeighbourField()); 
+              const vectorField gradcmpPF(gradcmp.boundaryField()[patchI].patchInternalField()); 
               const scalarField& upwP = upw.boundaryField()[patchI];
               vectorField deltasP(vf.boundaryField()[patchI].patch().delta());
               

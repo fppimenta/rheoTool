@@ -222,13 +222,13 @@ void Foam::navierSlipFvPatchVectorField::calcUws
      }
      else
      {
-        vectorField tt = (tauP&n) - n*((tauP&n)&n);
+        vectorField tt((tauP&n) - n*((tauP&n)&n));
         uws = -knl_ * Foam::pow(Foam::mag(tt), m_) * tt/(mag(tt) + 1e-20);
      }
   }
   else if (model_ == "slipTT")
   {
-      vectorField tt = (tauP&n) - n*((tauP&n)&n);
+      vectorField tt((tauP&n) - n*((tauP&n)&n));
       uws = -alpha_ * tt / Foam::sqrt(1.-mag(tt)*beta_);
   } 
 
@@ -252,7 +252,7 @@ void Foam::navierSlipFvPatchVectorField::updateCoeffs()
     }
  
     vectorField uws = vectorField( this->patch().size(), pTraits<vector>::zero );
-    vectorField n = this->patch().nf();
+    vectorField n(this->patch().nf());
     
     calcUws(uws, n);
   

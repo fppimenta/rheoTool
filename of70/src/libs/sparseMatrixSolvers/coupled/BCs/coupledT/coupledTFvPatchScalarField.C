@@ -224,7 +224,7 @@ Foam::tmp<Foam::Field<Foam::scalar>> Foam::coupledTFvPatchScalarField::snGrad() 
    const fvMesh& thisMesh = this->patch().boundaryMesh().mesh();
    const polyMesh& nbrMesh = thisMesh.time().lookupObject<polyMesh>(nbrMeshName);
    const fvPatch& nbrPatch = refCast<const fvMesh>(nbrMesh).boundary()[rcbpp.neighbPatchID()];
-   scalarField Tc = rcbpp.interpolate(nbrPatch.lookupPatchField<volScalarField, scalar>(nbrFieldName_).patchInternalField());
+   scalarField Tc(rcbpp.interpolate(nbrPatch.lookupPatchField<volScalarField, scalar>(nbrFieldName_).patchInternalField()));
    
    return this->deltaCoeffs() * (Tc - this->patchInternalField());
 }
@@ -263,7 +263,7 @@ void Foam::coupledTFvPatchScalarField::updateCoeffs()
    
    fvPatchField<scalar>& kpf = thisKappa.boundaryFieldRef()[this->patch().index()]; 
    
-   scalarField kp = kpf.patchInternalField(); 
+   scalarField kp(kpf.patchInternalField()); 
    
    //- Lookup conductivity in neighb mesh
     
@@ -273,17 +273,17 @@ void Foam::coupledTFvPatchScalarField::updateCoeffs()
    
    scalarField kcf = nbrPatch.lookupPatchField<volScalarField, scalar>(kappaName_);
    
-   scalarField kc = nbrPatch.lookupPatchField<volScalarField, scalar>(kappaName_).patchInternalField();
+   scalarField kc(nbrPatch.lookupPatchField<volScalarField, scalar>(kappaName_).patchInternalField());
    
    kcf = rcbpp.interpolate(kcf);
    kc = rcbpp.interpolate(kc);
    
    //- Lookup temperature and dx in current mesh
-   scalarField Tp = this->patchInternalField(); 
+   scalarField Tp(this->patchInternalField()); 
    const scalarField dxp(this->deltan());
    
    //- Lookup temperature and dx in neighb mesh
-   scalarField Tc = rcbpp.interpolate(nbrPatch.lookupPatchField<volScalarField, scalar>(nbrFieldName_).patchInternalField()); 
+   scalarField Tc(rcbpp.interpolate(nbrPatch.lookupPatchField<volScalarField, scalar>(nbrFieldName_).patchInternalField())); 
    const scalarField dxc(this->nbrDeltan());
    
    scalarField w(this->weights());

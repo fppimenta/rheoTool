@@ -82,17 +82,17 @@ Foam::constitutiveEqs::Giesekus::Giesekus
 void Foam::constitutiveEqs::Giesekus::correct()
 {
  // Update temperature-dependent properties
- volScalarField lambda = thermoLambdaPtr_->createField(lambda_);
- volScalarField etaP = thermoEtaPtr_->createField(etaP_);
+ volScalarField lambda(thermoLambdaPtr_->createField(lambda_));
+ volScalarField etaP(thermoEtaPtr_->createField(etaP_));
  
  // Velocity gradient tensor
- volTensorField L = fvc::grad(U());
+ volTensorField L(fvc::grad(U()));
 
  // Convected derivate term
- volTensorField C = tau_ & L;
+ volTensorField C(tau_ & L);
 
  // Twice the rate of deformation tensor
- volSymmTensorField twoD = twoSymm(L);
+ volSymmTensorField twoD(twoSymm(L));
 
  // Stress transport equation
  fvSymmTensorMatrix tauEqn

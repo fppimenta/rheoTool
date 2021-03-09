@@ -164,26 +164,26 @@ void Foam::constitutiveEqs::ML_IKH::correct()
     dimensionedScalar onePa("1",dimPressure,1);
     
 //- Assemble lambda
-    volScalarField lambda = lambdas_[0].lambdaI() * C_[0];
+    volScalarField lambda(lambdas_[0].lambdaI() * C_[0]);
     for (int i = 1; i<C_.size(); i++)   
       lambda += lambdas_[i].lambdaI() * C_[i];   
 
 //- Solve for tau
     // Velocity gradient tensor
-    volTensorField L = fvc::grad(U());
+    volTensorField L(fvc::grad(U()));
     
     // Convected derivate term
-    volTensorField C = tau_ & L;
+    volTensorField C(tau_ & L);
 
     // Twice the rate of deformation tensor
-    volSymmTensorField twoD = twoSymm(L);
+    volSymmTensorField twoD(twoSymm(L));
     
     // Inter vars 
-    volSymmTensorField kback = kh_*symm(A_ + 2.*(A_&A_));
-    volSymmTensorField tauEff = tau_ - kback;
-    volScalarField sigmaBar = Foam::mag(tau_-Itensor*tr(tau_)/nDims)/Foam::sqrt(2.);
+    volSymmTensorField kback(kh_*symm(A_ + 2.*(A_&A_)));
+    volSymmTensorField tauEff(tau_ - kback);
+    volScalarField sigmaBar(Foam::mag(tau_-Itensor*tr(tau_)/nDims)/Foam::sqrt(2.));
  
-    volSymmTensorField Dp = tauEff*(sigmaBar-lambda*ky_)/(2.*lambda*etaP_*sigmaBar+small1);
+    volSymmTensorField Dp(tauEff*(sigmaBar-lambda*ky_)/(2.*lambda*etaP_*sigmaBar+small1));
    
     forAll(Dp, i)
     {
@@ -193,12 +193,12 @@ void Foam::constitutiveEqs::ML_IKH::correct()
        }
     }
     
-    volScalarField preFac =
+    volScalarField preFac(
     Foam::max
     ( 
       ZScalar,
      (1./(lambda*lambdaE_))*(sigmaBar - lambda*ky_)/(sigmaBar+small)
-    );
+    ));
     
     fvSymmTensorMatrix tauEqn
     (
@@ -215,7 +215,7 @@ void Foam::constitutiveEqs::ML_IKH::correct()
     tauEqn.solve();
     
 //- Solve for A
-    volTensorField W = (L - L.T())/2.; 
+    volTensorField W((L - L.T())/2.); 
   
     fvSymmTensorMatrix AEqn
     (

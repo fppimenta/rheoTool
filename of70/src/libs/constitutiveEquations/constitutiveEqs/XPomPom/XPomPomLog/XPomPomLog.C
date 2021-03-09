@@ -133,17 +133,17 @@ Foam::constitutiveEqs::XPomPomLog::XPomPomLog
 void Foam::constitutiveEqs::XPomPomLog::correct()
 {
  // Update temperature-dependent properties
- volScalarField lambdaS = thermoLambdaSPtr_->createField(lambdaS_);
- volScalarField lambdaB = thermoLambdaBPtr_->createField(lambdaB_);
- volScalarField etaP = thermoEtaPtr_->createField(etaP_);
+ volScalarField lambdaS(thermoLambdaSPtr_->createField(lambdaS_));
+ volScalarField lambdaB(thermoLambdaBPtr_->createField(lambdaB_));
+ volScalarField etaP(thermoEtaPtr_->createField(etaP_));
 
  // Decompose grad(U).T()
- volTensorField L = fvc::grad(U());
+ volTensorField L(fvc::grad(U()));
 
  dimensionedScalar c1( "zero", dimensionSet(0, 0, -1, 0, 0, 0, 0), 0.);
- volTensorField   B = c1 * eigVecs_; 
- volTensorField   omega = B;
- volTensorField   M = (eigVecs_.T() & L.T() & eigVecs_);
+ volTensorField   B(c1 * eigVecs_); 
+ volTensorField   omega(B);
+ volTensorField   M(eigVecs_.T() & L.T() & eigVecs_);
 
  decomposeGradU(M, eigVals_, eigVecs_, omega, B);
   

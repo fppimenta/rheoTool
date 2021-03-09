@@ -91,7 +91,7 @@ Foam::constitutiveEqs::BMP::BMP
 void Foam::constitutiveEqs::BMP::correct()
 {
     // Velocity gradient tensor
-    volTensorField L = fvc::grad(U());
+    volTensorField L(fvc::grad(U()));
     
     // Fluidity transport equation  
     fvScalarMatrix PhiEqn
@@ -108,10 +108,10 @@ void Foam::constitutiveEqs::BMP::correct()
     PhiEqn.solve();
 
     // Convected derivate term
-    volTensorField C = tau_ & L;
+    volTensorField C(tau_ & L);
 
     // Twice the rate of deformation tensor
-    volSymmTensorField twoD = twoSymm(L);
+    volSymmTensorField twoD(twoSymm(L));
 
     // Stress transport equation
     fvSymmTensorMatrix tauEqn

@@ -155,13 +155,13 @@ if (enabled_)
           
           scalar avJ(0.);
            {
-             scalarField J = 
+             scalarField J(
              (zi*FK_) * specI.boundaryField()[pI] * phi.boundaryField()[pI] 
 	    -(zi*FK_*Di)*
 	     (          
 	        specI.boundaryField()[pI].snGrad()
 	       + (eK_*zi/(kbK_*T_)) * (psi.boundaryField()[pI].snGrad() + phiE.boundaryField()[pI].snGrad()) * specI.boundaryField()[pI]
-	     )*pt.magSf();
+	     )*pt.magSf());
 	
 	     avJ = gSum(J);
 	     scalar avS = gSum(pt.magSf());

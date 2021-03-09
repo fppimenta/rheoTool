@@ -98,12 +98,12 @@ Foam::constitutiveEqs::HerschelBulkley::HerschelBulkley
 void Foam::constitutiveEqs::HerschelBulkley::correct()
 {
    volScalarField
-   strainRate_ =
+   strainRate_(
    max
    (
        strainRate(),
        dimensionedScalar("VSMALL", dimless/dimTime, VSMALL)
-   );
+   ));
     
    dimensionedScalar tone("tone", dimTime, 1.0);
    dimensionedScalar rtone("rtone", dimless/dimTime, 1.0);

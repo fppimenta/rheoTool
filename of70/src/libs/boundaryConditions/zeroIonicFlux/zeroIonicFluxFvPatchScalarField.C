@@ -163,7 +163,7 @@ void Foam::zeroIonicFluxFvPatchScalarField::evaluate(const Pstream::commsTypes)
     
     const fvPatchField<scalar>& psib_ = patch().lookupPatchField<volScalarField, scalar>("psi");
     
-    scalarField deltaPsi = psib_ - psib_.patchInternalField();
+    scalarField deltaPsi(psib_ - psib_.patchInternalField());
      
     scalar eK_(Foam::EDFEquation::eK_.value());
     scalar kbK_(Foam::EDFEquation::kbK_.value());

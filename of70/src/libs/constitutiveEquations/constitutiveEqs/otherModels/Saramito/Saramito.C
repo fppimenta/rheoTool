@@ -127,16 +127,16 @@ Foam::constitutiveEqs::Saramito::Saramito
 void Foam::constitutiveEqs::Saramito::correct()
 {
     // Velocity gradient tensor
-    volTensorField L = fvc::grad(U());
+    volTensorField L(fvc::grad(U()));
 
     // Convected derivate term
-    volTensorField C = tau_ & L;
+    volTensorField C(tau_ & L);
 
     // Twice the rate of deformation tensor
-    volSymmTensorField twoD = twoSymm(L);
+    volSymmTensorField twoD(twoSymm(L));
       
     // 2nd invariant of deviatoric stress  
-    volScalarField tauDMag = Foam::mag(tau_-Itensor*tr(tau_)/nDims)/Foam::sqrt(2.);
+    volScalarField tauDMag(Foam::mag(tau_-Itensor*tr(tau_)/nDims)/Foam::sqrt(2.));
     if (writeII_ && tau_.time().outputTime())
      {
        tauDMag.rename("II_tauD");

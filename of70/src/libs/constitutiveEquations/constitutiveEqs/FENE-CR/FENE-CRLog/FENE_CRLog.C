@@ -128,16 +128,16 @@ Foam::constitutiveEqs::FENE_CRLog::FENE_CRLog
 void Foam::constitutiveEqs::FENE_CRLog::correct()
 {
     // Update temperature-dependent properties
-    volScalarField lambda = thermoLambdaPtr_->createField(lambda_);
-    volScalarField etaP = thermoEtaPtr_->createField(etaP_);
+    volScalarField lambda(thermoLambdaPtr_->createField(lambda_));
+    volScalarField etaP(thermoEtaPtr_->createField(etaP_));
     
     // Decompose grad(U).T()
-    volTensorField L = fvc::grad(U());
+    volTensorField L(fvc::grad(U()));
 
     dimensionedScalar c1( "zero", dimensionSet(0, 0, -1, 0, 0, 0, 0), 0.);
-    volTensorField   B = c1 * eigVecs_; 
-    volTensorField   omega = B;
-    volTensorField   M = (eigVecs_.T() & L.T() & eigVecs_);
+    volTensorField   B(c1 * eigVecs_); 
+    volTensorField   omega(B);
+    volTensorField   M(eigVecs_.T() & L.T() & eigVecs_);
 
     decomposeGradU(M, eigVals_, eigVecs_, omega, B);
 
@@ -151,7 +151,7 @@ void Foam::constitutiveEqs::FENE_CRLog::correct()
         tensor::I 
     );
 
-    volScalarField f = L2_ / ( L2_- Foam::tr(eigVecs_ &eigVals_& eigVecs_.T()) );
+    volScalarField f(L2_ / ( L2_- Foam::tr(eigVecs_ &eigVals_& eigVecs_.T()) ));
 
     fvSymmTensorMatrix thetaEqn
     (

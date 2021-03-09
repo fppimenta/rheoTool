@@ -109,7 +109,8 @@ class RRM
           const volSymmTensorField& D
         )
         {
-          return (1./5.) * symm( (S & D) + (D & S) - (S & S & D) - (D & S & S) + 2.*(S & D & S) + 3.*S*(S && D)  );
+            volSymmTensorField result((1./5.) * symm( (S & D) + (D & S) - (S & S & D) - (D & S & S) + 2.*(S & D & S) + 3.*S*(S && D)  ));
+          return result;
         }
         
 protected:

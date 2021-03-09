@@ -33,26 +33,23 @@ License
 
 namespace Foam
 {
- namespace constitutiveEqs 
- {
+  namespace constitutiveEqs 
+  {
     defineTypeNameAndDebug(PTT, 0);
     addToRunTimeSelectionTable(constitutiveEq, PTT, dictionary);
-    
+  }
+}
+
     template<>
-    const char* NamedEnum
-    <
-      PTT::PTTFunctions,
-      3
-    >::names[] =
+    const char* Foam::NamedEnum<Foam::constitutiveEqs::PTT::PTTFunctions, 3>::names[] =
     {
       "linear",
       "exponential",
       "generalized"
     };
   
-    const NamedEnum<PTT::PTTFunctions, 3> PTT::PTTFunctionNames_;
- }
-}
+    const Foam::NamedEnum<Foam::constitutiveEqs::PTT::PTTFunctions, 3>
+    Foam::constitutiveEqs::PTT::PTTFunctionNames_;
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -129,17 +126,17 @@ Foam::constitutiveEqs::PTT::PTT
 void Foam::constitutiveEqs::PTT::correct()
 {
    // Update temperature-dependent properties
-   volScalarField lambda = thermoLambdaPtr_->createField(lambda_);
-   volScalarField etaP = thermoEtaPtr_->createField(etaP_);
+   volScalarField lambda(thermoLambdaPtr_->createField(lambda_));
+   volScalarField etaP(thermoEtaPtr_->createField(etaP_));
  
    // Velocity gradient tensor
-    volTensorField L = fvc::grad(U());
+    volTensorField L(fvc::grad(U()));
 
     // Convected derivate term
-    volTensorField C = tau_ & L;
+    volTensorField C(tau_ & L);
 
     // Twice the rate of deformation tensor
-    volSymmTensorField twoD = twoSymm(L);
+    volSymmTensorField twoD(twoSymm(L));
 
      // Stress transport equation
     fvSymmTensorMatrix tauEqn
@@ -164,7 +161,7 @@ void Foam::constitutiveEqs::PTT::correct()
       
       case pfGen :
         scalar gammaBeta(gammaFunValues_[0]);
-        volScalarField z = epsilon_*lambda*tr(tau_)/etaP;
+        volScalarField z(epsilon_*lambda*tr(tau_)/etaP);
         volScalarField Eab(z);        
         forAll(z, i)
         {

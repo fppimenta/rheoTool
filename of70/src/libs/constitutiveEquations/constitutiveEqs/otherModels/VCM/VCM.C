@@ -130,11 +130,11 @@ Foam::constitutiveEqs::VCM::VCM
 void Foam::constitutiveEqs::VCM::correct()
 {
  // Velocity gradient tensor and gammaDot
-    volTensorField L = fvc::grad(U());   
-    volSymmTensorField gDot = twoSymm(L);
+    volTensorField L(fvc::grad(U()));   
+    volSymmTensorField gDot(twoSymm(L));
   
  // Breakage rate
-    volScalarField cA = cAEq_ + (1./3.)*chi_*(gDot&&(A_/nA_));
+    volScalarField cA(cAEq_ + (1./3.)*chi_*(gDot&&(A_/nA_)));
      
  // Solve for nA
   
@@ -175,7 +175,7 @@ void Foam::constitutiveEqs::VCM::correct()
  // Solve for A
     
     // Convected derivate term
-    volTensorField CA = A_ & L;
+    volTensorField CA(A_ & L);
     
     fvSymmTensorMatrix AEqn
     (
@@ -196,7 +196,7 @@ void Foam::constitutiveEqs::VCM::correct()
  // Solve for B
   
     // Convected derivate term
-    volTensorField CB = B_ & L;
+    volTensorField CB(B_ & L);
     
     // Compute lambdaB from given parameters
     dimensionedScalar lambdaB = lambdaA_*eps_;

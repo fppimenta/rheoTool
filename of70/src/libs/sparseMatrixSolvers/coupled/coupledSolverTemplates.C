@@ -440,8 +440,8 @@ void Foam::coupledSolver::assemblePetscAb
  //- Contribution from BCs
  forAll(bMesh, patchI)
  {
-   scalarField bC = eqn.boundaryCoeffs()[patchI].component(cmpI);  
-   scalarField iC = eqn.internalCoeffs()[patchI].component(cmpI);  
+   scalarField bC(eqn.boundaryCoeffs()[patchI].component(cmpI));  
+   scalarField iC(eqn.internalCoeffs()[patchI].component(cmpI));  
    const labelUList& addr = lduA.patchAddr(patchI);
    const fvPatch& pfvPatch = bMesh[patchI];      
    
@@ -727,7 +727,7 @@ void Foam::coupledSolver::assemblePetscb
    // Non-coupled
    if (!bMesh[patchI].coupled())
    {
-     scalarField bC = eqn.boundaryCoeffs()[patchI].component(cmpI);   
+     scalarField bC(eqn.boundaryCoeffs()[patchI].component(cmpI));   
      const labelUList& addr = lduA.patchAddr(patchI); 
      
      forAll(addr, facei)

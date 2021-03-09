@@ -181,7 +181,7 @@ void Foam::heatFluxFvPatchScalarField::updateCoeffs()
     return;
   }
 
-  scalarField Tc = this->patchInternalField();
+  scalarField Tc(this->patchInternalField());
   scalarField delta(1./patch().deltaCoeffs());
   const scalar Ta = Ta_->value(this->db().time().timeOutputValue());
   const scalar Ts = Ts_->value(this->db().time().timeOutputValue());

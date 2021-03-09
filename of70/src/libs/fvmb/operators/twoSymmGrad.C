@@ -135,7 +135,7 @@ tmp< LMatrix<tensor> >  twoSymmGrad
     const vectorField Sfb = pvf.patch().Sf(); 
     tensorField& internalCoeffsFvm(fvm.internalCoeffs()[patchi]);
     tensorField& boundaryCoeffsFvm(fvm.boundaryCoeffs()[patchi]);
-    const scalarField cpI = c.boundaryField()[patchi].patchInternalField();
+    const scalarField cpI(c.boundaryField()[patchi].patchInternalField());
         
     // bw refer to the f-C fractional distance on the other processor. The
     // cell on each processor is always the owner, so bw still corresponds 

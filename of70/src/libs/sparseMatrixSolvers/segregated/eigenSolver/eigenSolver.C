@@ -613,7 +613,7 @@ void Foam::eigenSolver<Type>::assembleEigenAbx
  }
  
  //- Diagonal elements and source vector
- scalarField source = eqn.source().component(cmpI);   
+ scalarField source(eqn.source().component(cmpI));   
  for (int cellI=0; cellI<nc; cellI++) 
  {  
    // Diagonal 
@@ -626,8 +626,8 @@ void Foam::eigenSolver<Type>::assembleEigenAbx
  //- Contribution from BCs
  forAll(T.boundaryField(), patchI)
  {
-   scalarField bC = eqn.boundaryCoeffs()[patchI].component(cmpI);  
-   scalarField iC = eqn.internalCoeffs()[patchI].component(cmpI);  
+   scalarField bC(eqn.boundaryCoeffs()[patchI].component(cmpI));  
+   scalarField iC(eqn.internalCoeffs()[patchI].component(cmpI));  
    const labelUList& addr = eqn.lduMatrix::lduAddr().patchAddr(patchI);   
    const fvPatch& pfvPatch = T.mesh().boundary()[patchI];    
     
@@ -671,7 +671,7 @@ void Foam::eigenSolver<Type>::assembleEigenAbx
        // Apply the rotation
        refCast<const cyclicFvPatchField<Type> >(T.boundaryField()[patchI]).transformCoupleField(pnf);
 
-       scalarField pnfc = pnf.component(cmpI);
+       scalarField pnfc(pnf.component(cmpI));
       
        forAll(ownFC, facei)
        {            
@@ -841,7 +841,7 @@ void Foam::eigenSolver<Type>::assembleEigenBx
  int nc = T.size();  
  
  //- Diagonal elements and source vector
- scalarField source = eqn.source().component(cmpI);   
+ scalarField source(eqn.source().component(cmpI));   
  for (int cellI=0; cellI<nc; cellI++) 
  { 
    // Source vector   
@@ -851,7 +851,7 @@ void Foam::eigenSolver<Type>::assembleEigenBx
  //- Contribution from BCs
  forAll(T.boundaryField(), patchI)
  {
-   scalarField bC = eqn.boundaryCoeffs()[patchI].component(cmpI);    
+   scalarField bC(eqn.boundaryCoeffs()[patchI].component(cmpI));    
    const labelUList& addr = eqn.lduMatrix::lduAddr().patchAddr(patchI);      
     
    // Non-coupled
@@ -880,7 +880,7 @@ void Foam::eigenSolver<Type>::assembleEigenBx
          
      refCast<const cyclicFvPatchField<Type> >(T.boundaryField()[patchI]).transformCoupleField(pnf);
 
-     scalarField pnfc = pnf.component(cmpI);
+     scalarField pnfc(pnf.component(cmpI));
       
      const labelList& ownFC = T.mesh().boundaryMesh()[patchI].faceCells(); 
      forAll(ownFC, facei)

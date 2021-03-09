@@ -111,7 +111,7 @@ void linearExtrapolationFvPatchField<Type>::updateCoeffs()
    const fvMesh& mesh = this->patch().boundaryMesh().mesh();  
  
    const GeometricField<Type, fvPatchField, volMesh>&
-   var = this->db().objectRegistry::lookupObject< GeometricField<Type, fvPatchField, volMesh> >(varName);  
+   var = this->db().objectRegistry::template lookupObject< GeometricField<Type, fvPatchField, volMesh> >(varName);  
 
    Field<Type> varp = Field<Type>( this->patch().size(), pTraits<Type>::zero );
 
@@ -131,7 +131,7 @@ void linearExtrapolationFvPatchField<Type>::updateCoeffs()
            tvarI = tmp<volScalarField>(var.component(cmp)*1.);
            
         volScalarField& varI = tvarI.ref();
-        volVectorField gradT = fvc::grad(varI, "linExtrapGrad");
+        volVectorField gradT(fvc::grad(varI, "linExtrapGrad"));
     
         forAll(this->patch(), facei )        
         {
