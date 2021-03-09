@@ -62,4 +62,6 @@ SunOS*Gcc*/
 # ignore .tags in the main directory
 /.tags
 
+**/.DS_Store
+
 # end-of-file
