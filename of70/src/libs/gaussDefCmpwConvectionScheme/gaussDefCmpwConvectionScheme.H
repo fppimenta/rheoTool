@@ -92,7 +92,7 @@ public:
         (
             const fvMesh& mesh,
             const surfaceScalarField& faceFlux,
-            const word& scheme
+            Istream& scheme
         )
         :
             convectionScheme<Type>(mesh, faceFlux),
@@ -105,7 +105,8 @@ public:
             const fvMesh& mesh,
             const surfaceScalarField& faceFlux,
             Istream& is,
-            const word& scheme
+            Istream& scheme
+            // remove triSurface in Make/options for OF-v2012
         )
         :
             convectionScheme<Type>(mesh, faceFlux),
