@@ -174,8 +174,12 @@ public:
           return false;
         };
 
-        //- Correct the viscoelastic stress
-        virtual void correct();
+        //- Correct the viscoelastic stress: alpha is the color function in two phase-flows
+        virtual void correct
+        (
+          const volScalarField* alpha = nullptr,
+          const volTensorField* gradU = nullptr
+        );
 };
 
 

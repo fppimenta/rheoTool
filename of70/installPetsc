@@ -41,7 +41,7 @@
 #
 #------------------------------------------------------------------------------
 
-PetscV="3.13.3"
+PetscV="3.15.0"
 
 # This dir can be changed 
 PetscIntallDir=$WM_PROJECT_USER_DIR/ThirdParty

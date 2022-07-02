@@ -152,7 +152,11 @@ Foam::constitutiveEqs::ML_IKH::ML_IKH
  
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::constitutiveEqs::ML_IKH::correct()
+void Foam::constitutiveEqs::ML_IKH::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
 //- Aux numbers     
     dimensionedScalar ZScalar("0",dimless/dimTime,0.);
@@ -170,7 +174,7 @@ void Foam::constitutiveEqs::ML_IKH::correct()
 
 //- Solve for tau
     // Velocity gradient tensor
-    volTensorField L = fvc::grad(U());
+    volTensorField L( gradU == nullptr ? fvc::grad(U())() : *gradU );
     
     // Convected derivate term
     volTensorField C = tau_ & L;

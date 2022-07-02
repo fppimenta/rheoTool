@@ -1,0 +1,125 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  https://openfoam.org                  |
+|   \\  /    A nd           | Version:  9                                     |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     rheoFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         70;
+
+deltaT          .01;
+
+writeControl    timeStep;
+
+writeInterval   1000;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  12;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   10;
+
+graphFormat     raw;
+
+runTimeModifiable yes;
+
+adjustTimeStep on;
+
+maxCo          0.4;
+
+maxDeltaT      0.1;
+
+functions
+{
+    outputWi0
+    {
+	 functionObjectLibs ("libutilityFunctionObjects.so");
+	 type coded;
+	 name calWi0;
+	 writeControl timeStep;
+         writeInterval      50;
+         enabled             yes;
+
+	 codeWrite
+	 #{
+ 
+          // Lookup/create variable 
+	     
+	   const volVectorField& U = mesh().lookupObject<volVectorField>("U");
+        
+           const dictionary& constDict = mesh().lookupObject<IOdictionary>("constitutiveProperties");
+           dimensionedScalar lambda_(constDict.subDict("parameters").lookup("lambda"));
+  
+           scalarList list;
+    
+          // Compute cd
+
+           // Find cell at stagnation point
+            
+           label cellC = mesh().findCell(vector(0,0,0.5));
+           
+           volTensorField gradU(fvc::grad(U));
+
+           list.append(mesh().time().value());  // Time (col 0)  
+           list.append(Foam::sqrt( Foam::max(1e-12, gradU[cellC].xx() * gradU[cellC].xx() + gradU[cellC].yx() * gradU[cellC].xy() ) ) * lambda_.value() ); // Wi0 (col 1) 
+
+          // Write data
+
+           string comsh;           
+           string filename("Wi0.txt");
+	   std::stringstream doub2str; doub2str.precision(12);
+
+           comsh = "./writeData " + filename;
+           forAll(list, id)
+            {
+              doub2str.str(std::string());
+              doub2str << list[id]; 
+              comsh += " " + doub2str.str();
+            }
+
+           if (Pstream::parRun())
+   	   {
+   	        for (label procI = 0; procI < Pstream::nProcs(); procI++)
+	         {
+                   if (procI == Pstream::myProcNo())
+                     {
+                       if (cellC!=-1)
+                       {
+                        system(comsh);
+                       }                   
+                    }
+                 }               
+           }
+           else
+           {
+             system(comsh);
+           }
+
+	 #};
+    }
+}
+ 
+
+// ************************************************************************* //

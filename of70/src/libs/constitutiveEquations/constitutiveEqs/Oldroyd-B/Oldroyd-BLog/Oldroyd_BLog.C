@@ -125,15 +125,18 @@ Foam::constitutiveEqs::Oldroyd_BLog::Oldroyd_BLog
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::constitutiveEqs::Oldroyd_BLog::correct()
+void Foam::constitutiveEqs::Oldroyd_BLog::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
     // Update params thermo 
     volScalarField lambda = thermoLambdaPtr_->createField(lambda_);
     volScalarField etaP = thermoEtaPtr_->createField(etaP_);
- 
+        
     // Decompose grad(U).T()
-
-    volTensorField L = fvc::grad(U());
+    volTensorField L( gradU == nullptr ? fvc::grad(U())() : *gradU );
 
     dimensionedScalar c1( "zero", dimensionSet(0, 0, -1, 0, 0, 0, 0), 0.);
     volTensorField   B = c1 * eigVecs_; 
@@ -172,21 +175,19 @@ void Foam::constitutiveEqs::Oldroyd_BLog::correct()
           )
        ) 
        
-    );
+    );     
+      
+   thetaEqn.relax();
+   thetaEqn.solve();
+    
+   // Diagonalization of theta
 
-   
-    thetaEqn.relax();
-    thetaEqn.solve();
-  
-    // Diagonalization of theta
+   calcEig(theta_, eigVals_, eigVecs_);
 
-    calcEig(theta_, eigVals_, eigVecs_);
+   // Convert from theta to tau
+   tau_ = (etaP/lambda) * symm( (eigVecs_ & eigVals_ & eigVecs_.T()) - Itensor);
 
-    // Convert from theta to tau
-
-    tau_ = (etaP/lambda) * symm( (eigVecs_ & eigVals_ & eigVecs_.T()) - Itensor);
-
-    tau_.correctBoundaryConditions();
+   tau_.correctBoundaryConditions();
 }
 
 

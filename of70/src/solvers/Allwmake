@@ -16,4 +16,6 @@ wmake rheoBDFoam
 
 wmake rheoHeatFoam
 wmake rheoMultiRegionFoam
+
+wmake rheoFilmFoam
  

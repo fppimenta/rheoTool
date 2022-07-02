@@ -79,14 +79,18 @@ Foam::constitutiveEqs::Giesekus::Giesekus
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::constitutiveEqs::Giesekus::correct()
+void Foam::constitutiveEqs::Giesekus::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
  // Update temperature-dependent properties
  volScalarField lambda = thermoLambdaPtr_->createField(lambda_);
  volScalarField etaP = thermoEtaPtr_->createField(etaP_);
  
  // Velocity gradient tensor
- volTensorField L = fvc::grad(U());
+ volTensorField L( gradU == nullptr ? fvc::grad(U())() : *gradU );
 
  // Convected derivate term
  volTensorField C = tau_ & L;

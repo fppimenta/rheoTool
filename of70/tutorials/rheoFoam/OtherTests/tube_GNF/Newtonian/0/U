@@ -22,8 +22,13 @@ boundaryField
 {
     inlet
     {
-	type            fixedValue;
-	value           uniform (0.4 0 0);
+	type            poiseuilleVelocity;
+	geometryType    Circular;
+	uMean           0.4;
+	R               1.5e-3;
+	center          (0 0 0);
+	
+	value           uniform (0 0 0);
     }  
     walls
     {

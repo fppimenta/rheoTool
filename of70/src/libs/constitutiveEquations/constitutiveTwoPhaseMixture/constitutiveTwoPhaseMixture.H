@@ -122,8 +122,8 @@ public:
         //- Update the constitutiveEqs
         void correct()
         {
-            phase1_->correct();
-            phase2_->correct();
+            phase1_->correct(&alpha1_);
+            phase2_->correct(&alpha2_);
         }
         
         //- Polymeric extra-stress tensor

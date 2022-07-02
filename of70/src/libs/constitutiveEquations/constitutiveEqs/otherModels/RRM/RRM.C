@@ -103,10 +103,14 @@ Foam::constitutiveEqs::RRM::RRM
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
  
-void Foam::constitutiveEqs::RRM::correct()
+void Foam::constitutiveEqs::RRM::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
     // Evolve Lstar    
-    volScalarField Rsby = lambdaS_ / (1. - Foam::sqr( Lstar_/(alpha_ + beta_/ ( strainRate()/Dr0_ + 1e-16 ) ) ) ); 
+    volScalarField Rsby = lambdaS_ / (1. - Foam::sqr( Lstar_/(alpha_ + beta_/ ( strainRate(gradU)/Dr0_ + 1e-16 ) ) ) ); 
   
     fvScalarMatrix LstarEqn
     (
@@ -124,8 +128,8 @@ void Foam::constitutiveEqs::RRM::correct()
     // Dr
     volScalarField Dr = Dr0_*Foam::pow(Lstar_, -3) * (1. + Foam::log(Lstar_)/m_); 
 
-    // Velocity gradient tensor
-    volTensorField K = fvc::grad(U());   
+    // Velocity gradient tensor  
+    volTensorField K( gradU == nullptr ? fvc::grad(U())() : *gradU );
     
     // Convected derivate term
     volTensorField C = S_ & K; 

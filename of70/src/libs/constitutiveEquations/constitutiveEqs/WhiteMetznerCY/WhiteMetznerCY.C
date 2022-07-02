@@ -84,10 +84,14 @@ Foam::constitutiveEqs::WhiteMetznerCY::WhiteMetznerCY
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::constitutiveEqs::WhiteMetznerCY::correct()
+void Foam::constitutiveEqs::WhiteMetznerCY::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
     // Velocity gradient tensor
-    volTensorField L = fvc::grad(U());
+    volTensorField L( gradU == nullptr ? fvc::grad(U())() : *gradU );
 
     // Convected derivate term
     volTensorField C = tau_ & L;

@@ -1,0 +1,78 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  https://openfoam.org                  |
+|   \\  /    A nd           | Version:  9                                     |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volScalarField;
+    object      psi;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 2 -3 0 0 -1 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+
+    inletWest
+    {
+	type            codedFixedValue;	 
+    	value           uniform 100;
+    	name            ACVolt1;
+    	code
+    	#{
+          const scalar& t = this->db().time().timeOutputValue() ;
+ 
+          scalar pi(3.14159);
+          
+          scalar f(1.); //Hz
+
+          operator==(  
+                       50 + 50*sin(2*pi*f*t)
+                    );
+   	#};
+    }
+    
+    inletNorth
+    {
+	type            codedFixedValue;
+    	value           uniform 100;
+    	name            ACVolt2;
+    	code
+    	#{
+          const scalar& t = this->db().time().timeOutputValue() ;
+ 
+          scalar pi(3.14159);
+          
+          scalar f(1.); //Hz
+
+          operator==(  
+                       45 + 45*sin(2*pi*f*t-pi*4./8.)
+                    );
+   	#}; 
+    }
+    
+    outlet
+    {
+	type            fixedValue;
+	value           uniform 0;     
+    }
+    
+    symmetry
+    {
+	type            symmetryPlane;    
+    }
+    
+    walls
+    {
+	type            zeroGradient;
+    }
+}
+
+// ************************************************************************* //

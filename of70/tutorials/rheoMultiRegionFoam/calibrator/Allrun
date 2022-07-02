@@ -33,6 +33,7 @@ cp -rf constant/calibrator.back/thermoProperties    constant/calibrator/thermoPr
  
 if [ "$1" -gt 1 ]; then
  foamDictionary -entry "numberOfSubdomains" -set $1 system/decomposeParDict
+ foamDictionary -entry "simpleCoeffs.n" -set "( 1 $1 1 )" system/decomposeParDict
  runApplication decomposePar -allRegions -dict system/decomposeParDict  
  runParallel rheoMultiRegionFoam
  runApplication reconstructPar -latestTime -allRegions 

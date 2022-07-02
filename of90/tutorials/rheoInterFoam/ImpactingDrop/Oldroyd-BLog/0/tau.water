@@ -1,0 +1,47 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  https://openfoam.org                  |
+|   \\  /    A nd           | Version:  9                                     |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volSymmTensorField;
+    object      tau;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 -1 -2 0 0 0 0];
+
+internalField   uniform (0 0 0 0 0 0);
+
+boundaryField
+{
+    atmosphere
+    {
+       type            fixedValue;
+       value           uniform (0 0 0 0 0 0);
+    }
+    plate
+    {
+       type            linearExtrapolation;
+       value           uniform (0 0 0 0 0 0);
+    }
+     wFront
+    {
+	type            wedge;     
+    }
+    wBack
+    {
+	type            wedge;     
+    }
+    axis
+    {
+	type            empty;     
+    }
+   
+}
+
+// ************************************************************************* //

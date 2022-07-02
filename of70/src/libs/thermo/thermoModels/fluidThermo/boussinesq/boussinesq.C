@@ -181,7 +181,7 @@ for (int jj = 0; jj<nNonOC; jj++)
   }
   
   if (isViscDissipation_)
-    TEqn -= (tau && fvc::grad(U));
+   TEqn -= (tau && fvc::grad(U));
   
   TEqn.relax();
 

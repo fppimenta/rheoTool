@@ -1,0 +1,3 @@
+rheoInterFoam.C
+
+EXE = $(FOAM_APPBIN)/rheoInterFoam

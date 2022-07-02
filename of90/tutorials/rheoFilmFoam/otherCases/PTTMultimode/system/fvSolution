@@ -1,0 +1,94 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  https://openfoam.org                  |
+|   \\  /    A nd           | Version:  9                                     |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    U
+    {
+        solver           PCG;
+        preconditioner   DIC;
+        tolerance        1e-10;
+        relTol           0.;
+        minIter          0;
+        maxIter          800;
+        
+    }
+
+    "(theta.*|tau.*|h|T)"
+    {
+
+        solver           PBiCG;
+        preconditioner
+        {
+            preconditioner DILU;
+        }
+
+        tolerance         1e-10;
+        relTol            0.;
+        minIter           0;
+        maxIter           1000;
+    }
+    
+    cellDisplacement
+    {
+        solver          GAMG;
+        tolerance       1e-8;
+        relTol          0.;
+        smoother        DIC;
+        cacheAgglomeration true;
+        nCellsInCoarsestLevel 10;
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+    }
+}
+
+filmPostProcessing
+{
+  enabled true;
+  writeFrequency 200;
+} 
+
+SIMPLE
+{
+    nInIter         2;
+    nNonOrthogonalCorrectors 0;
+    pRefCell        0;
+    pRefValue       0;
+    
+    moveMeshOuterCorrectors yes;
+    checkMeshCourantNo yes;
+
+    residualControl
+    {
+        
+    }
+}
+
+relaxationFactors
+{
+
+    equations
+    {
+       h 0.4;
+       U 0.4;
+       "tau.*" 0.4;
+       "theta.*" 0.4;
+       T     0.4;
+    }
+
+  
+}
+
+// ************************************************************************* //

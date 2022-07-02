@@ -106,7 +106,11 @@ Foam::constitutiveEqs::FENE_P::FENE_P
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::constitutiveEqs::FENE_P::correct()
+void Foam::constitutiveEqs::FENE_P::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
 
 // Update temperature-dependent properties
@@ -121,7 +125,7 @@ dimensionedSymmTensor Ist
 );
     
 // Velocity gradient tensor
-volTensorField L = fvc::grad(U());
+volTensorField L( gradU == nullptr ? fvc::grad(U())() : *gradU );
 
 if (!solveInTau_)
 {

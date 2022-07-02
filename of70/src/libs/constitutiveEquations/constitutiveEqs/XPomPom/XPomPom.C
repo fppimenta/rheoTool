@@ -83,7 +83,11 @@ Foam::constitutiveEqs::XPomPom::XPomPom
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::constitutiveEqs::XPomPom::correct()
+void Foam::constitutiveEqs::XPomPom::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
   // Update temperature-dependent properties
   volScalarField lambdaB = thermoLambdaBPtr_->createField(lambdaB_);
@@ -91,7 +95,7 @@ void Foam::constitutiveEqs::XPomPom::correct()
   volScalarField etaP = thermoEtaPtr_->createField(etaP_);
 
   // Velocity gradient tensor
-  volTensorField L = fvc::grad(U());
+  volTensorField L( gradU == nullptr ? fvc::grad(U())() : *gradU );
 
   // Convected derivate term
   volTensorField C = tau_ & L;

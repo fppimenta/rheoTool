@@ -71,7 +71,7 @@ autoPrecond(false)
       mesh.template validComponents<Type>()
     );
 
-    int nc = T.size();
+    label nc = T.size();
     
     for (direction cmpt=0; cmpt<pTraits<Type>::nComponents; cmpt++)
     {
@@ -578,13 +578,13 @@ void Foam::eigenSolver<Type>::assembleEigenAbx
   int cmpI
 )
 {
- int nc = T.size();  
+ label nc = T.size();  
   
  std::vector<trip> tripList;
   
  //- Off diagonal elements   
  const lduAddressing& offDiag = eqn.lduMatrix::lduAddr();
- int nIFaces = offDiag.lowerAddr().size();
+ label nIFaces = offDiag.lowerAddr().size();
  
  tripList.reserve(nc+nIFaces+T.mesh().nFaces());
  
@@ -614,7 +614,7 @@ void Foam::eigenSolver<Type>::assembleEigenAbx
  
  //- Diagonal elements and source vector
  scalarField source = eqn.source().component(cmpI);   
- for (int cellI=0; cellI<nc; cellI++) 
+ for (label cellI=0; cellI<nc; cellI++) 
  {  
    // Diagonal 
    tripList.push_back( trip(cellI, cellI, eqn.diag()[cellI]) );
@@ -838,11 +838,11 @@ void Foam::eigenSolver<Type>::assembleEigenBx
   int cmpI
 )
 {
- int nc = T.size();  
+ label nc = T.size();  
  
  //- Diagonal elements and source vector
  scalarField source = eqn.source().component(cmpI);   
- for (int cellI=0; cellI<nc; cellI++) 
+ for (label cellI=0; cellI<nc; cellI++) 
  { 
    // Source vector   
    b(cellI) = source[cellI];
@@ -903,10 +903,10 @@ void Foam::eigenSolver<Type>::transferEigenSolution
   int cmpI
 )
 {  
-   int nc = T.size();
+   label nc = T.size();
    scalarField tt(nc, 0.);
          
-   for (int i = 0; i < nc; i++)
+   for (label i = 0; i < nc; i++)
      tt[i] = x(i);
     
    T.primitiveFieldRef().replace(cmpI, tt);

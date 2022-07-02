@@ -1,0 +1,20 @@
+EXE_INC = \
+    -I$(LIB_SRC)/triSurface/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/twoPhaseModels/twoPhaseMixture/lnInclude \
+    -I$(LIB_SRC)/twoPhaseModels/interfaceProperties/lnInclude \
+    -I../../constitutiveEquations/lnInclude \
+    -I../../EDFModels/lnInclude \
+    -I../../thermo/lnInclude 
+
+LIB_LIBS = \
+    -lOpenFOAM \
+    -ltriSurface \
+    -lmeshTools \
+    -lfiniteVolume \
+    -ltwoPhaseMixture \
+    -linterfaceProperties \
+    -L$(FOAM_USER_LIBBIN) -lconstitutiveEquations \
+    -L$(FOAM_USER_LIBBIN) -lEDFModels \
+    -L$(FOAM_USER_LIBBIN) -lthermoRheoTool 

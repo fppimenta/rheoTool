@@ -1,0 +1,56 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  6.0                                   |
+|   \\  /    A nd           | Website:  https://openfoam.org                  |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      constitutiveProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+g  g [0 1 -2 0 0 0 0] (9.81 0 0);
+
+filmProperties
+{
+  isTanZeroTraction false; 
+  isThermo true;
+  
+  h        h [ 1 0 -3 -1 0 0 0] 20;
+  Cp       Cp [ 0 2 -2 -1 0 0 0] 1500;
+  Tair     Tair [ 0 0 0 1 0 0 0] 298.15;
+}
+   
+parameters
+{                
+                type             Newtonian;
+                
+                // Physical constants
+                rho              rho [1 -3 0 0 0 0 0] 1330.;
+                eta              eta [1 -1 -1 0 0 0 0] 270.;
+                
+                thermoEta
+                {                 
+                  type          Arrhenius;
+                  alpha         alpha [0 0 0 1 0 0 0] 7938.417128;
+                  T0            T0 [ 0 0 0 1 0 0 0] 523.15;
+                } 
+               
+                
+                // Stabilization              
+                stabilization   coupling;                            
+}
+
+passiveScalarProperties
+{
+                solvePassiveScalar   no;
+                D                    D [ 0 2 -1 0 0 0 0 ] 1e-9; 
+}
+
+// ************************************************************************* //

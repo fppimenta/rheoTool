@@ -327,9 +327,9 @@ void Foam::coupledSolver::createSystem()
  // Update mesh-dependent members of varInfo
  forAll(varInfo, i)
  {
-   int meshID = varInfo[i].meshID;
-   int ncI = meshList[meshID].mesh->nCells();
-   reduce(ncI, sumOp<int>());
+   label meshID = varInfo[i].meshID;
+   label ncI = meshList[meshID].mesh->nCells();
+   reduce(ncI, sumOp<label>());
    varInfo[i].nCells = ncI;
  }
  
@@ -345,19 +345,19 @@ void Foam::coupledSolver::createSystem()
  // Size. If the number of rows is not divisible by nProcs,
  // the remainder is added to the last process.
  
- int nglb(0);
+ label nglb(0);
  forAll(meshList, i)
  {
-   int nMeshI = meshList[i].mesh->nCells();
-   reduce(nMeshI, sumOp<int>());
+   label nMeshI = meshList[i].mesh->nCells();
+   reduce(nMeshI, sumOp<label>());
    nglb += nMeshI*meshList[i].nValidCmp;
  }
- int nloc(nglb);
+ label nloc(nglb);
   
  if (Pstream::parRun())
  {
    nloc = nglb/Pstream::nProcs();
-   int dif = nglb - nloc*Pstream::nProcs();  
+   label dif = nglb - nloc*Pstream::nProcs();  
    if (dif > 0)
    {
      if (Pstream::myProcNo() == Pstream::nProcs()-1)
@@ -739,13 +739,13 @@ void Foam::coupledSolver::getResiduals
  scalar xAvW(0.);
  forAll(numNormW, i)
  { 
-   int ilower = this->sharedData[meshList[aux[i][3]].ID].ilower;
+   label ilower = this->sharedData[meshList[aux[i][3]].ID].ilower;
    label nLocal = meshList[aux[i][3]].mesh->nCells();
    label nGlobalCells = aux[i][2]; // global number of cells (equivalent to reduceOp(nLocal))
  
-   for (int j=0; j<nLocal; j++)
+   for (label j=0; j<nLocal; j++)
    {
-     int row = j + ilower + aux[i][1]; 
+     label row = j + ilower + aux[i][1]; 
      ierr = VecSetValues(xpart,1,&row,&val,INSERT_VALUES);CHKERRV(ierr);
    } 
    
@@ -870,12 +870,12 @@ void Foam::coupledSolver::getResiduals
  // Filter per block equation
  forAll(numNormW, i)
  {    
-   int ilower = this->sharedData[meshList[aux[i][3]].ID].ilower;
+   label ilower = this->sharedData[meshList[aux[i][3]].ID].ilower;
    label nLocal = meshList[aux[i][3]].mesh->nCells();
  
-   for (int j=0; j<nLocal; j++)
+   for (label j=0; j<nLocal; j++)
    {
-     int row = j + ilower + aux[i][1];  
+     label row = j + ilower + aux[i][1];  
      ierr = VecSetValues(xpart,1,&row,&val,INSERT_VALUES);CHKERRV(ierr);
    }
 
@@ -933,8 +933,8 @@ void Foam::coupledSolver::getResiduals
 
 void Foam::coupledSolver::computeAllocationPetsc
 (
- int nloc,
- int nglb
+ label nloc,
+ label nglb
 )
 { 
  
@@ -1185,8 +1185,8 @@ void Foam::coupledSolver::computeAllocationPetsc
    // the allocation corresponding to the rows it owns.          
    forAll(maxInProcBlocks_, i)
    {
-     int p = myProcNo*nlocRound + i; // Global index
-     int total = listTmp[p];
+     label p = myProcNo*nlocRound + i; // Global index
+     label total = listTmp[p];
      maxInProcBlocks_[i] = min(nloc,total); // min: we cannot allocate more nnz than the local size of diagonal matrix 
      maxOutProcBlocks_[i] = min(nglb-nloc,total); // min: we cannot allocate more nnz than the local size of off-diagonal matrix    
    } 

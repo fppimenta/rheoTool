@@ -1,0 +1,41 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+# Copy the flow vars
+cp -rf ../electricFieldSimulation/5/p*  0/ 
+cp -rf ../electricFieldSimulation/5/U*  0/
+
+# Equilibrate the molecules 
+runApplication blockMesh
+ 
+runApplication initMolecules
+
+foamDictionary -entry "endTime" -set "400" system/controlDict
+foamDictionary -entry "deltaT" -set ".05" system/controlDict
+foamDictionary -entry "writeInterval" -set "100" system/controlDict
+
+foamDictionary -entry "externalFlow/pushBackCmp" -set "( 1 0 0 )" constant/moleculesControls
+foamDictionary -entry "externalFlow/pushBackFreq" -set "150" constant/moleculesControls
+foamDictionary -entry "outputOptions/outputStatsInterval" -set "100" constant/moleculesControls
+
+runApplication rheoBDFoam
+mv log.rheoBDFoam log.rheoBDFoam.equilibrate
+
+# Run freely
+foamDictionary -entry "endTime" -set "10000" system/controlDict
+foamDictionary -entry "deltaT" -set ".02" system/controlDict
+foamDictionary -entry "writeInterval" -set "5" system/controlDict
+
+foamDictionary -entry "externalFlow/pushBackCmp" -set "( 0 0 0 )" constant/moleculesControls
+foamDictionary -entry "outputOptions/outputStatsInterval" -set "3" constant/moleculesControls
+
+# Since we have "writeFields = false", then a manual copy of U and p is needed
+cp -rf 0/p*  400/ 
+cp -rf 0/U*  400/
+
+runApplication rheoBDFoam
+
+runApplication averageMolcX 400 -startPoint "(-300e-6 0 0)" -endPoint "(1500e-6 0 0)" -nBins 100

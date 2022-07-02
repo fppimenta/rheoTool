@@ -1,0 +1,7 @@
+filmModel.C
+BC/freeSurfaceDisplacementPointPatchVectorField.C
+BC/rollVelocityFvPatchVectorField.C
+motionSolver/spinesFvMotionSolver.C
+
+
+LIB = $(FOAM_USER_LIBBIN)/libfilmCasting

@@ -1,0 +1,40 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  https://openfoam.org                  |
+|   \\  /    A nd           | Version:  9                                     |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      electricProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+ 
+parameters
+{
+        type             DebyeHuckel;      
+  
+        relPerm          relPerm [ 0 0 0 0 0 0 0 ] 80;  
+        T                T [ 0 0 0 1 0 0 0 ] 300;
+        psiContrib       false;
+        
+        species
+        (        
+           cations
+           {        
+              z                 z [ 0 0 0 0 0 0 0 ] 1;      
+              c0                c0 [ 0 -3 0 0 1 0 0 ] 9.48946E-05;          
+           }
+           
+           anions
+           {  
+              z                 z [ 0 0 0 0 0 0 0 ] -1;         
+              c0                c0 [ 0 -3 0 0 1 0 0 ] 9.48946E-05;         
+           }               
+        );          
+}
+
+// ************************************************************************* //

@@ -25,10 +25,10 @@ if (!bMesh[patchI].coupled())
      );  
      
      // The ID of T from the neigb region
-     int bCol = findField(camiPatchField.nbrFieldName(), camiPatchField.nbrMeshName());
+     label bCol = findField(camiPatchField.nbrFieldName(), camiPatchField.nbrMeshName());
  
      // The column bias
-     int fRow = varInfo[bCol].firstElem;
+     label fRow = varInfo[bCol].firstElem;
  
      // The neiFC gets ilower from the proc/mesh where neicamipp is. This is ensured after
      // the call to distribute(neiFCproc).

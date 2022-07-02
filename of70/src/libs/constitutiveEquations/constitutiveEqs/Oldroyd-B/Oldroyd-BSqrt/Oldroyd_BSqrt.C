@@ -86,14 +86,18 @@ Foam::constitutiveEqs::Oldroyd_BSqrt::Oldroyd_BSqrt
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::constitutiveEqs::Oldroyd_BSqrt::correct()
+void Foam::constitutiveEqs::Oldroyd_BSqrt::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
     // Update temperature-dependent properties
     volScalarField lambda = thermoLambdaPtr_->createField(lambda_);
     volScalarField etaP = thermoEtaPtr_->createField(etaP_);
  
     // Velocity gradient tensor
-    volTensorField L = fvc::grad(U());
+    volTensorField L( gradU == nullptr ? fvc::grad(U())() : *gradU );
    
     volTensorField a(L*0.0);
     scalar t1(0.0), t2(0.0), t3(0.0), B1(0.0), B2(0.0), B3(0.0), w1(0.0), w2(0.0), w3(0.0), D(0.0);

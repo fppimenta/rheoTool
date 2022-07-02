@@ -664,9 +664,9 @@ void Foam::petscSolver<Type>::computeAllocationPetsc
  // Set Allocation. Note: this will only work for direct-neig based
  // stencil, ie, each cell only 'depends' on its direct neigs.
  
- int n = T.size();
- int nglb = T.size();
- reduce(nglb, sumOp<int>()); 
+ label n = T.size();
+ label nglb = T.size();
+ reduce(nglb, sumOp<label>()); 
  
  // Resize arrays to 0 because setSize() might be conservative
  maxInProcFaces_.clear();
@@ -842,11 +842,11 @@ void Foam::petscSolver<Type>::assemblePetscAbx
   int cmpV
 )
 {
- int ilower = this->sharedData[meshID_].ilower;
+ label ilower = this->sharedData[meshID_].ilower;
 
- int n = T.size();
- int nglb = T.size();
- reduce(nglb, sumOp<int>()); 
+ label n = T.size();
+ label nglb = T.size();
+ reduce(nglb, sumOp<label>()); 
  
  // Matrix/Vectors can be reused for other components. Only need
  // to size/preallocate upon call from first valid component.
@@ -891,8 +891,8 @@ void Foam::petscSolver<Type>::assemblePetscAbx
  
  //- Off diagonal elements   
  const lduAddressing& offDiag = eqn.lduMatrix::lduAddr();
- int col; int row;
- int nFaces = offDiag.lowerAddr().size();
+ label col; label row;
+ label nFaces = offDiag.lowerAddr().size();
  
  // Symmetric matrices only have upper(). No need to force creation of lower().
  if (eqn.symmetric())
@@ -924,7 +924,7 @@ void Foam::petscSolver<Type>::assemblePetscAbx
  
  // Diagonal and source  
  scalarField source = eqn.source().component(cmpI);   
- for (int cellI=0; cellI<n; cellI++) 
+ for (label cellI=0; cellI<n; cellI++) 
  {  
    // Diagonal
    row = ilower + cellI;  
@@ -1246,11 +1246,11 @@ void Foam::petscSolver<Type>::assemblePetscbx
   int cmpV
 )
 {
- int ilower = this->sharedData[meshID_].ilower;
+ label ilower = this->sharedData[meshID_].ilower;
 
- int n = T.size();
- int nglb = T.size();
- reduce(nglb, sumOp<int>()); 
+ label n = T.size();
+ label nglb = T.size();
+ reduce(nglb, sumOp<label>()); 
  
  // Matrix/Vectors can be reused for other components. Only need
  // to size/preallocate upon call from first valid component.
@@ -1272,11 +1272,11 @@ void Foam::petscSolver<Type>::assemblePetscbx
  }
  
  // Start filling the vector
- int row;
+ label row;
   
  // Source  
  scalarField source = eqn.source().component(cmpI);   
- for (int cellI=0; cellI<n; cellI++) 
+ for (label cellI=0; cellI<n; cellI++) 
  {  
    row = ilower + cellI;   
    ierr = VecSetValues(b,1,&row,&source[cellI],INSERT_VALUES);CHKERRV(ierr);
@@ -1352,13 +1352,13 @@ void Foam::petscSolver<Type>::transferPetscSolution
   int cmpI
 )
 {
-   int ilower = this->sharedData[meshID_].ilower;
+   label ilower = this->sharedData[meshID_].ilower;
    
    /* get the local solution */
-   int nvalues = T.size();
-   std::vector<int> rows(nvalues);
+   label nvalues = T.size();
+   std::vector<label> rows(nvalues);
         
-   for (int i = 0; i < nvalues; i++)
+   for (label i = 0; i < nvalues; i++)
     rows[i] = ilower + i;
     
    scalarField tt(T.size(), 0.);

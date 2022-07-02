@@ -13,3 +13,5 @@ wclean rheoBDFoam
 
 wclean rheoHeatFoam
 wclean rheoMultiRegionFoam
+
+wclean rheoFilmFoam

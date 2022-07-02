@@ -56,7 +56,7 @@ void Foam::coupledSolver::insertField
   meshList[mID].nValidCmp += i;
   
   label ncells = field.size(); 
-  reduce(ncells, sumOp<int>());
+  reduce(ncells, sumOp<label>());
   
   // Set the position for the first component of the NEXT variable to be added.
   // A Type variable may add up to N blocks because it has
@@ -106,8 +106,8 @@ void Foam::coupledSolver::insertEquation
  createSystem();
   
  // The index retrieved is the position in varInfo where the field lies
- int bRow = findField(rowField, matrix.psi().mesh().name());
- int bCol = findField(colField, matrix.psi().mesh().name());
+ label bRow = findField(rowField, matrix.psi().mesh().name());
+ label bCol = findField(colField, matrix.psi().mesh().name());
  
  label sizeRow = varInfo[bRow].nCells;  
  label sizeCol = varInfo[bCol].nCells;  
@@ -125,9 +125,9 @@ void Foam::coupledSolver::insertEquation
  {
    if (component(validComponents, cmpt) == -1) continue; 
    
-   int rowBias = varInfo[bRow].firstElem+(i*sizeRow);
-   int colBias = varInfo[bCol].firstElem+(i*sizeCol);  // TODO: will only work if rowField = colField or if both fields are of scalar type.
-                                                       // In general one would have i for bRow and j for bCol. (See insertEquation(LMatrix)) 
+   label rowBias = varInfo[bRow].firstElem+(i*sizeRow);
+   label colBias = varInfo[bCol].firstElem+(i*sizeCol);  // TODO: will only work if rowField = colField or if both fields are of scalar type.
+                                                         // In general one would have i for bRow and j for bCol. (See insertEquation(LMatrix)) 
 
    if (initTimeFlag || updateA_ || !saveSystem_)
    {
@@ -188,11 +188,11 @@ void Foam::coupledSolver::insertEquation
  createSystem();
   
  // The index retrieved is the position in varInfo where the field lies
- int bRow = findField(rowField, matrix.mesh().name());
- int bCol = findField(colField, matrix.mesh().name());
+ label bRow = findField(rowField, matrix.mesh().name());
+ label bCol = findField(colField, matrix.mesh().name());
  
- int fRow = varInfo[bRow].firstElem;
- int fCol = varInfo[bCol].firstElem;
+ label fRow = varInfo[bRow].firstElem;
+ label fCol = varInfo[bCol].firstElem;
  
  label sizeRow = varInfo[bRow].nCells;  
  label sizeCol = varInfo[bCol].nCells;  
@@ -201,8 +201,8 @@ void Foam::coupledSolver::insertEquation
  
  forAll(rel, i)
  {   
-   int rowBias = fRow + (rel[i][0]*sizeRow);
-   int colBias = fCol + (rel[i][1]*sizeCol);
+   label rowBias = fRow + (rel[i][0]*sizeRow);
+   label colBias = fCol + (rel[i][1]*sizeCol);
    direction cmpt = rel[i][2];
    
    if (initTimeFlag || updateA_ || !saveSystem_)
@@ -280,7 +280,7 @@ void Foam::coupledSolver::getSolution()
    {
      if (component(validComponents, cmpt) == -1) continue; 
      
-     int rowBias = fPos+(j*sizeField);
+     label rowBias = fPos+(j*sizeField);
      transferPetscSolution(x, *varList[i], cmpt, rowBias, mID);  
      
      j++;
@@ -298,12 +298,12 @@ void Foam::coupledSolver::transferPetscSolution
   Vec& x,
   Foam::GeometricField<Type, fvPatchField, volMesh>& T,
   int cmpI,
-  int rowBias,
+  label rowBias,
   int mID
 )
 {
- int ilower = this->sharedData[meshList[mID].ID].ilower;
- int n = T.size();
+ label ilower = this->sharedData[meshList[mID].ID].ilower;
+ label n = T.size();
  
  // If run in parallel, we cannot VecGetValues() from processors different
  // from the one we are. Therefore we need to scatter and gather the values
@@ -316,9 +316,9 @@ void Foam::coupledSolver::transferPetscSolution
    PetscScalar *values;
 
    scalarField tt(n, 0.);
-   std::vector<int> idx_from(n);
-   std::vector<int> idx_to(n);
-   for (int i = 0; i < n; i++)
+   std::vector<label> idx_from(n);
+   std::vector<label> idx_to(n);
+   for (label i = 0; i < n; i++)
    {
     idx_from[i] = ilower + i + rowBias;
     idx_to[i] = i;
@@ -334,7 +334,7 @@ void Foam::coupledSolver::transferPetscSolution
    VecScatterEnd(scatter,x,xloc,INSERT_VALUES,SCATTER_FORWARD);
 
    VecGetArray(xloc,&values);
-   for (int i = 0; i < n; i++)
+   for (label i = 0; i < n; i++)
     tt[i] = values[i];
 
    T.primitiveFieldRef().replace(cmpI, tt);
@@ -346,9 +346,9 @@ void Foam::coupledSolver::transferPetscSolution
  }
  else
  { 
-   std::vector<int> rows(n);
+   std::vector<label> rows(n);
         
-   for (int i = 0; i < n; i++)
+   for (label i = 0; i < n; i++)
     rows[i] = ilower + i + rowBias;
     
    scalarField tt(n, 0.);
@@ -366,8 +366,8 @@ void Foam::coupledSolver::assemblePetscAb
   Vec& x,
   eqType& eqn,
   int cmpI,
-  int rowBias,
-  int colBias,
+  label rowBias,
+  label colBias,
   int rowVarID
 )
 {
@@ -376,14 +376,14 @@ void Foam::coupledSolver::assemblePetscAb
  // we will assume they are the same.
  label mID = varInfo[rowVarID].meshID;  
  
- int ilower = this->sharedData[meshList[mID].ID].ilower;
+ label ilower = this->sharedData[meshList[mID].ID].ilower;
  
  // Start filling the matrix/vector
  
  //- Off diagonal elements   
  const lduAddressing& lduA = eqn.lduAddr();
- int col; int row;
- int nFaces = lduA.lowerAddr().size();
+ label col; label row;
+ label nFaces = lduA.lowerAddr().size();
  
  // Symmetric matrices only have upper(). No need to force creation of lower().
  if (eqn.symmetric())
@@ -423,8 +423,8 @@ void Foam::coupledSolver::assemblePetscAb
  // Diagonal and source  
  scalarField source(eqn.source().component(cmpI));  
  scalarField diag(eqn.diag().component(cmpI));
- int n = source.size(); 
- for (int cellI=0; cellI<n; cellI++) 
+ label n = source.size(); 
+ for (label cellI=0; cellI<n; cellI++) 
  {  
    // Diagonal
    row = ilower + cellI + rowBias; 
@@ -488,8 +488,8 @@ void Foam::coupledSolver::assemblePetscAb
          forAll(bC, facei)
          {        
            double v = -bC[facei];
-           int row = this->sharedData[meshList[mID].ID].fCo[pI][facei] + rowBias;  
-           int col = this->sharedData[meshList[mID].ID].fCn[pI][facei] + colBias; 
+           label row = this->sharedData[meshList[mID].ID].fCo[pI][facei] + rowBias;  
+           label col = this->sharedData[meshList[mID].ID].fCn[pI][facei] + colBias; 
            ierr = MatSetValues
            (
              A,
@@ -689,7 +689,7 @@ void Foam::coupledSolver::assemblePetscb
   Vec& b,
   eqType& eqn,
   int cmpI,
-  int rowBias,
+  label rowBias,
   int rowVarID
 )
 {
@@ -697,17 +697,17 @@ void Foam::coupledSolver::assemblePetscb
  // we will assume they are the same.
  label mID = varInfo[rowVarID].meshID; 
  
- int ilower = this->sharedData[meshList[mID].ID].ilower;
+ label ilower = this->sharedData[meshList[mID].ID].ilower;
  
  // Start filling the vector
  
  const lduAddressing& lduA = eqn.lduAddr();
- int row;
+ label row;
  
  // Diagonal and source  
  scalarField source(eqn.source().component(cmpI));  
- int n = source.size(); 
- for (int cellI=0; cellI<n; cellI++) 
+ label n = source.size(); 
+ for (label cellI=0; cellI<n; cellI++) 
  {  
    // Diagonal
    row = ilower + cellI + rowBias; 

@@ -8,6 +8,41 @@
 
 //************************************************************\\
 
+
+Version 6.0
+
+Released on 03/07/2022.
+
+o Generic:
+	
+	- Add: added rheoTool version for OpenFOAM(R) v9.0. The version compatible with OpenFOAM(R) v7.0 will be discontinued in a future release.
+	
+    - Fix: the code version for OpenFOAM(R) v9.0 is now compatible with Clang/llvm (tested on Clang/llvm 12).
+	
+	- Change: upgrade to Petsc v3.16.5 (of90), but retains back-compatibility with older versions.
+	 
+o Solvers:
+	
+	- Add: added solver rheoFilmFoam for the simulation of film-casting according to a 2.5D approach. 
+	
+o Constitutive equations:
+	
+	- Add: added the sPTT-IKH thixo-elastoviscoplastic model.
+	
+	- Fix: re-implemented etaSThermo() to avoid error in models that do not re-define it. Added member function hasThermo() in the base to distinguish thermo-enabled models.
+	
+o Boundary conditions:
+	
+	- Add: added BC poiseuilleVelocity, which defines the analytical velocity profile for laminar flows across cross-sections of rectangular (3D/2D) and circular shapes. 
+	
+
+o Multiphase:
+	
+	- Fix: the two-phase flow solver rheoInterFoam was re-implemented on the top of interFoam. It now shares the same controls for PIMPLE (with the extra-feature of supporting SIMPLEC) and inherits the phase-change model of interFoam. However, this solver keeps untested and under-development. Use it on your own risk.   
+	
+
+//************************************************************\\
+
 Version 5.0
 
 Released on 30/04/2020.

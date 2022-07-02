@@ -1,0 +1,53 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  https://openfoam.org                  |
+|   \\  /    A nd           | Version:  9                                     |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volScalarField;
+    object      psi;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 2 -3 0 0 -1 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    elecNorth
+    {
+	type            fixedValue;
+	value           uniform 0;      
+    }
+   
+    elecSouth
+    {
+	type            fixedValue;
+	value           uniform 0;        
+    }
+    
+    cylinder
+    {
+	type            inducedPotential;
+	psiF            0;
+	value           uniform 0;
+    }
+
+    "wall.*"
+    {
+	type            fixedValue;
+	value           uniform 0;       
+    }
+
+    frontAndBack
+    {
+	type            empty;     
+    }    
+}
+
+// ************************************************************************* //

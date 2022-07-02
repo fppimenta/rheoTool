@@ -1,0 +1,244 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  https://openfoam.org                  |
+|   \\  /    A nd           | Version:  9                                     |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     rheoFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         20;
+
+deltaT          2e-4;
+
+writeControl    runTime;
+
+writeInterval   2;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  12;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   10;
+
+graphFormat     raw;
+
+runTimeModifiable yes;
+
+adjustTimeStep off;
+
+maxCo          0.01;
+
+maxDeltaT      0.001;
+
+functions
+{
+
+ // Sample some points along time
+
+    probes
+    {
+        // Where to load it from
+        functionObjectLibs ( "libsampling.so" );
+
+        type            probes;
+
+        // Name of the directory for probe data
+        name            probes;
+
+        // Write at same frequency as fields
+        writeControl   timeStep;
+        writenterval  100;
+
+        // Fields to be probed
+        fields
+        (
+            U
+            tau
+        );
+
+        probeLocations
+        (
+             (0 0 0.5)
+             (1 0 0.5)
+             
+             (0 0.9 0.5)
+             (0 -0.9 0.5)
+ 
+             (0 0.95 0.5)
+             (0 -0.95 0.5)
+            
+        );
+    }
+
+ // Monitor top Xr length along time (actually, only points of velocity inversion are computed)
+
+    XrTop
+    {
+	 functionObjectLibs ("libutilityFunctionObjects.so");
+	 type coded;
+	 name outputVort0;
+	 writeControl timeStep;
+         writeInterval      51;
+         enabled             yes;
+         
+	 codeWrite
+	 #{
+	           
+          // Lookup/create variable 
+
+           label patchvort = mesh().boundaryMesh().findPatchID("wall_vorttop"); // Define name of BC contacting the vortex
+           const polyPatch& cPatchvort = mesh().boundaryMesh()[patchvort];
+           const volVectorField& U = mesh().lookupObject<volVectorField>("U");
+           const volVectorField& C = mesh().C();
+           
+
+          // Define reference parameters 
+ 
+           vector refPoint(0., 4., 0.5); // Reference point to zero the vortex length
+           vector refDir(1., 0., 0.); // Vector aligned with the wall
+
+          // Compute vortex length based on the point of velocity inversion
+
+           scalarList list;
+           list.append(mesh().time().value()); // Time (col 0)  
+           int index(0);
+           scalar uPrev=0.0; vector CPrev(0., 0., 0.);
+           vector refDirU(refDir/mag(refDir));
+      
+           forAll(cPatchvort, facei )       
+              {
+                label  curCell = cPatchvort.faceCells()[facei];
+                scalar uCmp = (U[curCell] & refDirU);
+               
+                if (uPrev*uCmp<0.0)
+                 { 
+                   vector r_curCell = -uCmp * ( CPrev - C[curCell] ) / (uPrev - uCmp) + C[curCell];
+  
+                   list.append( mag( ( (r_curCell - refPoint) & refDirU ) ) ); // Distance between refPoint and inversion points (col 1:n)
+
+                   index++;
+                 } 
+       
+                uPrev = uCmp;
+                CPrev = C[curCell];
+            }  
+             
+          // Write data
+
+           string comsh;           
+           string filename("Xr_top.txt");
+	   std::stringstream doub2str; doub2str.precision(12);
+
+           comsh = "./writeData " + filename;
+           forAll(list, id)
+            {
+              doub2str.str(std::string());
+              doub2str << list[id]; 
+              comsh += " " + doub2str.str();
+            }
+           
+	    if (Pstream::master())
+            {
+	      system(comsh);
+            }
+        
+	 #};
+    }
+
+ // Monitor top Xl length along time (actually, only points of velocity inversion are computed). Could be merged with previous codestream.
+
+    codeWrite
+    {
+	 functionObjectLibs ("libutilityFunctionObjects.so");
+	 type coded;
+	 name outputVort1;
+	 writeControl timeStep;
+         writeInterval      51;
+         enabled             yes;
+
+	 codeWrite
+	 #{
+           
+          // Lookup/create variable 
+
+           label patchvort = mesh().boundaryMesh().findPatchID("wall_liptop"); // Define name of BC contacting the vortex
+           const polyPatch& cPatchvort = mesh().boundaryMesh()[patchvort];
+           const volVectorField& U = mesh().lookupObject<volVectorField>("U");
+           const volVectorField& C = mesh().C();
+
+          // Define reference parameters 
+ 
+           vector refPoint(0., 1., 0.5); // Reference point to zero the vortex length
+           vector refDir(0., 1., 0.); // Vector aligned with the wall
+
+          // Compute vortex length based on the point of velocity inversion
+
+           scalarList list;
+           list.append(mesh().time().value()); // Time (col 0)  
+           int index(0);
+           scalar uPrev=0.0; vector CPrev(0., 0., 0.);
+           vector refDirU(refDir/mag(refDir));
+      
+           forAll(cPatchvort, facei )       
+              {
+                label  curCell = cPatchvort.faceCells()[facei];
+                scalar uCmp = (U[curCell] & refDirU);
+               
+                if (uPrev*uCmp<0.0)
+                 {
+                   vector r_curCell = -uCmp * ( CPrev - C[curCell] ) / (uPrev - uCmp) + C[curCell];
+  
+                   list.append( mag( ( (r_curCell - refPoint) & refDirU ) ) ); // Distance between refPoint and inversion points (col 1:n)
+
+                   index++;
+                 } 
+       
+                uPrev = uCmp;
+                CPrev = C[curCell];
+            }  
+             
+          // Write data
+
+           string comsh;           
+           string filename("Lip_top.txt");
+	   std::stringstream doub2str; doub2str.precision(12);
+
+           comsh = "./writeData " + filename;
+           forAll(list, id)
+            {
+              doub2str.str(std::string());
+              doub2str << list[id]; 
+              comsh += " " + doub2str.str();
+            }
+           
+	    if (Pstream::master())
+            {
+	      system(comsh);
+            }
+        
+	 #};
+    }
+}
+
+// ************************************************************************* //

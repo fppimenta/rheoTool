@@ -101,7 +101,7 @@ void Foam::sparseSolverBase::setSharedData
     int sum = 0;
     for (int j = 0; j<Pstream::nProcs(); j++)
     {
-      int nTemp = nCells[j]; 
+      label nTemp = nCells[j]; 
       nCells[j] += sum;
       sum += nTemp;  
     }
@@ -223,7 +223,7 @@ void Foam::sparseSolverBase::setSharedData
      
      labelList fC = mesh.boundaryMesh()[p].faceCells();
      // Convert from local to global adressing
-     for (int j = 0; j<fC.size(); j++)
+     for (label j = 0; j<fC.size(); j++)
        fC[j] = mapProcs[fC[j]];
      
      sharedData[id].fCo.append(fC);
@@ -264,7 +264,7 @@ void Foam::sparseSolverBase::setSharedData
      labelList fC = mesh.boundaryMesh()[pI].faceCells();
      
      // Convert from local to global adressing
-     for (int j = 0; j<fC.size(); j++)
+     for (label j = 0; j<fC.size(); j++)
        fC[j] = mapProcs[fC[j]];
     
      OPstream toOwn(Pstream::commsTypes::blocking, o);
@@ -284,7 +284,7 @@ void Foam::sparseSolverBase::setSharedData
 }
 
 // Build on demand, ie if empty and return the mesh index
-int Foam::sparseSolverBase::buildSharedDataOnDemand
+Foam::label Foam::sparseSolverBase::buildSharedDataOnDemand
 ( 
   const fvMesh& mesh
 )

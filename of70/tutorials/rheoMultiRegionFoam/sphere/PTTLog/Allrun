@@ -38,9 +38,8 @@ foamDictionary -entry "writeFormat" -set "ascii" system/controlDict
  
 if [ "$1" -gt 1 ]; then
  foamDictionary -entry "numberOfSubdomains" -set $1 system/decomposeParDict
- foamDictionary -entry "numberOfSubdomains" -set $1 system/fluid/decomposeParDict
- foamDictionary -entry "numberOfSubdomains" -set $1 system/sphere/decomposeParDict
- runApplication decomposePar -allRegions 
+ foamDictionary -entry "simpleCoeffs.n" -set "( 1 $1 1 )" system/decomposeParDict
+ runApplication decomposePar -allRegions  -dict system/decomposeParDict
  runParallel rheoMultiRegionFoam
  runApplication reconstructPar -latestTime -allRegions 
 else

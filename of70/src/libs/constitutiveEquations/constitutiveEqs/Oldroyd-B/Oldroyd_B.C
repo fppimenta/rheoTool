@@ -78,14 +78,18 @@ Foam::constitutiveEqs::Oldroyd_B::Oldroyd_B
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
  
-void Foam::constitutiveEqs::Oldroyd_B::correct()
+void Foam::constitutiveEqs::Oldroyd_B::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
  // Update temperature-dependent properties
  volScalarField lambda = thermoLambdaPtr_->createField(lambda_);
  volScalarField etaP = thermoEtaPtr_->createField(etaP_);
-
+ 
  // Velocity gradient tensor
- volTensorField L = fvc::grad(U());
+ volTensorField L( gradU == nullptr ? fvc::grad(U())() : *gradU );
 
  // Convected derivate term
  volTensorField C = tau_ & L;
@@ -106,8 +110,8 @@ void Foam::constitutiveEqs::Oldroyd_B::correct()
  tauEqn.relax();
     
  if (!solveCoupled_)
- {
-   solve(tauEqn == etaP/lambda*twoD);
+ { 
+   solve(tauEqn == etaP/lambda*twoD);   
  }
  else
  {   

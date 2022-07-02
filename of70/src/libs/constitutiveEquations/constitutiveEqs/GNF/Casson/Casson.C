@@ -96,7 +96,11 @@ Foam::constitutiveEqs::Casson::Casson
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::constitutiveEqs::Casson::correct()
+void Foam::constitutiveEqs::Casson::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
   
  if (reg_)
@@ -105,7 +109,7 @@ void Foam::constitutiveEqs::Casson::correct()
     strainRate_ =
     max
     (
-        strainRate(),
+        strainRate(gradU),
         dimensionedScalar("VSMALL", dimless/dimTime, VSMALL)
     );
     

@@ -125,14 +125,18 @@ Foam::constitutiveEqs::FENE_CRLog::FENE_CRLog
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::constitutiveEqs::FENE_CRLog::correct()
+void Foam::constitutiveEqs::FENE_CRLog::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
     // Update temperature-dependent properties
     volScalarField lambda = thermoLambdaPtr_->createField(lambda_);
     volScalarField etaP = thermoEtaPtr_->createField(etaP_);
     
     // Decompose grad(U).T()
-    volTensorField L = fvc::grad(U());
+    volTensorField L( gradU == nullptr ? fvc::grad(U())() : *gradU );
 
     dimensionedScalar c1( "zero", dimensionSet(0, 0, -1, 0, 0, 0, 0), 0.);
     volTensorField   B = c1 * eigVecs_; 

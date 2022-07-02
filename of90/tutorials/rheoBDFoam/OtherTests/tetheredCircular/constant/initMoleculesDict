@@ -1,0 +1,71 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  https://openfoam.org                  |
+|   \\  /    A nd           | Version:  9                                     |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      particleProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+ 
+groups
+(
+    G1
+    {
+        nMolecules   30;
+        
+        // Physical properties
+        D            0.065e-12; 
+        a            .077e-6;  
+        Nks           19.81132075;             
+        nuEV         1.2e-21;    
+        Ls           2.1e-6;     
+        
+        spatialDistibutionCoeffs
+         {
+            p0              (-5e-5 5e-5 2e-5); 
+            p1              (5e-5 5e-5 2e-5); 
+          
+            branches
+            (
+                  (0 0 11) ( 0  0.1 0. ) (false true)
+            );
+            
+         }       
+    }     
+    
+    G2
+    {
+        nMolecules   30;
+        
+        // Physical properties
+        D            0.065e-12; 
+        a            .077e-6;  
+        Nks           19.81132075;             
+        nuEV         1.2e-21;    
+        Ls           2.1e-6;     
+        
+        spatialDistibutionCoeffs
+         {
+            p0              (-5e-5 -5e-5 2e-5); 
+            p1              (5e-5 -5e-5 2e-5); 
+          
+            branches
+            (
+                (0 0 3) ( 0.1 -0.1 0 ) (false true)
+                (0 2 3) ( -0.1 -0.1 0 ) (false true)
+                (1 2 3) ( -0.1 0.1 0 ) (false true)
+                (2 2 2) ( 0.1 0.1 0 ) (false false) (0 0)
+            );
+            
+         }       
+    }     
+   
+);
+ 
+// ************************************************************************* //

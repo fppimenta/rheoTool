@@ -1,0 +1,165 @@
+#!/bin/sh
+#------------------------------------------------------------------------------
+# =========                 |
+# \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+#  \\    /   O peration     |
+#   \\  /    A nd           | For copyright notice see file Copyright
+#    \\/     M anipulation  |
+#------------------------------------------------------------------------------
+# License
+#     This file is part of rheoTool.
+#
+#     rheoTool is free software: you can redistribute it and/or modify it
+#     under the terms of the GNU General Public License as published by the
+#     Free Software Foundation, either version 3 of the License, or (at your
+#     option) any later version.
+#
+#     rheoTool is distributed in the hope that it will be useful, but
+#     WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#     General Public License for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Description
+#     Download, configure and compile Petsc and its depencies. Dependencies
+#     are installed with sudo mode, requiring password. These commands,
+#     under section '## Install dependencies', can be commented if those
+#     dependencies are already installed in the system. Petsc loc vars
+#     are added to .bashrc.
+#
+#     Install directory can be configured.
+#
+# Requirements:
+#     1: Internet connection
+#     2: file etc/bashrc should be sourced 
+#     3: sudo privillege (optional if packages are already installed)
+#
+# Author:
+#     Francisco Pimenta (2018)
+#
+#------------------------------------------------------------------------------
+
+PetscV="3.16.5"
+
+# This dir can be changed 
+PetscIntallDir=$WM_PROJECT_USER_DIR/ThirdParty
+
+# Set here paths to mpi. Default to systemOpenMPI, as used by default in OpenFOAM. Should
+# be changed by the user for other cases (mpich, thirdparty openmpi, mvapich,...). 
+mpiDir=$MPI_ARCH_PATH
+mpiFort=$(which mpifort) 
+mpiCC=$(which mpicc)
+mpiCXX=$(which mpicxx)
+
+## Download Petsc
+
+[ -z "$WM_PROJECT_USER_DIR" ] && { echo " "; echo "ERROR: OpenFOAM vars are not loaded"; echo " "; exit 1; }
+
+mkdir -p $PetscIntallDir
+cd $PetscIntallDir
+
+if [ -f petsc-$PetscV.tar.gz ] || [ -d petsc-$PetscV ]; then
+ printf "Warning: petsc (or its tarball) is already present in $WM_PROJECT_USER_DIR/ThirdParty.\n\n"
+ 
+ while true; do
+   read -p "Do you want to remove it and do a new download of this package? (Y/N)" res
+   case $res in
+       [Yy]* ) rm -rf petsc-$PetscV.tar.gz petsc-$PetscV
+               wget "http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-$PetscV.tar.gz"
+               state=$?
+               if [ $state -ne 0 ]; then
+                 printf "\n\n ********************** \n\n"
+                 printf "ERROR: Check your Internet connection\n\n"
+                 exit 1;
+               fi
+               break
+               ;;
+       [Nn]* ) exit
+               ;;
+       * )     echo "Valid options are Y or N"
+               ;;
+   esac
+ done
+else
+   wget "http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-$PetscV.tar.gz"
+   state=$?
+   if [ $state -ne 0 ]; then
+     printf "\n\n ********************** \n\n"
+     printf "ERROR: Check your Internet connection\n\n"
+     exit 1;
+   fi
+fi
+
+tar -xvzf petsc-$PetscV.tar.gz
+
+state=$?
+
+if [ $state -eq 0 ]; then
+  rm petsc-$PetscV.tar.gz
+else
+  printf "\n\n ********************** \n\n"
+  printf "ERROR: untar error\n\n"
+  exit 1;
+fi
+
+state=$?
+
+if [ $state -eq 0 ]; then
+  printf "\n\n ********************** \n\n"
+  printf "Petsc has been downloaded successfully to directory:\n\n"
+  printf "$PetscIntallDir/petsc-$PetscV\n\n"
+else
+  printf "\n\n ********************** \n\n"
+  printf "ERROR: Petsc download failled.\n\n"
+  printf "Check if you have write permission ?\n\n"
+fi
+
+## Install dependencies
+
+sudo apt update
+sudo apt-get install libatlas-dev 
+sudo apt-get install libatlas-base-dev 
+sudo apt-get install libblas-dev liblapack-dev flex bison git make cmake gfortran
+
+## Configure petsc
+
+cd petsc-$PetscV 
+
+./configure --with-mpi-dir=$mpiDir --with-debugging=0 --download-hypre --download-parmetis --download-metis --download-ptscotch --download-mumps --download-scalapack --with-precision=double --with-shared-libraries=1 --with-scalar-type=real --with-fc=$mpiFort --with-cc=$mpiCC --with-cxx=$mpiCXX CXX_LINKER_FLAGS=-Wl,--no-as-needed CFLAGS="-g -O2 -fPIC -fstack-protector-strong -Wformat -Werror=format-security" CXXFLAGS="-g -O2 -fPIC -fstack-protector-strong -Wformat -Werror=format-security" FCFLAGS="-g -O2 -fstack-protector-strong" FFLAGS="-g -O2 -fstack-protector-strong" CPPFLAGS="-Wdate-time -D_FORTIFY_SOURCE=2" LDFLAGS="-Wl,-Bsymbolic-functions -Wl,-z,relro" MAKEFLAGS=w
+
+state=$?
+
+if [ $state -eq 0 ]; then
+  printf "\n\n ********************** \n\n"
+  printf " Compiling Petsc ....................."
+else
+  printf "\n\n ********************** \n\n"
+  printf "ERROR: an unexpected ocurred while configuring Petsc. Check the error message displayed by Petsc.\n\n"
+  exit 1;
+fi
+
+## Compile Petsc
+
+parch=$(tail -200 configure.log | grep 'PETSC_ARCH:' | awk '{print $2}')
+pdir=$(tail -200 configure.log | grep 'PETSC_DIR:' | awk '{print $2}')
+
+make PETSC_DIR=$pdir PETSC_ARCH=$parch all
+
+## Export petsc vars
+
+state=$?
+
+if [ $state -eq 0 ]; then 
+  echo "export PETSC_DIR=$pdir">>$HOME/.bashrc
+  echo "export PETSC_ARCH=$parch">>$HOME/.bashrc
+  echo "export LD_LIBRARY_PATH=\$PETSC_DIR/\$PETSC_ARCH/lib:\$LD_LIBRARY_PATH">>$HOME/.bashrc
+  printf "\n\nPetsc has been successfully installed !\n\n"
+else
+  printf "\n\n ********************** \n\n"
+  printf "ERROR: an unexpected error ocurred while compiling Petsc. \n\n"
+  exit 1;
+fi
+
+																												

@@ -94,7 +94,11 @@ Foam::constitutiveEqs::RoliePoly::RoliePoly
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::constitutiveEqs::RoliePoly::correct()
+void Foam::constitutiveEqs::RoliePoly::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
 
 // Update temperature-dependent properties
@@ -103,7 +107,7 @@ volScalarField lambdaR = thermoLambdaRPtr_->createField(lambdaR_);
 volScalarField etaP = thermoEtaPtr_->createField(etaP_);
 
 // Velocity gradient tensor
-volTensorField L = fvc::grad(U());
+volTensorField L( gradU == nullptr ? fvc::grad(U())() : *gradU );
 
 if (!solveInTau_)
 {  

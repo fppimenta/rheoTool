@@ -1,0 +1,54 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  https://openfoam.org                  |
+|   \\  /    A nd           | Version:  9                                     |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volScalarField;
+    object      T;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [ 0 0 0 1 0 0 0 ];
+
+internalField   uniform 200;
+
+boundaryField
+{
+    
+    p_inlet
+    {
+        type            fixedValue;
+        value           uniform 200;
+    }
+    
+    p_outlet
+    {
+        type            zeroGradient;
+    }
+    
+    p_down
+    {
+        type            zeroGradient;
+    }
+    
+    "(bottom|top)"  
+    {
+        type             empty;
+    }
+    
+    inter.polymer
+    {   
+        type                    coupledT;
+        nbrFieldName            "T";
+        isContactResistance     false;
+        hres                    1;
+        value                   uniform 200;
+    }
+}
+
+// ************************************************************************* //

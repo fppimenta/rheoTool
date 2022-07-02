@@ -1,0 +1,66 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  https://openfoam.org                  |
+|   \\  /    A nd           | Version:  9                                     |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    inlet
+    {
+   
+        type            codedFixedValue;
+    	value           uniform (0 0 0);
+    	name    smoothU;
+    	code
+    	#{
+          const scalar& t = this->db().time().timeOutputValue();
+ 
+          vector Uav(0.25, 0, 0);
+          vector dirN(1, 0, 0);
+          
+          scalar tlim(1.);
+          scalar fac(8.);
+
+          if (t<=tlim)
+           {
+             Uav = ( ( (1 - Foam::cos( 3.1415926535897932 * t/tlim) ) / fac) * dirN);
+           }
+       
+          operator == (Uav);
+   	#};
+
+    }
+    
+    outlet
+    {
+        type            zeroGradient;
+    }
+
+    "(wall.*)"
+    {
+        type            fixedValue;
+        value           uniform ( 0 0 0 );
+    }
+
+    frontAndBack
+    {
+        type             empty;
+    }
+    
+}
+
+// ************************************************************************* //

@@ -1,7 +1,7 @@
 constitutiveModel/constitutiveModel.C
 
 constitutiveEqs/constitutiveEq/constitutiveEq.C
-constitutiveEqs/constitutiveEq/newConstitutiveEq.C
+constitutiveEqs/constitutiveEq/newConstitutiveEq.C 
 
  constitutiveEqs/Oldroyd-B/Oldroyd_B.C
  constitutiveEqs/Oldroyd-B/Oldroyd-BLog/Oldroyd_BLog.C
@@ -40,10 +40,12 @@ constitutiveEqs/constitutiveEq/newConstitutiveEq.C
  constitutiveEqs/otherModels/Saramito/Saramito.C
  constitutiveEqs/otherModels/Saramito/SaramitoLog/SaramitoLog.C
  constitutiveEqs/otherModels/ML-IKH/ML_IKH.C
+ constitutiveEqs/otherModels/sPTT-IKH/sPTT_IKH.C
  constitutiveEqs/otherModels/RRM/RRM.C
  constitutiveEqs/otherModels/VCM/VCM.C
  constitutiveEqs/otherModels/BMP/BMP.C
- constitutiveEqs/otherModels/BMP/BMPLog/BMPLog.C
+ constitutiveEqs/otherModels/BMP/BMPLog/BMPLog.C 
+
  
 constitutiveTwoPhaseMixture/constitutiveTwoPhaseMixture.C
 immiscibleConstitutiveTwoPhaseMixture/immiscibleConstitutiveTwoPhaseMixture.C

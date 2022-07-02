@@ -174,11 +174,15 @@ Foam::constitutiveEqs::SaramitoLog::SaramitoLog
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::constitutiveEqs::SaramitoLog::correct()
+void Foam::constitutiveEqs::SaramitoLog::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
    // Decompose grad(U).T()
 
-    volTensorField L = fvc::grad(U());
+    volTensorField L( gradU == nullptr ? fvc::grad(U())() : *gradU );
  
     dimensionedScalar c1( "zero", dimensionSet(0, 0, -1, 0, 0, 0, 0), 0.);
     volTensorField   B = c1 * eigVecs_; 

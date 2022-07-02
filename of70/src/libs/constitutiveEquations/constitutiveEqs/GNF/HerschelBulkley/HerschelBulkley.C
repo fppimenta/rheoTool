@@ -90,18 +90,22 @@ Foam::constitutiveEqs::HerschelBulkley::HerschelBulkley
     thermoEtaPtr_(thermoFunction::New("thermoEta", U.mesh(), dict))
 {
   // Initialize eta_
-  correct();
+  correct(nullptr);
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::constitutiveEqs::HerschelBulkley::correct()
+void Foam::constitutiveEqs::HerschelBulkley::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
    volScalarField
    strainRate_ =
    max
    (
-       strainRate(),
+       strainRate(gradU),
        dimensionedScalar("VSMALL", dimless/dimTime, VSMALL)
    );
     

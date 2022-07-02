@@ -129,7 +129,11 @@ Foam::constitutiveEqs::RoliePolyLog::RoliePolyLog
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::constitutiveEqs::RoliePolyLog::correct()
+void Foam::constitutiveEqs::RoliePolyLog::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
     // Update temperature-dependent properties
     volScalarField lambdaR = thermoLambdaRPtr_->createField(lambdaR_);
@@ -137,7 +141,7 @@ void Foam::constitutiveEqs::RoliePolyLog::correct()
     volScalarField etaP = thermoEtaPtr_->createField(etaP_);
  
     // Decompose grad(U).T()
-    volTensorField L = fvc::grad(U());
+    volTensorField L( gradU == nullptr ? fvc::grad(U())() : *gradU );
 
     dimensionedScalar c1( "zero", dimensionSet(0, 0, -1, 0, 0, 0, 0), 0.);
     volTensorField   B = c1 * eigVecs_; 

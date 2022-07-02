@@ -107,7 +107,11 @@ Foam::constitutiveEqs::FENE_CR::FENE_CR
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::constitutiveEqs::FENE_CR::correct()
+void Foam::constitutiveEqs::FENE_CR::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
 
  // Update temperature-dependent properties
@@ -115,7 +119,7 @@ void Foam::constitutiveEqs::FENE_CR::correct()
  volScalarField etaP = thermoEtaPtr_->createField(etaP_);
 
  // Velocity gradient tensor
- volTensorField L = fvc::grad(U());
+ volTensorField L( gradU == nullptr ? fvc::grad(U())() : *gradU );
 
  if (!solveInTau_)
  {

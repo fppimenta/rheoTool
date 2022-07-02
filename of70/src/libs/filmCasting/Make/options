@@ -1,0 +1,37 @@
+sinclude $(GENERAL_RULES)/mplib$(WM_MPLIB)
+sinclude $(RULES)/mplib$(WM_MPLIB)
+
+EXE_INC = \
+    -isystem$(EIGEN_RHEO) \
+    -I../constitutiveEquations/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/transportModels/twoPhaseMixture/lnInclude \
+    -I$(LIB_SRC)/transportModels/interfaceProperties/lnInclude \
+    -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
+    -I$(LIB_SRC)/dynamicMesh/lnInclude \
+    -I$(LIB_SRC)/fvMotionSolver/lnInclude \
+    -I../sparseMatrixSolvers/lnInclude \
+    -I../fvmb/lnInclude \
+    -I../thermo/lnInclude \
+    -isystem$(PETSC_DIR)/$(PETSC_ARCH)/include \
+    -isystem$(PETSC_DIR)/include \
+    $(PFLAGS) $(PINC)
+ 
+LIB_LIBS = \
+    -lfiniteVolume \
+    -lconstitutiveEquations \
+    -lmeshTools \
+    -ldynamicFvMesh \
+    -lfvMotionSolvers \
+    -ltopoChangerFvMesh \
+    -ldynamicMesh \
+    -ltwoPhaseMixture \
+    -linterfaceProperties \
+    -ltwoPhaseProperties \
+    -L$(FOAM_USER_LIBBIN) -lsparseMatrixSolvers \
+    -L$(FOAM_USER_LIBBIN) -lfvmb \
+    -L$(FOAM_USER_LIBBIN) -lthermoRheoTool \
+    -L$(PETSC_DIR)/$(PETSC_ARCH)/lib -lHYPRE \
+    -L$(PETSC_DIR)/$(PETSC_ARCH)/lib -lpetsc \
+    $(PLIBS)

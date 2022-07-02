@@ -127,10 +127,14 @@ Foam::constitutiveEqs::VCM::VCM
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::constitutiveEqs::VCM::correct()
+void Foam::constitutiveEqs::VCM::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
  // Velocity gradient tensor and gammaDot
-    volTensorField L = fvc::grad(U());   
+    volTensorField L( gradU == nullptr ? fvc::grad(U())() : *gradU );   
     volSymmTensorField gDot = twoSymm(L);
   
  // Breakage rate

@@ -1,0 +1,38 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+# Equilibrate the molecules 
+runApplication blockMesh
+ 
+runApplication initMolecules
+
+foamDictionary -entry "endTime" -set "40" system/controlDict
+foamDictionary -entry "deltaT" -set ".005" system/controlDict
+foamDictionary -entry "writeInterval" -set "10" system/controlDict
+
+foamDictionary -entry "externalFlow/pushBackCmp" -set "( 1 1 1 )" constant/moleculesControls
+foamDictionary -entry "externalFlow/interpolation" -set "Analytical" constant/moleculesControls
+foamDictionary -entry "outputOptions/outputStatsInterval" -set "100" constant/moleculesControls
+
+foamDictionary -entry "SIMPLE/solveFluid" -set "no" system/fvSolution
+
+runApplication rheoBDFoam
+
+# Run freely
+foamDictionary -entry "endTime" -set "80" system/controlDict
+foamDictionary -entry "deltaT" -set ".001" system/controlDict
+foamDictionary -entry "writeInterval" -set "1" system/controlDict
+
+foamDictionary -entry "externalFlow/pushBackCmp" -set "( 1 1 1 )" constant/moleculesControls
+foamDictionary -entry "externalFlow/interpolation" -set "BarycentricWeights" constant/moleculesControls
+foamDictionary -entry "outputOptions/outputStatsInterval" -set "20" constant/moleculesControls
+
+foamDictionary -entry "SIMPLE/solveFluid" -set "yes" system/fvSolution
+
+mv log.rheoBDFoam log.rheoBDFoam.equilibrate
+runApplication rheoBDFoam
+
+runApplication averageMolcN 40

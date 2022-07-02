@@ -88,10 +88,14 @@ Foam::constitutiveEqs::BMP::BMP
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::constitutiveEqs::BMP::correct()
+void Foam::constitutiveEqs::BMP::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
     // Velocity gradient tensor
-    volTensorField L = fvc::grad(U());
+    volTensorField L( gradU == nullptr ? fvc::grad(U())() : *gradU );
     
     // Fluidity transport equation  
     fvScalarMatrix PhiEqn

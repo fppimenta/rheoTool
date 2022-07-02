@@ -1,0 +1,52 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  https://openfoam.org                  |
+|   \\  /    A nd           | Version:  9                                     |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volScalarField;
+    object      psi;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 2 -3 0 0 -1 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+
+    cyc0
+    {
+	type            cyclic;
+    }
+   
+    reservoir
+    {
+	type            fixedValue;
+	value           uniform 3.10929256;      
+    }
+    
+    membrane
+    {
+	type            fixedValue;
+	value           uniform 0;       
+    }
+
+    cyc1
+    {
+	type            cyclic;    
+    }
+
+    frontAndBack
+    {
+	type            empty;     
+    }
+    
+}
+
+// ************************************************************************* //

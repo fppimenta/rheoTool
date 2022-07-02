@@ -1,0 +1,30 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  https://openfoam.org                  |
+|   \\  /    A nd           | Version:  9                                     |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      thermoProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+type            boussinesq;
+
+enableViscousDissipation false;
+
+rhoCp           rhoCp [ 1 -1 -2 -1 0 0 0 ] 4e6;
+
+kappaCoeffs
+{
+    a0              0.6;
+    a1              0;
+    a2              0;
+    a3              0;
+}
+
+// ************************************************************************* //

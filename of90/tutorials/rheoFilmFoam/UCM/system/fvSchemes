@@ -1,0 +1,68 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  https://openfoam.org                  |
+|   \\  /    A nd           | Version:  9                                     |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+ddtSchemes
+{
+    default         steadyState;
+    ddt(U)          Euler;
+}
+
+gradSchemes
+{
+    default         Gauss linear;
+}
+
+divSchemes
+{
+    default                  none;
+    div(tau)                 Gauss linear; 
+    div(etaStab,grad(U))     Gauss linear;
+    div(U)                   Gauss linear;
+    div(etaP,grad(U))        Gauss linear;
+    
+    div(phi,theta)           bounded GaussDefCmpw cubista;  
+    div(phi,tau)             bounded  GaussDefCmpw cubista; 
+    div(phi,h)               GaussDefCmpw cubista;  // The only not bounded
+    div(phi,T)               bounded  GaussDefCmpw cubista;  
+    
+    div(sigmaSup)             Gauss linear; 
+    div(eta*e*dev2(T(gradU))) Gauss linear;
+    div(pI)                   Gauss linear;
+    div(((etaP*e)*grad(U)))   Gauss linear;
+}
+
+laplacianSchemes
+{
+    default                       Gauss linear corrected;     
+}
+
+interpolationSchemes
+{
+    default           linear;
+      
+}
+
+snGradSchemes
+{
+    default         corrected;
+}
+
+fluxRequired
+{
+    default         no;
+    p;
+}
+
+// ************************************************************************* //

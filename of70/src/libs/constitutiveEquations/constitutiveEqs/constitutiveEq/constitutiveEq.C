@@ -183,6 +183,9 @@ tmp<fvVectorMatrix> constitutiveEq::divTauThermo
    const volVectorField& U  
 ) const
 {
+ 
+ if (!hasThermo())
+  NotImplemented;
    
  if (isGNF())
  {   
@@ -251,7 +254,11 @@ tmp<fvVectorMatrix> constitutiveEq::divTauSThermo
    const volVectorField& U,  
    const volScalarField& alpha
 ) const
-{       
+{    
+
+ if (!hasThermo())
+  NotImplemented;
+     
  if (isGNF())
  {       
    return

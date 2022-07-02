@@ -124,10 +124,14 @@ Foam::constitutiveEqs::Saramito::Saramito
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::constitutiveEqs::Saramito::correct()
+void Foam::constitutiveEqs::Saramito::correct
+(
+  const volScalarField* alpha,
+  const volTensorField* gradU
+)
 {
     // Velocity gradient tensor
-    volTensorField L = fvc::grad(U());
+    volTensorField L( gradU == nullptr ? fvc::grad(U())() : *gradU );
 
     // Convected derivate term
     volTensorField C = tau_ & L;

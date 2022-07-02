@@ -90,8 +90,8 @@ isThereCyclicAMI_(false)
        HypreIJPreconditioner::New(fvSolution.subDict("solvers").subDict(word(T.name()))).ptr()
     );
       
-    int ilower = this->sharedData[meshID_].ilower;
-    int iupper = this->sharedData[meshID_].iupper;
+    label ilower = this->sharedData[meshID_].ilower;
+    label iupper = this->sharedData[meshID_].iupper;
  
     typename pTraits<Type>::labelType validComponents
     (
@@ -489,8 +489,8 @@ void Foam::hypreSolver<Type>::solveNoReuse
 )
 {
 
- int ilower = this->sharedData[meshID_].ilower;
- int iupper = this->sharedData[meshID_].iupper;
+ label ilower = this->sharedData[meshID_].ilower;
+ label iupper = this->sharedData[meshID_].iupper;
  
  GeometricField<Type, fvPatchField, volMesh>& T =
  const_cast< GeometricField<Type, fvPatchField, volMesh>& >
@@ -690,9 +690,9 @@ void Foam::hypreSolver<Type>::computeAllocationHypre
  // Set Allocation. Note: this will only work for direct-neig based
  // stencil, ie, each cell only 'depends' on its direct neigs.
  
- int n = T.size();
- int nglb = T.size();
- reduce(nglb, sumOp<int>()); 
+ label n = T.size();
+ label nglb = T.size();
+ reduce(nglb, sumOp<label>()); 
  
  // Resize arrays to 0 because setSize() might be conservative
  maxInProcFaces_.clear();
@@ -895,19 +895,19 @@ void Foam::hypreSolver<Type>::assembleHypreAbx
  }
  
  
- int ilower = this->sharedData[meshID_].ilower;
+ label ilower = this->sharedData[meshID_].ilower;
  
  // Initialize before setting coefficients 
  HYPRE_IJMatrixInitialize(A);
  HYPRE_IJVectorInitialize(b);
  HYPRE_IJVectorInitialize(x);
  
- int nc = T.size();  
+ label nc = T.size();  
   
  //- Off diagonal elements   
  const lduAddressing& offDiag = eqn.lduMatrix::lduAddr();
- int nnz = 1; int col; int row;
- int nFaces = offDiag.lowerAddr().size();
+ label nnz = 1; label col; label row;
+ label nFaces = offDiag.lowerAddr().size();
  
  // Symmetric matrices only have upper(). No need to force creation of lower().
  if (eqn.symmetric())
@@ -940,10 +940,10 @@ void Foam::hypreSolver<Type>::assembleHypreAbx
  //- Diagonal elements and source vector
  std::vector<double> rhs_values(nc);
  std::vector<double> x_values(nc);
- std::vector<int> rows(nc);
+ std::vector<label> rows(nc);
 
  scalarField source = eqn.source().component(cmpI);   
- for (int cellI=0; cellI<nc; cellI++) 
+ for (label cellI=0; cellI<nc; cellI++) 
  {  
    // Diagonal
    row = ilower + cellI;  
@@ -1241,21 +1241,21 @@ void Foam::hypreSolver<Type>::assembleHypreBx
 )
 {
  
- int ilower = this->sharedData[meshID_].ilower;
+ label ilower = this->sharedData[meshID_].ilower;
  
  // Initialize before setting coefficients 
  HYPRE_IJVectorInitialize(b);
  HYPRE_IJVectorInitialize(x);
  
- int nc = T.size();  
+ label nc = T.size();  
   
  //- Diagonal elements and source vector
  std::vector<double> rhs_values(nc);
  std::vector<double> x_values(nc);
- std::vector<int> rows(nc);
+ std::vector<label> rows(nc);
 
  scalarField source = eqn.source().component(cmpI);   
- for (int cellI=0; cellI<nc; cellI++) 
+ for (label cellI=0; cellI<nc; cellI++) 
  {  
    // Source vector   
    rhs_values[cellI] = source[cellI];
@@ -1322,13 +1322,13 @@ void Foam::hypreSolver<Type>::transferHypreSolution
   int cmpI
 )
 {
-   int ilower = this->sharedData[meshID_].ilower;
+   label ilower = this->sharedData[meshID_].ilower;
    
    // get the local solution 
-   int nvalues = T.size();
-   std::vector<int> rows(nvalues);
+   label nvalues = T.size();
+   std::vector<label> rows(nvalues);
         
-   for (int i = 0; i < nvalues; i++)
+   for (label i = 0; i < nvalues; i++)
     rows[i] = ilower + i;
     
    scalarField tt(T.size(), 0.);
