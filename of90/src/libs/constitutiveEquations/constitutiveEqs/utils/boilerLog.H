@@ -24,9 +24,11 @@
  volTensorField   omega(B);
  
  #if defined(PTTLog_H) || defined(SaramitoLog_H)
-  volTensorField   M(eigVecs_.T() & ( L.T() - zeta_*symm(L) ) & eigVecs_);
+ // volTensorField   M(eigVecs_.T() & ( L.T() - zeta_*symm(L) ) & eigVecs_);
+  volTensorField M(innerP(eigVecs_,( L.T() - zeta_*symm(L) ) ,true));
  #else
-  volTensorField   M(eigVecs_.T() & L.T() & eigVecs_);
+ // volTensorField   M(eigVecs_.T() & L.T() & eigVecs_);
+  volTensorField M(innerP(eigVecs_,L.T(),true));
  #endif
  
  decomposeGradU(M, eigVals_, eigVecs_, omega, B);

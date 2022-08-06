@@ -349,9 +349,11 @@ void constitutiveEq::decomposeGradU
    omegaR.zy() = -omegaR.yz(); 
  }
  
- omega = ( eigVecs & omega & eigVecs.T() );
-
- B = ( eigVecs & B & eigVecs.T() );
+ //omega = ( eigVecs & omega & eigVecs.T() );
+ //B = ( eigVecs & B & eigVecs.T() );
+ 
+ omega = innerP(eigVecs, omega, false);
+ B = innerP(eigVecs, B, false);
  
 }
 
@@ -465,6 +467,69 @@ void constitutiveEq::checkIfCoupledSolver
  }
  
 }
+
+tmp<volTensorField> constitutiveEq::innerP
+(
+  const volTensorField& t1,
+  const volTensorField& t2,
+  bool isFirstT
+) const
+{
+ 
+ tmp<volTensorField> tr
+ (
+   new volTensorField
+   (
+    IOobject
+    (
+      "tmpInnerP",
+      t1.instance(),
+      t1.db()
+    ),
+    t1.mesh(),
+    dimensionedTensor
+    (
+      "0",
+      t1.dimensions()*t1.dimensions()*t2.dimensions(),
+      pTraits<tensor>::zero
+    ),
+    extrapolatedCalculatedFvPatchField<tensor>::typeName
+  )
+ );        
+ 
+ volTensorField& r = tr.ref();
+ 
+ if (isFirstT)
+ {
+   forAll(t1, i)
+   {
+     r[i] = (t1[i].T() & t2[i] & t1[i]);
+   }
+ }
+ else
+ {
+   forAll(t1, i)
+   {
+     r[i] = (t1[i] & t2[i] & t1[i].T());
+   }
+ }
+ 
+ return tr;
+}
+
+tmp<volTensorField> constitutiveEq::innerP
+(
+  const volTensorField& t1,
+  const tmp<volTensorField>& tt2,
+  bool isFirstT
+  
+) const
+{
+   tmp<volTensorField> tr(innerP(t1,tt2(),isFirstT));
+   tt2.clear();
+   return tr;
+}
+
 
 tmp<volSymmTensorField> constitutiveEq::tauTotal() const
 {

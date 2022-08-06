@@ -133,9 +133,9 @@ void Foam::constitutiveEqs::Oldroyd_BLog::correct
     // Update params thermo 
     volScalarField lambda(thermoLambdaPtr_->createField(lambda_));
     volScalarField etaP(thermoEtaPtr_->createField(etaP_));
-        
+    
     // Decompose grad(U).T()
-    #include "boilerLog.H"
+    #include "boilerLog.H" 
   
     // Solve the constitutive Eq in theta = log(c)
     fvSymmTensorMatrix thetaEqn
@@ -148,6 +148,8 @@ void Foam::constitutiveEqs::Oldroyd_BLog::correct
          (omega&theta_)
        - (theta_&omega)
        + 2.0 * B
+       + (1.0/lambda)  * innerP(eigVecs_,(inv(eigVals_)-Itensor),false)
+       /*
        + (1.0/lambda) 
         * (
              eigVecs_ &
@@ -157,8 +159,8 @@ void Foam::constitutiveEqs::Oldroyd_BLog::correct
                )
            & eigVecs_.T() 
           )
-       ) 
-       
+       */
+       )       
     );     
       
    thetaEqn.relax();
@@ -169,7 +171,9 @@ void Foam::constitutiveEqs::Oldroyd_BLog::correct
    calcEig(theta_, eigVals_, eigVecs_);
 
    // Convert from theta to tau
-   tau_ = (etaP/lambda) * symm( (eigVecs_ & eigVals_ & eigVecs_.T()) - Itensor);
+   //tau_ = (etaP/lambda) * symm( (eigVecs_ & eigVals_ & eigVecs_.T()) - Itensor);
+   tau_ = (etaP/lambda) * symm( innerP(eigVecs_,eigVals_,false) - Itensor);
+   
 
    tau_.correctBoundaryConditions();
 }

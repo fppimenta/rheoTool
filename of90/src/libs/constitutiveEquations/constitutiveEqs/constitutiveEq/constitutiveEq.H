@@ -223,6 +223,21 @@ protected:
       //- Should the constitutive equation be solved coupled with momentum
       // and continuity?
       bool solveCoupled_;
+      
+      // Hot fix functions for bug in gcc > 9.0
+      tmp<volTensorField> innerP
+      (
+        const volTensorField& t1,
+        const volTensorField& t2,
+        bool isFirstT
+      ) const;
+      
+      tmp<volTensorField> innerP
+      (
+        const volTensorField& t1,
+        const tmp<volTensorField>& t2,
+        bool isFirstT
+      ) const;
 
 public:
 
