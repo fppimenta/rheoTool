@@ -23,7 +23,7 @@ EXE_INC = \
     $(PFLAGS) $(PINC)
 
 EXE_LIBS = \
-    -lrtTwoPhaseChangeModels \
+    -L$(FOAM_USER_LIBBIN) -lrtTwoPhaseChangeModels \
     -lfiniteVolume \
     -ldynamicFvMesh \
     -ltopoChangerFvMesh \
