@@ -120,7 +120,7 @@ Foam::constitutiveEqs::SaramitoLog::SaramitoLog
     tau0_(dict.lookup("tau0")),
     n_(dict.lookup("n")),
     k_( n_.value() == 1 ? etaP_*1. : dict.lookup("k")),
-    dims_(dict.lookupOrDefault<vector>("dims", U.mesh().solutionD() )),
+    dims_(dict.lookup("dims")),
     nDims(scalar(dims_.x()+dims_.y()+dims_.z())),
     Itensor("Identity", dimless, symm(tensor::I)),
     writeII_(dict.lookupOrDefault<Switch>("writeSecondInvariantTauDev", false)),

@@ -113,7 +113,7 @@ Foam::constitutiveEqs::ML_IKH::ML_IKH
     q_(dict.lookup("q")),
     lambdaE_(dict.lookup("lambdaE")),
     isSC_(dict.lookup("isStressControlled")), 
-    dims_(dict.lookupOrDefault<vector>("dims", U.mesh().solutionD() )),
+    dims_(dict.lookup("dims")),
     nDims(scalar(dims_.x()+dims_.y()+dims_.z())),
     Itensor("Identity", dimless, symm(tensor::I)),   
     lambdas_()
